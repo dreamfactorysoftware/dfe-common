@@ -1,4 +1,4 @@
-<?php namespace DreamFactory\Enterprise\Common\Providers;
+<?php namespace DreamFactory\Enterprise\Common\Auth\Providers;
 
 use DreamFactory\Enterprise\Common\Auth\ConsoleUserProvider;
 use Illuminate\Support\ServiceProvider;
