@@ -48,7 +48,7 @@ abstract class BaseUserProvider extends DatabaseUserProvider
         /** @type ServiceUser|User $_model */
         $_model = new $this->_userClass;
 
-        return $_model->whereRaw( explode( ' AND ', $_condition ), $_data )->first();
+        return $_model->whereRaw( implode( ' AND ', $_condition ), $_data )->first();
     }
 
     /**
