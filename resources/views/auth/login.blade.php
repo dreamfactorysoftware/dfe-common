@@ -1,4 +1,4 @@
-@extends('layouts.auth')
+@extends('dfe-common::layouts.auth')
 
 {{-- no spaces... it won't be trimmed --}}
 {{-- @formatter:off --}}
