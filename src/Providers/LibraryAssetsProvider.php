@@ -49,4 +49,14 @@ class LibraryAssetsProvider extends BaseServiceProvider
     {
     }
 
+    public static function compiles()
+    {
+        return array_merge(
+            parent::compiles(),
+            [
+                __DIR__ . DIRECTORY_SEPARATOR . __FILE__,
+            ]
+        );
+    }
+
 }
