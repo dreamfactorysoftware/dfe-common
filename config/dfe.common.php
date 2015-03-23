@@ -1,6 +1,7 @@
 <?php
 /**
  * Configuration file for the dfe-common library
+ * Access via config key "dfe.common"
  */
 use DreamFactory\Enterprise\Common\Enums\MailTemplates;
 
@@ -8,12 +9,12 @@ return [
     //******************************************************************************
     //* General
     //******************************************************************************
-    'display-name'  => 'DreamFactory Enterprise',
-    'version'       => 'v1.0.x-alpha',
+    'display-name'    => 'DreamFactory Enterprise',
+    'display-version' => 'v1.0.x-alpha',
     //******************************************************************************
     //* Mail template service
     //******************************************************************************
-    'mail-template' => [
+    'mail-template'   => [
         'web-url'               => 'http://cerberus.fabric.dreamfactory.com/',
         'public-url'            => 'http://cerberus.fabric.dreamfactory.com/',
         'support-email-address' => 'support@dreamfactory.com',

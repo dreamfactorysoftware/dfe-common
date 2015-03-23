@@ -1,7 +1,5 @@
 <?php namespace DreamFactory\Enterprise\Common\Providers;
 
-use Illuminate\Support\Facades\Log;
-
 class LibraryAssetsProvider extends BaseServiceProvider
 {
     //******************************************************************************
@@ -19,7 +17,7 @@ class LibraryAssetsProvider extends BaseServiceProvider
     /**
      * @type string Relative path to config file
      */
-    const CONFIG_NAME = 'dfe-common.php';
+    const CONFIG_NAME = 'dfe.common.php';
     /**
      * @type string Relative path of asset installation
      */
@@ -44,8 +42,6 @@ class LibraryAssetsProvider extends BaseServiceProvider
 
         //  And assets...
         $this->publishes( [$_resourcesPath . '/assets' => public_path( static::ASSET_PUBLISH_PATH )], 'public' );
-
-        Log::debug( 'dfe-common library assets booted.' );
     }
 
     /** @inheritdoc */
