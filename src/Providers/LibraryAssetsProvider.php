@@ -17,7 +17,7 @@ class LibraryAssetsProvider extends BaseServiceProvider
     /**
      * @type string Relative path to config file
      */
-    const CONFIG_NAME = '/config/dfe-common.php';
+    const CONFIG_NAME = 'dfe-common.php';
     /**
      * @type string Relative path of asset installation
      */
@@ -31,16 +31,18 @@ class LibraryAssetsProvider extends BaseServiceProvider
     public function boot()
     {
         $_libBase = realpath( __DIR__ . '/../../' );
+        $_configPath = $_libBase . '/config';
+        $_resourcesPath = $_libBase . '/resources';
 
         //  Views
-        $this->loadViewsFrom( $_libBase . '/resources/views', static::IOC_NAME );
-        $this->publishes( [$_libBase . '/resources/views' => base_path( 'resources/views/vendor/' . static::IOC_NAME )] );
+        $this->loadViewsFrom( $_resourcesPath . '/views', static::IOC_NAME );
+        $this->publishes( [$_resourcesPath . '/views' => base_path( 'resources/views/vendor/' . static::IOC_NAME )] );
 
         //  Config
-        $this->publishes( [$_libBase . static::CONFIG_NAME => config_path( static::CONFIG_NAME ),] );
+        $this->publishes( [$_configPath . static::CONFIG_NAME => config_path( static::CONFIG_NAME ),] );
 
         //  And assets...
-        $this->publishes( [$_libBase . '/resources/assets' => public_path( static::ASSET_PUBLISH_PATH )], 'public' );
+        $this->publishes( [$_resourcesPath . '/assets' => public_path( static::ASSET_PUBLISH_PATH )], 'public' );
     }
 
     /** @inheritdoc */
