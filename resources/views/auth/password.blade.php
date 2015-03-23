@@ -1,4 +1,4 @@
-@extends('layouts.auth')
+@extends('dfe-common::layouts.auth')
 
 {{-- no spaces... it won't be trimmed --}}
 {{-- @formatter:off --}}
@@ -11,7 +11,7 @@ darkly
 @overwrite
 {{-- @formatter:on --}}
 
-@include('auth.branding')
+@include('dfe-common::auth.branding')
 
 @section('content')
 	<div id="container-login" class="container-fluid">

@@ -11,7 +11,7 @@ darkly
 @overwrite
 {{-- @formatter:on --}}
 
-@include('auth.branding')
+@include('dfe-common::auth.branding')
 
 @section('content')
 	<div id="container-login" class="container-fluid">

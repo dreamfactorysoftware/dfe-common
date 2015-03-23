@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	@section('head-master')
-		@include('layouts.partials.head-master')
+		@include('dfe-common::layouts.partials.head-master')
 	@show
 
 	@section('head-links')
@@ -20,7 +20,7 @@
 @section('before-body-scripts')
 @show
 
-@include('layouts.partials.body-scripts')
+@include('dfe-common::layouts.partials.body-scripts')
 
 @section('after-body-scripts')
 @show
