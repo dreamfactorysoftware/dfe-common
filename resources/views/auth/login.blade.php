@@ -11,11 +11,6 @@ darkly
 @overwrite
 {{-- @formatter:on --}}
 
-@section('head-links')
-	@parent
-	<link href="@yield('asset-path')/css/login.css" rel="stylesheet">
-@stop
-
 @include('auth.branding')
 
 @section('content')
@@ -91,5 +86,5 @@ darkly
 @section( 'after-body-scripts' )
 	@parent
 	<script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
-	<script src="/js/auth.validate.js"></script>
+	<script src="/vendor/dfe-common/js/auth.validate.js"></script>
 @stop

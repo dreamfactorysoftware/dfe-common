@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Mail\Message;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PasswordController extends BaseController
 {
@@ -15,15 +16,6 @@ class PasswordController extends BaseController
     //******************************************************************************
 
     use ResetsPasswords;
-
-    //******************************************************************************
-    //* Members
-    //******************************************************************************
-
-    /**
-     * @type string
-     */
-    protected $redirectTo = '/app/dashboard';
 
     //******************************************************************************
     //* Methods
@@ -117,10 +109,25 @@ class PasswordController extends BaseController
                 return redirect( $this->redirectPath() );
 
             default:
-                return redirect()->back()
-                    ->withInput( $request->only( 'email' ) )
-                    ->withErrors( ['email' => trans( $response )] );
+                return redirect()->back()->withInput( $request->only( 'email' ) )->withErrors( ['email' => trans( $response )] );
         }
+    }
+
+    /** @inheritdoc */
+    public function getEmail()
+    {
+        return view( 'dfe-common:auth.password' );
+    }
+
+    /** @inheritdoc */
+    public function getReset( $token = null )
+    {
+        if ( is_null( $token ) )
+        {
+            throw new NotFoundHttpException;
+        }
+
+        return view( 'dfe-common:auth.reset' )->with( 'token', $token );
     }
 
 }

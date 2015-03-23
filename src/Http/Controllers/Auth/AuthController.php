@@ -14,15 +14,6 @@ class AuthController extends BaseController
     use AuthenticatesAndRegistersUsers;
 
     //******************************************************************************
-    //* Members
-    //******************************************************************************
-
-    /**
-     * @type string
-     */
-    protected $redirectTo = '/app/dashboard';
-
-    //******************************************************************************
     //* Methods
     //******************************************************************************
 
@@ -39,4 +30,17 @@ class AuthController extends BaseController
 
         $this->middleware( 'guest', ['except' => 'getLogout'] );
     }
+
+    /** @inheritdoc */
+    public function getLogin()
+    {
+        return view( 'dfe-common:auth.login' );
+    }
+
+    /** @inheritdoc */
+    public function getRegister()
+    {
+        return view( 'dfe-common:auth.register' );
+    }
+
 }

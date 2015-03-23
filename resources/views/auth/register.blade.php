@@ -1,4 +1,15 @@
-@extends('layouts.dark-page')
+@extends('layouts.auth')
+
+{{-- no spaces... it won't be trimmed --}}
+{{-- @formatter:off --}}
+@section('page-title')
+Register
+@overwrite
+
+@section('page-theme')
+darkly
+@overwrite
+{{-- @formatter:on --}}
 
 @section('content')
 <div class="container-fluid">
