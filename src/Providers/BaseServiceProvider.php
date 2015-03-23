@@ -36,7 +36,7 @@ abstract class BaseServiceProvider extends ServiceProvider
     /**
      * @type bool No need to be eager unless wanted...
      */
-    protected $defer = true;
+    protected $defer = false;
 
     //********************************************************************************
     //* Public Methods
