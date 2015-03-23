@@ -9,7 +9,7 @@ use Illuminate\Http\Response;
 use Illuminate\Mail\Message;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class PasswordController extends BaseController
+class CommonPasswordController extends BaseController
 {
     //******************************************************************************
     //* Traits

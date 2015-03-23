@@ -5,7 +5,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\Registrar;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 
-class AuthController extends BaseController
+class CommonAuthController extends BaseController
 {
     //******************************************************************************
     //* Traits
