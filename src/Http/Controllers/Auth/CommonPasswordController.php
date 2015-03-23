@@ -77,7 +77,7 @@ class CommonPasswordController extends BaseController
     /** @inheritdoc */
     public function getEmail()
     {
-        return view( 'dfe-common:auth.password' );
+        return view( 'dfe-common::auth.password' );
     }
 
     /** @inheritdoc */
@@ -88,7 +88,7 @@ class CommonPasswordController extends BaseController
             throw new NotFoundHttpException;
         }
 
-        return view( 'dfe-common:auth.reset' )->with( 'token', $token );
+        return view( 'dfe-common::auth.reset' )->with( 'token', $token );
     }
 
 }

@@ -34,13 +34,13 @@ class CommonAuthController extends BaseController
     /** @inheritdoc */
     public function getLogin()
     {
-        return view( 'dfe-common:auth.login' );
+        return view( 'dfe-common::auth.login' );
     }
 
     /** @inheritdoc */
     public function getRegister()
     {
-        return view( 'dfe-common:auth.register' );
+        return view( 'dfe-common::auth.register' );
     }
 
 }
