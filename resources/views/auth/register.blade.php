@@ -5,10 +5,6 @@
 @section('page-title')
 Register
 @overwrite
-
-@section('page-theme')
-darkly
-@overwrite
 {{-- @formatter:on --}}
 
 @section('content')

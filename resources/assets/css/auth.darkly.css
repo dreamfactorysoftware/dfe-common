@@ -1,11 +1,7 @@
 body {
-	background-color: #353535; /*rgba(58, 44, 69, 1);*/
 	padding-top:      5%;
+	background-color: #353535;
 	color:            rgba(255, 255, 255, .5);
-}
-
-.normal-text {
-	color: #ff9d1d;
 }
 
 #container-login form h4 {

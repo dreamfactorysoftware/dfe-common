@@ -5,10 +5,6 @@
 @section('page-title')
 Password Reset
 @overwrite
-
-@section('page-theme')
-darkly
-@overwrite
 {{-- @formatter:on --}}
 
 @include('dfe-common::auth.branding')
@@ -59,8 +55,10 @@ darkly
 					<label class="control-label sr-only" for="password">Password</label>
 
 					<div class="form-actions">
-						<span class="pull-left"><a href="/auth/login" class="btn btn-success">Login</a></span> <span class="pull-right"><button class="btn btn-danger"
-																																				type="submit">Send Reset Link
+						<span class="pull-left"><a href="/auth/login"
+												   class="btn btn-success"><i class="fa fa-angle-double-left"></i>&nbsp;Back to Login</a></span> <span class="pull-right"><button
+								class="btn btn-danger"
+								type="submit"><i class="fa fa-send"></i>&nbsp;Send Reset Link
 							</button></span>
 					</div>
 				</form>

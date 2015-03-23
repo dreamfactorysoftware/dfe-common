@@ -5,10 +5,6 @@
 @section('page-title')
 Password Reset
 @overwrite
-
-@section('page-theme')
-darkly
-@overwrite
 {{-- @formatter:on --}}
 
 @include('dfe-common::auth.branding')
