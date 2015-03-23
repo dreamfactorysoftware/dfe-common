@@ -36,7 +36,6 @@ class LibraryAssetsProvider extends BaseServiceProvider
 
         //  Views
         $this->loadViewsFrom( $_resourcesPath . '/views', static::IOC_NAME );
-        $this->publishes( [$_resourcesPath . '/views' => base_path( 'resources/views/vendor/' . static::IOC_NAME )] );
 
         //  Config
         $this->publishes( [$_configPath . '/' . static::CONFIG_NAME => config_path( static::CONFIG_NAME ),] );
