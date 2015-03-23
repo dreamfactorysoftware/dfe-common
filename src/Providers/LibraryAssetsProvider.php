@@ -1,5 +1,8 @@
 <?php namespace DreamFactory\Enterprise\Common\Providers;
 
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\View;
+
 class LibraryAssetsProvider extends BaseServiceProvider
 {
     //******************************************************************************
@@ -42,11 +45,14 @@ class LibraryAssetsProvider extends BaseServiceProvider
 
         //  And assets...
         $this->publishes( [$_resourcesPath . '/assets' => public_path( static::ASSET_PUBLISH_PATH )], 'public' );
+
+        Log::debug( 'dfe-common library assets booted.' );
     }
 
     /** @inheritdoc */
     public function register()
     {
+        View::addNamespace( static::IOC_NAME, __DIR__ . '/../../resources/views' );
     }
 
     public static function compiles()
