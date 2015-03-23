@@ -24,11 +24,5 @@
 
 @section('after-body-scripts')
 @show
-
-{{-- @formatter:off --}}
-@section('asset-path')
-{{ __DIR__ . '/../../assets' }}
-@stop
-{{-- @formatter:on --}}
 </body>
 </html>
