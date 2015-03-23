@@ -5,8 +5,6 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\PasswordBroker;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Mail\Message;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CommonPasswordController extends BaseController
@@ -35,44 +33,7 @@ class CommonPasswordController extends BaseController
         $this->middleware( 'guest' );
     }
 
-    /**
-     * Send a reset link to the given user.
-     *
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function postEmail( Request $request )
-    {
-        $this->validate( $request, ['email' => 'required|email'] );
-
-        $response = $this->passwords->sendResetLink(
-            $request->only( 'email' ),
-            function ( Message $m )
-            {
-                $m->subject( $this->getEmailSubject() );
-            }
-        );
-
-        switch ( $response )
-        {
-            case PasswordBroker::RESET_LINK_SENT:
-                return redirect()->back()->with( 'status', trans( $response ) );
-
-            case PasswordBroker::INVALID_USER:
-                return redirect()->back()->withErrors( ['email' => trans( $response )] );
-        }
-
-        return null;
-    }
-
-    /**
-     * Reset the given user's password.
-     *
-     * @param  Request $request
-     *
-     * @return Response
-     */
+    /** @inheritdoc */
     public function postReset( Request $request )
     {
         $this->validate(
