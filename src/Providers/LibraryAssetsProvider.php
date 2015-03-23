@@ -1,7 +1,6 @@
 <?php namespace DreamFactory\Enterprise\Common\Providers;
 
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\View;
 
 class LibraryAssetsProvider extends BaseServiceProvider
 {
@@ -52,17 +51,6 @@ class LibraryAssetsProvider extends BaseServiceProvider
     /** @inheritdoc */
     public function register()
     {
-        View::addNamespace( static::IOC_NAME, __DIR__ . '/../../resources/views' );
+        //  Does nothing but is required
     }
-
-    public static function compiles()
-    {
-        return array_merge(
-            parent::compiles(),
-            [
-                __DIR__ . DIRECTORY_SEPARATOR . __FILE__,
-            ]
-        );
-    }
-
 }
