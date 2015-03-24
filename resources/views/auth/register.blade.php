@@ -1,11 +1,17 @@
-@extends('dfe-common::layouts.auth')
+@extends('dfe-common::layouts.common')
 
 {{-- no spaces... it won't be trimmed --}}
 {{-- @formatter:off --}}
-@section('page-title')
-Register
-@overwrite
+@section('page-title')Register@overwrite
+@section('page-theme'){{ config('dfe.common.themes.auth', 'darkly') }}@stop
 {{-- @formatter:on --}}
+
+@section('head-links')
+    @parent
+    <link href="/vendor/dfe-common/css/auth.css" rel="stylesheet">
+@stop
+
+@include('dfe-common::auth.branding')
 
 @section('content')
     <div class="container-fluid">
