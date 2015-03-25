@@ -99,7 +99,7 @@ body {
 	padding: 10px;
 }
 
-.form-actions > a > i.fa-fw,
-.form-actions > button > i.fa-fw {
+.form-actions > a i.fa-fw,
+.form-actions > button i.fa-fw {
 	margin-right: 4px;
 }
