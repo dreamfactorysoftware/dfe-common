@@ -2,8 +2,9 @@
 
 {{-- no spaces... it won't be trimmed --}}
 {{-- @formatter:off --}}
-@section('page-title')Login@overwrite
-@section('page-theme'){{ config('dfe.common.themes.auth', 'darkly') }}@stop
+@section('page-title')
+Login
+@overwrite
 {{-- @formatter:on --}}
 
 @section('head-links')
@@ -73,9 +74,9 @@
                     <label class="control-label sr-only" for="password">Password</label>
 
                     <div class="form-actions">
-                        <span class="pull-left"><a href="/password/email" class="btn btn-info">Lost password?</a></span>
+                        <span class="pull-left"><a href="/password/email" class="btn btn-info"><i class="fa fa-fw fa-question"></i>Lost password?</a></span>
 
-                        <span class="pull-right"><button type="submit" class="btn btn-success">Login</button></span>
+                        <span class="pull-right"><button type="submit" class="btn btn-success"><i class="fa fa-fw fa-sign-in"></i>Login</button></span>
                     </div>
                 </form>
             </div>

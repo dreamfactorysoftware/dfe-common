@@ -2,8 +2,9 @@
 
 {{-- no spaces... it won't be trimmed --}}
 {{-- @formatter:off --}}
-@section('page-title')Password Reset@overwrite
-@section('page-theme'){{ config('dfe.common.themes.auth', 'darkly') }}@stop
+@section('page-title')
+Password Reset
+@overwrite
 {{-- @formatter:on --}}
 
 @section('head-links')
@@ -74,7 +75,7 @@
                     <label class="control-label sr-only" for="password_confirmation">Password Confirmation</label>
 
                     <div class="form-actions">
-                        <span class="pull-right"><button type="submit" class="btn btn-danger">Reset Password</button></span>
+                        <span class="pull-right"><button type="submit" class="btn btn-danger"><i class="fa fa-fw fa-refresh"></i>Reset Password</button></span>
                     </div>
 
                 </form>

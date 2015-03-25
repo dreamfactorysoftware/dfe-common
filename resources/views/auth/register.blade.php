@@ -2,8 +2,9 @@
 
 {{-- no spaces... it won't be trimmed --}}
 {{-- @formatter:off --}}
-@section('page-title')Register@overwrite
-@section('page-theme'){{ config('dfe.common.themes.auth', 'darkly') }}@stop
+@section('page-title')
+Register
+@overwrite
 {{-- @formatter:on --}}
 
 @section('head-links')

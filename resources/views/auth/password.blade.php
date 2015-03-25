@@ -2,8 +2,9 @@
 
 {{-- no spaces... it won't be trimmed --}}
 {{-- @formatter:off --}}
-@section('page-title')Password Reset@overwrite
-@section('page-theme'){{ config('dfe.common.themes.auth', 'darkly') }}@stop
+@section('page-title')
+Password Reset
+@overwrite
 {{-- @formatter:on --}}
 
 @section('head-links')
@@ -60,9 +61,9 @@
 
                     <div class="form-actions">
 						<span class="pull-left"><a href="/auth/login"
-                                class="btn btn-success"><i class="fa fa-angle-double-left"></i>&nbsp;Back to Login</a></span> <span class="pull-right"><button
+                                class="btn btn-success"><i class="fa fa-fw fa-angle-double-left"></i>&nbsp;Back to Login</a></span> <span class="pull-right"><button
                                 class="btn btn-danger"
-                                type="submit"><i class="fa fa-send"></i>&nbsp;Send Reset Link
+                                type="submit"><i class="fa fa-fw fa-send"></i>&nbsp;Send Reset Link
                             </button></span>
                     </div>
                 </form>
