@@ -94,3 +94,12 @@ body {
 .help-inline {
 	color: #c96462;
 }
+
+.btn {
+	padding: 10px;
+}
+
+.form-actions > a > i.fa-fw,
+.form-actions > button > i.fa-fw {
+	margin-right: 4px;
+}
