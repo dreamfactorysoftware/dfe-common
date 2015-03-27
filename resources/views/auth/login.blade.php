@@ -2,9 +2,7 @@
 
 {{-- no spaces... it won't be trimmed --}}
 {{-- @formatter:off --}}
-@section('page-title')
-Login
-@overwrite
+@section('page-title'){{ "Login" }}@overwrite
 {{-- @formatter:on --}}
 
 @section('head-links')
