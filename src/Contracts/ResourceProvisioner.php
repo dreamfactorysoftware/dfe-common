@@ -14,15 +14,17 @@ interface ResourceProvisioner
 
     /**
      * @param ProvisioningRequest|mixed $request
+     * @param array                     $options
      *
      * @return mixed
      */
-    public function provision( $request );
+    public function provision( $request, $options = [] );
 
     /**
      * @param ProvisioningRequest|mixed $request
+     * @param array                     $options
      *
      * @return mixed
      */
-    public function deprovision( $request );
+    public function deprovision( $request, $options = [] );
 }

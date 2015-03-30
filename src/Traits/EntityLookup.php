@@ -71,7 +71,6 @@ trait EntityLookup
     {
         $_rows = ClusterServer::join( 'server_t', 'id', '=', 'server_id' )
             ->where( 'cluster_id', '=', $clusterId )
-            ->orderBy( 'server_t.server_type_id, server_t.server_id_text' )
             ->get(
                 [
                     'server_t.id',
