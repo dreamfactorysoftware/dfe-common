@@ -35,7 +35,6 @@
 		"dreamfactory/fabric-db":      "dev-develop as dev-master"
 	},
 	"require-dev":       {
-		"dreamfactory/fabric-audit":  "dev-develop as dev-master",
 		"dreamfactory/fabric-common": "dev-develop as dev-master",
 		"laravel/framework":          "5.0.*",
 		"phpunit/phpunit":            "~4.0",
