@@ -39,6 +39,7 @@ class BaseService implements LoggerInterface
     public function __construct( $app = null )
     {
         $this->app = $app;
+        $this->logger = \Log::getMonolog();
 
         $this->boot();
     }
@@ -48,7 +49,7 @@ class BaseService implements LoggerInterface
      */
     public function boot()
     {
-        $this->logger = \App::make( 'log' );
+        //  stuff goes here
     }
 
     /**

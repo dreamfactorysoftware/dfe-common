@@ -35,7 +35,7 @@ trait Lumberjack
      */
     public function emergency( $message, array $context = array() )
     {
-        $this->logger->emergency( $message, $context );
+        \Log::emergency( $message, $context );
     }
 
     /**
@@ -51,7 +51,7 @@ trait Lumberjack
      */
     public function alert( $message, array $context = array() )
     {
-        $this->logger->alert( $message, $context );
+        \Log::alert( $message, $context );
     }
 
     /**
@@ -66,7 +66,7 @@ trait Lumberjack
      */
     public function critical( $message, array $context = array() )
     {
-        $this->logger->critical( $message, $context );
+        \Log::critical( $message, $context );
     }
 
     /**
@@ -80,7 +80,7 @@ trait Lumberjack
      */
     public function error( $message, array $context = array() )
     {
-        $this->logger->error( $message, $context );
+        \Log::error( $message, $context );
     }
 
     /**
@@ -96,7 +96,7 @@ trait Lumberjack
      */
     public function warning( $message, array $context = array() )
     {
-        $this->logger->warning( $message, $context );
+        \Log::warning( $message, $context );
     }
 
     /**
@@ -109,7 +109,7 @@ trait Lumberjack
      */
     public function notice( $message, array $context = array() )
     {
-        $this->logger->notice( $message, $context );
+        \Log::notice( $message, $context );
     }
 
     /**
@@ -124,7 +124,7 @@ trait Lumberjack
      */
     public function info( $message, array $context = array() )
     {
-        $this->logger->info( $message, $context );
+        \Log::info( $message, $context );
     }
 
     /**
@@ -137,7 +137,7 @@ trait Lumberjack
      */
     public function debug( $message, array $context = array() )
     {
-        $this->logger->debug( $message, $context );
+        \Log::debug( $message, $context );
     }
 
     /**
@@ -151,7 +151,7 @@ trait Lumberjack
      */
     public function log( $level, $message, array $context = array() )
     {
-        $this->logger->log( $level, $message, $context );
+        \Log::log( $level, $message, $context );
 
         return $this;
     }
