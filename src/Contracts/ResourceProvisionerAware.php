@@ -11,11 +11,29 @@ interface ResourceProvisionerAware
     //*************************************************************************
 
     /**
-     * @param string $whichOne Which provisioner to retrieve
+     * Returns an instance of the provisioner $name
+     *
+     * @param string $name
      *
      * @return ResourceProvisioner
-     * @internal param ProvisioningRequest|mixed $request
-     *
      */
-    public function getProvisioner( $whichOne = null );
+    public function getProvisioner( $name = null );
+
+    /**
+     * Returns an instance of the storage provisioner $name
+     *
+     * @param string $name
+     *
+     * @return ResourceProvisioner
+     */
+    public function getStorageProvisioner( $name = null );
+
+    /**
+     * Returns an instance of the db provisioner $name
+     *
+     * @param string $name
+     *
+     * @return ResourceProvisioner
+     */
+    public function getDatabaseProvisioner( $name = null );
 }
