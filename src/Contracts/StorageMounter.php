@@ -28,7 +28,7 @@ interface StorageMounter
      * @param string $name
      * @param array  $options
      *
-     * @return bool
+     * @return StorageMounter
      */
     public function unmount( $name, $options = [] );
 }
