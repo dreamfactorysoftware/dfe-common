@@ -47,7 +47,7 @@ trait EntityLookup
      */
     protected function _findInstance( $instanceId )
     {
-        return Instance::byNameOrId( $instanceId )->firstOrFail();
+        return Instance::with( ['user', 'guest'] )->byNameOrId( $instanceId )->firstOrFail();
     }
 
     /**
