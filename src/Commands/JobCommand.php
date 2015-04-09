@@ -1,6 +1,7 @@
 <?php
 namespace DreamFactory\Enterprise\Common\Commands;
 
+use DreamFactory\Enterprise\Common\Traits\HasResults;
 use Illuminate\Contracts\Queue\ShouldBeQueued;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -23,7 +24,7 @@ abstract class JobCommand implements ShouldBeQueued
     //* Traits
     //******************************************************************************
 
-    use InteractsWithQueue, SerializesModels;
+    use InteractsWithQueue, SerializesModels, HasResults;
 
     //******************************************************************************
     //* Methods

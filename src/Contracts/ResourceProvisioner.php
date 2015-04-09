@@ -11,16 +11,16 @@ interface ResourceProvisioner
     //*************************************************************************
 
     /**
-     * @param \DreamFactory\Enterprise\Services\Requests\ProvisioningRequest|mixed $request
-     * @param array                                                                $options
+     * @param \DreamFactory\Enterprise\Services\Provisioners\ProvisioningRequest|mixed $request
+     * @param array                                                                    $options
      *
      * @return mixed
      */
     public function provision( $request, $options = [] );
 
     /**
-     * @param \DreamFactory\Enterprise\Services\Requests\ProvisioningRequest|mixed $request
-     * @param array                                                                $options
+     * @param \DreamFactory\Enterprise\Services\Provisioners\ProvisioningRequest|mixed $request
+     * @param array                                                                    $options
      *
      * @return mixed
      */
