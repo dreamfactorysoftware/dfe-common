@@ -15,7 +15,7 @@
 @section('content')
 	<div id="container-login" class="container-fluid">
 		<div class="row">
-			<div class="col-md-offset-4 col-md-4 col-md-offset-4">
+			<div class="col-md-offset-4 col-md-4 col-md-offset-4 col-sm-offset-2 col-sm-6 col-sm-offset-2">
 				<div class="container-logo">
 					@yield('auth.branding')
 				</div>
