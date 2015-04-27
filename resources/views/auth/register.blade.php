@@ -77,12 +77,12 @@
 					</div>
 
 					<div class="form-group">
-						<label for="display_name_text" class="control-label">Nickname</label>
+						<label for="nickname_text" class="control-label">Nickname</label>
 						<input type="text"
 							   class="form-control required"
-							   name="display_name_text"
-							   id="display_name_text"
-							   value="{{ old('display_name_text') }}">
+							   name="nickname_text"
+							   id="nickname_text"
+							   value="{{ old('nickname_text') }}">
 					</div>
 
 					<div class="form-actions">
