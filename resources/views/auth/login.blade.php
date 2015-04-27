@@ -72,9 +72,20 @@
 					<label class="control-label sr-only" for="password">Password</label>
 
 					<div class="form-actions">
-						<span class="pull-left"><a href="/password/email" class="btn btn-info">Lost password?</a></span>
+						<div class="row">
+							<div class="col-sm-4">
+								<span class="pull-left" style="margin-right: 10px;"><a href="/auth/register" class="btn btn-info">
+										<i class="fa fa-fw fa-user"></i>Sign Up</a></span>
+							</div>
 
-						<span class="pull-right"><button type="submit" class="btn btn-success"><i class="fa fa-fw fa-sign-in"></i>Login</button></span>
+							<div class="col-sm-4 pull-center">
+								<span><a href="/password/email" class="btn btn-warning"><i class="fa fa-fw fa-life-ring"></i>Lost password?</a></span>
+							</div>
+
+							<div class="col-sm-4">
+								<span class="pull-right"><button type="submit" class="btn btn-success"><i class="fa fa-fw fa-sign-in"></i>Login</button></span>
+							</div>
+						</div>
 					</div>
 				</form>
 			</div>

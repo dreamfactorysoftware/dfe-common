@@ -2,6 +2,11 @@ body {
 	padding-top:      5%;
 	background-color: #353535;
 	color:            rgba(255, 255, 255, .5);
+	font-size:        14px;
+}
+
+.form-control {
+	font-size: 14px;
 }
 
 #container-login form h4 {
@@ -99,8 +104,23 @@ body {
 	padding: 10px;
 }
 
-.form-actions a i.fa-fw,
-.form-actions button i.fa-fw {
+.form-actions .fa-fw.fa-right {
+	margin-left: 2px;
+	text-align:  right;
+}
+
+.form-actions .fa-fw,
+.form-actions .fa-fw.fa-left {
 	margin-right: 2px;
 	text-align:   left;
+}
+
+.form-actions .fa-fw.fa-center {
+	margin-left:  1px;
+	margin-right: 1px;
+	text-align:   center;
+}
+
+.pull-center {
+	text-align: center;
 }
