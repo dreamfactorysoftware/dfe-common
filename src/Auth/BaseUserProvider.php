@@ -1,7 +1,7 @@
 <?php namespace DreamFactory\Enterprise\Common\Auth;
 
-use DreamFactory\Library\Fabric\Database\Models\Auth\User;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\ServiceUser;
+use DreamFactory\Library\Fabric\Database\Models\Deploy\User;
 use Illuminate\Auth\DatabaseUserProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
 

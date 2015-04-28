@@ -2,7 +2,7 @@
 namespace DreamFactory\Enterprise\Common\Traits;
 
 use DreamFactory\Enterprise\Common\Enums\MailTemplates;
-use DreamFactory\Library\Fabric\Database\Models\Auth\User;
+use DreamFactory\Library\Fabric\Database\Models\Deploy\User;
 use DreamFactory\Library\Utility\IfSet;
 
 /**

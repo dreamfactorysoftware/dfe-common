@@ -2,12 +2,12 @@
 namespace DreamFactory\Enterprise\Common\Traits;
 
 use DreamFactory\Enterprise\Services\Enums\ServerTypes;
-use DreamFactory\Library\Fabric\Database\Models\Auth\User;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\Cluster;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\ClusterServer;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\Instance;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\InstanceServer;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\Server;
+use DreamFactory\Library\Fabric\Database\Models\Deploy\User;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\UserRole;
 use Illuminate\Support\Collection;
 
@@ -57,7 +57,7 @@ trait StaticComponentLookup
      */
     protected static function _lookupUser( $userId )
     {
-        return User::where( 'id', '=', $userId )->findOrfail( $userId );
+        return User::findOrFail( $userId );
     }
 
     /**
