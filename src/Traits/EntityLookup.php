@@ -2,6 +2,7 @@
 namespace DreamFactory\Enterprise\Common\Traits;
 
 use DreamFactory\Enterprise\Services\Enums\ServerTypes;
+use DreamFactory\Library\Fabric\Database\Enums\OwnerTypes;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\Cluster;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\ClusterServer;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\Instance;
@@ -9,6 +10,7 @@ use DreamFactory\Library\Fabric\Database\Models\Deploy\InstanceServer;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\Server;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\User;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\UserRole;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 
 /**
@@ -123,5 +125,42 @@ trait EntityLookup
             ->where( 'user_id', '=', $userId )
             ->orderBy( 'role_t.role_name_text' )
             ->get( ['role_t.*'] );
+    }
+
+    /**
+     * @param int $id
+     * @param int $type
+     *
+     * @return \DreamFactory\Library\Fabric\Database\Models\Deploy\Cluster|\DreamFactory\Library\Fabric\Database\Models\Deploy\Instance|\DreamFactory\Library\Fabric\Database\Models\Deploy\Server|\DreamFactory\Library\Fabric\Database\Models\Deploy\User
+     */
+    protected function _locateOwner( $id, $type = OwnerTypes::USER )
+    {
+        switch ( $type )
+        {
+            case OwnerTypes::CONSOLE:
+            case OwnerTypes::DASHBOARD:
+            case OwnerTypes::SERVICE:
+            case OwnerTypes::APPLICATION:
+                //  These have no associated data
+                $_model = new \stdClass();
+                $_model->id = $id;
+
+                return $_model;
+
+            case OwnerTypes::USER:
+                return $this->_findUser( $id );
+
+            case OwnerTypes::INSTANCE:
+                return $this->_findInstance( $id );
+
+            case OwnerTypes::SERVER:
+                return $this->_findServer( $id );
+
+            case OwnerTypes::CLUSTER:
+                return $this->_findCluster( $id );
+
+            default:
+                throw new ModelNotFoundException( 'The owner id "' . $type . ':' . $id . '" could not be found.' );
+        }
     }
 }
