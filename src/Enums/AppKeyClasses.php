@@ -4,14 +4,18 @@ use DreamFactory\Library\Fabric\Database\Enums\OwnerTypes;
 use DreamFactory\Library\Utility\Enums\FactoryEnum;
 
 /**
- * The types of app keys
+ * The classes of app keys
  */
-class AppKeyEntities extends FactoryEnum
+class AppKeyClasses extends FactoryEnum
 {
     //*************************************************************************
     //* Constants
     //*************************************************************************
 
+    /**
+     * @var string
+     */
+    const TYPE_ENTITY = 'entity';
     /**
      * @var string
      */
@@ -44,6 +48,10 @@ class AppKeyEntities extends FactoryEnum
      * @var string
      */
     const CLUSTER = '[entity:cluster]';
+    /**
+     * @var string
+     */
+    const OTHER = '[entity:other]';
 
     //******************************************************************************
     //* Methods
@@ -52,21 +60,36 @@ class AppKeyEntities extends FactoryEnum
     /**
      * Create a custom app ID
      *
-     * @param string $type The type of entity
-     * @param string $id   The id of the entity
+     * @param string $type   The specific entity type
+     * @param string $entity The entity classification/term. Defaults to generic "entity"
      *
      * @return string
      */
-    public static function make( $type, $id )
+    public static function make( $type, $entity = self::TYPE_ENTITY )
     {
-        static $_pattern = '[{type}:{id}]';
+        static $_pattern = '[{entity}:{type}]';
 
-        if ( empty( $type ) || empty( $id ) )
+        if ( empty( $entity ) || empty( $type ) )
         {
-            throw new \InvalidArgumentException( 'Neither $type or $id may be blank.' );
+            throw new \InvalidArgumentException( 'Neither $entity or $type may be blank.' );
         }
 
-        return strtolower( str_replace( ['{type}', '{id}'], [$type, $id], $_pattern ) );
+        return strtolower( str_replace( ['{entity}', '{id}'], [$entity, $type], $_pattern ) );
+    }
+
+    /**
+     * Given an owner type, return a key class
+     *
+     * @param int    $ownerType The type of owner
+     * @param string $entity    The entity classification/term. Defaults to generic "entity"
+     *
+     * @return string
+     */
+    public static function fromOwnerType( $ownerType, $entity = self::TYPE_ENTITY )
+    {
+        $_name = strtolower( OwnerTypes::nameOf( $ownerType ) );
+
+        return static::make( static::defines( $_name, true ), $entity );
     }
 
     /**
@@ -76,8 +99,6 @@ class AppKeyEntities extends FactoryEnum
      */
     public static function mapOwnerType( $entityType )
     {
-        $entityType = strtoupper( trim( $entityType ) );
-
-        return OwnerTypes::defines( $entityType, true );
+        return OwnerTypes::defines( strtoupper( trim( $entityType ) ), true );
     }
 }
