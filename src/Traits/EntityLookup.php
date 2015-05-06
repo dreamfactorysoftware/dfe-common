@@ -97,6 +97,21 @@ trait EntityLookup
         return $_servers;
     }
 
+
+    /**
+     * Returns all clusters registered on $serverId
+     *
+     * @param int $serverId
+     *
+     * @return Collection
+     */
+    protected function _serverClusters( $serverId )
+    {
+        return ClusterServer::where('server_id', '=', $serverId)
+            ->get();
+    }
+
+
     /**
      * Returns all instances registered on $serverId
      *
