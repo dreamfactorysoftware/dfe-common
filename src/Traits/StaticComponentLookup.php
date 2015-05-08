@@ -8,6 +8,7 @@ use DreamFactory\Library\Fabric\Database\Models\Deploy\Instance;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\InstanceServer;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\Mount;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\Server;
+use DreamFactory\Library\Fabric\Database\Models\Deploy\ServiceUser;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\User;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\UserRole;
 use Illuminate\Support\Collection;
@@ -52,7 +53,7 @@ trait StaticComponentLookup
     }
 
     /**
-     * @param int|string $instanceId
+     * @param int|string $mountId
      *
      * @return Instance
      */
@@ -69,6 +70,16 @@ trait StaticComponentLookup
     protected static function _lookupUser( $userId )
     {
         return User::findOrFail( $userId );
+    }
+
+    /**
+     * @param int $serviceUserId
+     *
+     * @return User
+     */
+    protected static function _lookupServiceUser( $serviceUserId )
+    {
+        return ServiceUser::findOrFail( $serviceUserId );
     }
 
     /**
