@@ -6,6 +6,7 @@ use DreamFactory\Library\Fabric\Database\Models\Deploy\Cluster;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\ClusterServer;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\Instance;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\InstanceServer;
+use DreamFactory\Library\Fabric\Database\Models\Deploy\Mount;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\Server;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\User;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\UserRole;
@@ -48,6 +49,16 @@ trait StaticComponentLookup
     protected static function _lookupInstance( $instanceId )
     {
         return Instance::byNameOrId( $instanceId )->firstOrFail();
+    }
+
+    /**
+     * @param int|string $instanceId
+     *
+     * @return Instance
+     */
+    protected static function _lookupMount( $mountId )
+    {
+        return Mount::byNameOrId( $mountId )->firstOrFail();
     }
 
     /**

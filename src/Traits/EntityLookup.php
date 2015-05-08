@@ -97,7 +97,6 @@ trait EntityLookup
         return $_servers;
     }
 
-
     /**
      * Returns all clusters registered on $serverId
      *
@@ -107,10 +106,9 @@ trait EntityLookup
      */
     protected function _serverClusters( $serverId )
     {
-        return ClusterServer::where('server_id', '=', $serverId)
+        return ClusterServer::where( 'server_id', '=', $serverId )
             ->get();
     }
-
 
     /**
      * Returns all instances registered on $serverId
@@ -150,32 +148,6 @@ trait EntityLookup
      */
     protected function _locateOwner( $id, $type = OwnerTypes::USER )
     {
-        switch ( $type )
-        {
-            case OwnerTypes::CONSOLE:
-            case OwnerTypes::DASHBOARD:
-            case OwnerTypes::SERVICE:
-            case OwnerTypes::APPLICATION:
-                //  These have no associated data
-                $_model = new \stdClass();
-                $_model->id = $id;
-
-                return $_model;
-
-            case OwnerTypes::USER:
-                return $this->_findUser( $id );
-
-            case OwnerTypes::INSTANCE:
-                return $this->_findInstance( $id );
-
-            case OwnerTypes::SERVER:
-                return $this->_findServer( $id );
-
-            case OwnerTypes::CLUSTER:
-                return $this->_findCluster( $id );
-
-            default:
-                throw new ModelNotFoundException( 'The owner id "' . $type . ':' . $id . '" could not be found.' );
-        }
+        return OwnerTypes::getOwner($id,$type);
     }
 }

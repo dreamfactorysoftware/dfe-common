@@ -43,6 +43,10 @@ class AppKeyClasses extends FactoryEnum
     /**
      * @var string
      */
+    const MOUNT = '[entity:mount]';
+    /**
+     * @var string
+     */
     const SERVER = '[entity:server]';
     /**
      * @var string
@@ -74,22 +78,24 @@ class AppKeyClasses extends FactoryEnum
             throw new \InvalidArgumentException( 'Neither $entity or $type may be blank.' );
         }
 
-        return strtolower( str_replace( ['{entity}', '{id}'], [$entity, $type], $_pattern ) );
+        return strtolower( str_replace( ['{entity}', '{type}'], [$entity, $type], $_pattern ) );
     }
 
     /**
      * Given an owner type, return a key class
      *
-     * @param int    $ownerType The type of owner
-     * @param string $entity    The entity classification/term. Defaults to generic "entity"
+     * @param int $ownerType The type of owner
      *
      * @return string
      */
-    public static function fromOwnerType( $ownerType, $entity = self::TYPE_ENTITY )
+    public static function fromOwnerType( $ownerType )
     {
-        $_name = strtolower( OwnerTypes::nameOf( $ownerType ) );
-
-        return static::make( static::defines( $_name, true ), $entity );
+        return static::defines(
+            strtoupper(
+                OwnerTypes::nameOf( $ownerType, !is_numeric( $ownerType ) )
+            ),
+            true
+        );
     }
 
     /**
