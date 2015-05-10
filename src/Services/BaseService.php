@@ -1,9 +1,8 @@
 <?php
 namespace DreamFactory\Enterprise\Common\Services;
 
-use Doctrine\ODM\CouchDB\Event;
 use DreamFactory\Enterprise\Common\Traits\Lumberjack;
-use DreamFactory\Library\Fabric\Common\Components\JsonFile;
+use DreamFactory\Library\Utility\JsonFile;
 use Illuminate\Contracts\Foundation\Application;
 use Psr\Log\LoggerInterface;
 
@@ -55,10 +54,12 @@ class BaseService implements LoggerInterface
     /**
      * @param mixed $object
      * @param int   $options
+     *
+     * @return string
      */
     protected function _jsonEncode( $object, $options = JsonFile::DEFAULT_JSON_ENCODE_OPTIONS )
     {
-        JsonFile::encode( $object, $options );
+        return JsonFile::encode( $object, $options );
     }
 
     /**
