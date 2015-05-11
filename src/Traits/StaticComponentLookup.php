@@ -2,6 +2,7 @@
 namespace DreamFactory\Enterprise\Common\Traits;
 
 use DreamFactory\Enterprise\Services\Enums\ServerTypes;
+use DreamFactory\Library\Fabric\Database\Models\Deploy\AppKey;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\Cluster;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\ClusterServer;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\Instance;
@@ -11,6 +12,7 @@ use DreamFactory\Library\Fabric\Database\Models\Deploy\Server;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\ServiceUser;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\User;
 use DreamFactory\Library\Fabric\Database\Models\Deploy\UserRole;
+use DreamFactory\Library\Utility\IfSet;
 use Illuminate\Support\Collection;
 
 /**
@@ -30,6 +32,18 @@ trait StaticComponentLookup
     protected static function _lookupCluster( $clusterId )
     {
         return Cluster::byNameOrId( $clusterId )->firstOrFail();
+    }
+
+    /**
+     *
+     * @param int $ownerId
+     * @param int $ownerType
+     *
+     * @return AppKey
+     */
+    protected static function _lookupAppKey( $ownerId, $ownerType )
+    {
+        return AppKey::mine( $ownerId, $ownerType );
     }
 
     /**
@@ -103,16 +117,63 @@ trait StaticComponentLookup
             );
 
         //  Organize by type
-        $_servers = [
-            ServerTypes::APP => [],
-            ServerTypes::DB  => [],
-            ServerTypes::WEB => [],
-        ];
+        $_servers = [];
 
-        foreach ( $_rows as $_server )
+        foreach ( ServerTypes::getDefinedConstants() as $_name => $_value )
         {
-            $_servers[$_server->server_type_id][$_server->server_id_text] = $_server;
+            $_servers[$_value] = [
+                '.id'   => null,
+                '.ids'  => [],
+                '.name' => $_name,
+                'data'  => [],
+            ];
         }
+
+        foreach ( $_rows as $_type => $_server )
+        {
+            if ( !isset( $_servers[$_server->server_type_id] ) )
+            {
+                continue;
+            }
+
+            $_servers[$_server->server_type_id]['data'][$_server->server_id_text] = $_server->toArray();
+            $_servers[$_server->server_type_id]['.ids'][] = $_server->id;
+        }
+
+        //  Set the single id for quick lookups
+        foreach ( $_servers as $_type => $_group )
+        {
+            if ( null !== IfSet::get( $_group, '.id' ) )
+            {
+                continue;
+            }
+
+            if ( null !== ( $_list = IfSet::get( $_group, '.ids' ) ) )
+            {
+                if ( !empty( $_list ) && is_array( $_list ) )
+                {
+                    $_servers[$_type]['.id'] = $_list[0];
+                    continue;
+                }
+            }
+
+            if ( null !== ( $_list = IfSet::get( $_group, 'data' ) ) )
+            {
+                if ( !empty( $_list ) && is_array( $_list ) )
+                {
+                    foreach ( $_list as $_item )
+                    {
+                        if ( isset( $_item['id'] ) )
+                        {
+                            $_servers[$_type['.id']] = $_item['id'];
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+
+        \Log::debug( 'I made this: ' . print_r( $_servers, true ) );
 
         return $_servers;
     }
