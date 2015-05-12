@@ -13,4 +13,6 @@ return [
      * You may also install other compatible themes and use them as well.
      */
     'themes'          => ['auth' => 'darkly', 'page' => 'flatly'],
+    'log-path'        => env( 'DFE_LOG_PATH' ),
+    'log-file-name'   => env( 'DFE_LOG_FILE_NAME' ),
 ];
