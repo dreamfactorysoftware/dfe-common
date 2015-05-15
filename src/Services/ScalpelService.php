@@ -1,8 +1,8 @@
 <?php
 namespace DreamFactory\Enterprise\Common\Services;
 
-use DreamFactory\Library\Fabric\Common\Utility\Json;
 use DreamFactory\Library\Utility\IfSet;
+use DreamFactory\Library\Utility\JsonFile;
 use Illuminate\Support\Facades\Config;
 use Wpb\StringBladeCompiler\Facades\StringView;
 
@@ -41,7 +41,7 @@ class ScalpelService extends BaseService
         $_json = false;
         $_workTemplate = $template;
 
-        !is_string( $_workTemplate ) && ( $_workTemplate = Json::encode( $_workTemplate ) ) && ( $_json = true );
+        !is_string( $_workTemplate ) && ( $_workTemplate = JsonFile::encode( $_workTemplate ) ) && ( $_json = true );
 
         /** @type \Wpb\StringBladeCompiler\StringView $_view */
         /** @noinspection PhpUndefinedMethodInspection */
@@ -59,7 +59,7 @@ class ScalpelService extends BaseService
 
         return
             $_json
-                ? Json::decode( $_workTemplate, true )
+                ? JsonFile::decode( $_workTemplate, true )
                 : $_workTemplate;
     }
 

@@ -1,7 +1,7 @@
 <?php
 namespace DreamFactory\Enterprise\Common\Contracts;
 
-use DreamFactory\Library\Fabric\Database\Models\Deploy\Instance;
+use DreamFactory\Enterprise\Database\Models\Instance;
 
 /**
  * Something that is aware of private paths
@@ -29,7 +29,7 @@ interface PrivatePathAware
     /**
      * Create a hash that will serve as the root directory for this user's space
      *
-     * @param \DreamFactory\Library\Fabric\Database\Models\Deploy\Instance $instance
+     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
      *
      * @return string
      */

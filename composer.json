@@ -35,23 +35,32 @@
 		"league/flysystem-ziparchive": "*"
 	},
 	"require-dev":       {
-		"dreamfactory/dfe-database": "dev-develop as dev-master",
-		"dreamfactory/dfe-common":   "dev-develop as dev-master",
-		"laravel/framework":         "5.0.*",
-		"phpunit/phpunit":           "~4.0",
-		"phpspec/phpspec":           "~2.1"
-	},
-	"extra":             {
-		"branch-alias": {
-			"dev-develop": "0.1.x-dev"
-		}
+		"phpunit/phpunit":             "~4.0",
+		"dreamfactory/dfe-database":   "dev-develop as dev-master",
+		"barryvdh/laravel-ide-helper": "~2.0",
+		"doctrine/dbal":               "~2.3",
+		"phpspec/phpspec":             "~2.1",
+		"way/generators":              "~3.0",
+		"laravel/framework":           "5.0.*",
+		"phpspec/phpspec":             "~2.1"
 	},
 	"autoload":          {
 		"psr-4": {
 			"DreamFactory\\Enterprise\\Common\\": "src/"
 		}
 	},
+	"autoload-dev":      {
+		"classmap": [
+			"tests/TestCase.php",
+			"tests/CommandTestCase.php"
+		]
+	},
 	"config":            {
 		"preferred-install": "dist"
+	},
+	"extra":             {
+		"branch-alias": {
+			"dev-develop": "1.0.x-dev"
+		}
 	}
 }

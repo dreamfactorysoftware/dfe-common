@@ -4,6 +4,7 @@ namespace DreamFactory\Enterprise\Common\Services;
 use DreamFactory\Enterprise\Common\Traits\Lumberjack;
 use DreamFactory\Library\Utility\JsonFile;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Facades\Log;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -38,7 +39,7 @@ class BaseService implements LoggerInterface
     public function __construct( $app = null )
     {
         $this->app = $app;
-        $this->logger = \Log::getMonolog();
+        $this->logger = Log::getMonolog();
 
         $this->boot();
     }
@@ -48,7 +49,7 @@ class BaseService implements LoggerInterface
      */
     public function boot()
     {
-        //  stuff goes here
+        //  Called after constructor
     }
 
     /**

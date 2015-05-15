@@ -1,16 +1,15 @@
 <?php
 namespace DreamFactory\Enterprise\Common\Traits;
 
-use DreamFactory\Enterprise\Services\Enums\ServerTypes;
-use DreamFactory\Library\Fabric\Database\Enums\OwnerTypes;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\Cluster;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\ClusterServer;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\Instance;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\InstanceServer;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\Server;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\User;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\UserRole;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use DreamFactory\Enterprise\Database\Enums\OwnerTypes;
+use DreamFactory\Enterprise\Database\Enums\ServerTypes;
+use DreamFactory\Enterprise\Database\Models\Cluster;
+use DreamFactory\Enterprise\Database\Models\ClusterServer;
+use DreamFactory\Enterprise\Database\Models\Instance;
+use DreamFactory\Enterprise\Database\Models\InstanceServer;
+use DreamFactory\Enterprise\Database\Models\Server;
+use DreamFactory\Enterprise\Database\Models\User;
+use DreamFactory\Enterprise\Database\Models\UserRole;
 use Illuminate\Support\Collection;
 
 /**
@@ -89,6 +88,7 @@ trait EntityLookup
             ServerTypes::WEB => [],
         ];
 
+        /** @type Server $_server */
         foreach ( $_rows as $_server )
         {
             $_servers[$_server->server_type_id][$_server->server_id_text] = $_server;
@@ -144,10 +144,10 @@ trait EntityLookup
      * @param int $id
      * @param int $type
      *
-     * @return \DreamFactory\Library\Fabric\Database\Models\Deploy\Cluster|\DreamFactory\Library\Fabric\Database\Models\Deploy\Instance|\DreamFactory\Library\Fabric\Database\Models\Deploy\Server|\DreamFactory\Library\Fabric\Database\Models\Deploy\User
+     * @return \DreamFactory\Enterprise\Database\Models\Cluster|\DreamFactory\Enterprise\Database\Models\Instance|\DreamFactory\Enterprise\Database\Models\Server|\DreamFactory\Enterprise\Database\Models\User
      */
     protected function _locateOwner( $id, $type = OwnerTypes::USER )
     {
-        return OwnerTypes::getOwner($id,$type);
+        return OwnerTypes::getOwner( $id, $type );
     }
 }

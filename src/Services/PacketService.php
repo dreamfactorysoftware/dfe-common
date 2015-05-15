@@ -34,6 +34,8 @@ class PacketService extends BaseService
     public function __construct( $version = self::PACKET_VERSION )
     {
         $this->_version = $version;
+
+        parent::__construct();
     }
 
     /**

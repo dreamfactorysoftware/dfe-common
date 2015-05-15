@@ -1,6 +1,8 @@
 <?php
 namespace DreamFactory\Enterprise\Common\Providers;
 
+use DreamFactory\Enterprise\Common\Services\SideloadService;
+
 /**
  * Register the sideload service into the $app ioc @ 'sideload'
  */
@@ -42,7 +44,7 @@ class SideloadServiceProvider extends BaseServiceProvider
             static::IOC_NAME,
             function ( $app )
             {
-                return new $this->_serviceClass( $app );
+                return new SideloadService($app);
             }
         );
     }

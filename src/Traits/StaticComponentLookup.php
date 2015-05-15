@@ -1,19 +1,20 @@
 <?php
 namespace DreamFactory\Enterprise\Common\Traits;
 
-use DreamFactory\Enterprise\Services\Enums\ServerTypes;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\AppKey;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\Cluster;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\ClusterServer;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\Instance;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\InstanceServer;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\Mount;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\Server;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\ServiceUser;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\User;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\UserRole;
+use DreamFactory\Enterprise\Database\Enums\ServerTypes;
+use DreamFactory\Enterprise\Database\Models\AppKey;
+use DreamFactory\Enterprise\Database\Models\Cluster;
+use DreamFactory\Enterprise\Database\Models\ClusterServer;
+use DreamFactory\Enterprise\Database\Models\Instance;
+use DreamFactory\Enterprise\Database\Models\InstanceServer;
+use DreamFactory\Enterprise\Database\Models\Mount;
+use DreamFactory\Enterprise\Database\Models\Server;
+use DreamFactory\Enterprise\Database\Models\ServiceUser;
+use DreamFactory\Enterprise\Database\Models\User;
+use DreamFactory\Enterprise\Database\Models\UserRole;
 use DreamFactory\Library\Utility\IfSet;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 /**
  * A trait for looking up various enterprise components statically
@@ -129,6 +130,10 @@ trait StaticComponentLookup
             ];
         }
 
+        /**
+         * @type int    $_type
+         * @type Server $_server
+         */
         foreach ( $_rows as $_type => $_server )
         {
             if ( !isset( $_servers[$_server->server_type_id] ) )
@@ -173,7 +178,7 @@ trait StaticComponentLookup
             }
         }
 
-        \Log::debug( 'I made this: ' . print_r( $_servers, true ) );
+        Log::debug( 'I made this: ' . print_r( $_servers, true ) );
 
         return $_servers;
     }

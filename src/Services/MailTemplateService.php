@@ -125,7 +125,7 @@ class MailTemplateService extends BaseService
      * @param string $template
      * @param array  $data
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      * @return \Swift_Mime_Message
      */
     protected function _createMessage( $template, &$data )

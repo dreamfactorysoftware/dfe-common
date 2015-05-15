@@ -38,8 +38,6 @@ class RouteHashingServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
-        $this->_serviceClass = 'DreamFactory\\Enterprise\\Common\\Services\\RouteHashingService';
-
         //  Register object into instance container
         $this->app->singleton(
             static::IOC_NAME,
