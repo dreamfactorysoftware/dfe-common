@@ -12,5 +12,5 @@ class DashboardUserProvider extends BaseUserProvider
     /**
      * @type string Our user class
      */
-    protected $_userClass = 'DreamFactory\\Library\\Fabric\\Database\\Models\\Deploy\\User';
+    protected $_userClass = 'DreamFactory\\Enterprise\\Database\\Models\\User';
 }

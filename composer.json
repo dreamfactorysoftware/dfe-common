@@ -20,25 +20,26 @@
 	"repositories":      [
 		{
 			"type": "vcs",
-			"url":  "git@github.com:dreamfactorysoftware/fabric-common.git"
+			"url":  "git@github.com:dreamfactorysoftware/dfe-common.git"
 		},
 		{
 			"type": "vcs",
-			"url":  "git@github.com:dreamfactorysoftware/fabric-db.git"
+			"url":  "git@github.com:dreamfactorysoftware/dfe-database.git"
 		}
 	],
 	"minimum-stability": "dev",
 	"require":           {
+		"dreamfactory/php-utils":      "dev-develop as dev-master",
 		"wpb/string-blade-compiler":   "2.*@dev",
 		"league/flysystem-sftp":       "*",
-		"league/flysystem-ziparchive": "*",
-		"dreamfactory/fabric-db":      "dev-develop as dev-master"
+		"league/flysystem-ziparchive": "*"
 	},
 	"require-dev":       {
-		"dreamfactory/fabric-common": "dev-develop as dev-master",
-		"laravel/framework":          "5.0.*",
-		"phpunit/phpunit":            "~4.0",
-		"phpspec/phpspec":            "~2.1"
+		"dreamfactory/dfe-database": "dev-develop as dev-master",
+		"dreamfactory/dfe-common":   "dev-develop as dev-master",
+		"laravel/framework":         "5.0.*",
+		"phpunit/phpunit":           "~4.0",
+		"phpspec/phpspec":           "~2.1"
 	},
 	"extra":             {
 		"branch-alias": {

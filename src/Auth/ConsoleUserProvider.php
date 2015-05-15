@@ -9,5 +9,5 @@ class ConsoleUserProvider extends BaseUserProvider
     //* Members
     //******************************************************************************
 
-    protected $_userClass = 'DreamFactory\\Library\\Fabric\\Database\\Models\\Deploy\\ServiceUser';
+    protected $_userClass = 'DreamFactory\\Enterprise\\Database\\Models\\ServiceUser';
 }
