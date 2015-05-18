@@ -1,6 +1,6 @@
 <?php namespace DreamFactory\Enterprise\Common\Enums;
 
-use DreamFactory\Library\Fabric\Database\Enums\OwnerTypes;
+use DreamFactory\Enterprise\Database\Enums\OwnerTypes;
 use DreamFactory\Library\Utility\Enums\FactoryEnum;
 
 /**

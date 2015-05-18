@@ -1,7 +1,7 @@
 <?php
 namespace DreamFactory\Enterprise\Common\Utility;
 
-use DreamFactory\Library\Fabric\Common\Utility\Json;
+use DreamFactory\Library\Utility\JsonFile;
 
 class UniqueId
 {
@@ -21,7 +21,7 @@ class UniqueId
         static $_guid = null;
 
         $_uuid = uniqid( null, true );
-        $_data = $seed . microtime( true ) . Json::encode( isset( $_SERVER ) ? $_SERVER : array(microtime( true )) );
+        $_data = $seed . microtime( true ) . JsonFile::encode( isset( $_SERVER ) ? $_SERVER : array(microtime( true )) );
         $_hash = strtoupper( hash( 'ripemd128', $_uuid . $_guid . md5( $_data ) ) );
 
         return

@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Library\Enterprise\Storage\Enums;
+<?php namespace DreamFactory\Enterprise\Common\Enums;
 
 /**
  * Standard DSP/DFE storage paths & keys

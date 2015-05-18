@@ -2,7 +2,7 @@
 namespace DreamFactory\Enterprise\Common\Utility;
 
 use DreamFactory\Enterprise\Common\Enums\AllocationFeatures;
-use DreamFactory\Library\Fabric\Common\Utility\Json;
+use DreamFactory\Library\Utility\JsonFile;
 
 /**
  * The types of allocation profiles
@@ -80,6 +80,6 @@ class AllocationProfile
      */
     public function __toString()
     {
-        return Json::encode( $this->toArray() );
+        return JsonFile::encode( $this->toArray() );
     }
 }
