@@ -23,8 +23,6 @@ class PacketServiceProvider extends BaseServiceProvider
 
     /** @inheritdoc */
     const IOC_NAME = 'packet';
-    /** @inheritdoc */
-    const ALIAS_NAME = 'Packet';
 
     //********************************************************************************
     //* Public Methods
