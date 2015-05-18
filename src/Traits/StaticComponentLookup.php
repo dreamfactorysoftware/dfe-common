@@ -4,7 +4,6 @@ namespace DreamFactory\Enterprise\Common\Traits;
 use DreamFactory\Enterprise\Database\Enums\ServerTypes;
 use DreamFactory\Enterprise\Database\Models\AppKey;
 use DreamFactory\Enterprise\Database\Models\Cluster;
-use DreamFactory\Enterprise\Database\Models\ClusterServer;
 use DreamFactory\Enterprise\Database\Models\Instance;
 use DreamFactory\Enterprise\Database\Models\InstanceServer;
 use DreamFactory\Enterprise\Database\Models\Mount;
@@ -14,7 +13,6 @@ use DreamFactory\Enterprise\Database\Models\User;
 use DreamFactory\Enterprise\Database\Models\UserRole;
 use DreamFactory\Library\Utility\IfSet;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 /**
  * A trait for looking up various enterprise components statically
@@ -106,16 +104,29 @@ trait StaticComponentLookup
      */
     protected static function _lookupClusterServers( $clusterId )
     {
-        $_rows = ClusterServer::join( 'server_t', 'id', '=', 'server_id' )
-            ->where( 'cluster_id', '=', $clusterId )
-            ->get(
-                [
-                    'server_t.id',
-                    'server_t.server_id_text',
-                    'server_t.server_type_id',
-                    'cluster_server_asgn_t.cluster_id'
-                ]
-            );
+        \Log::debug( '>>> lookupClusterServers clusterId=' . $clusterId );
+
+        $_cluster = static::_lookupCluster( $clusterId );
+
+        $_rows = \DB::select(
+            <<<MYSQL
+SELECT
+    s.id,
+    s.server_id_text,
+    s.server_type_id,
+    csa.cluster_id
+FROM
+    cluster_server_asgn_t csa
+JOIN server_t s ON
+    s.id = csa.server_id
+WHERE
+    csa.cluster_id = :cluster_id
+MYSQL
+            ,
+            [':cluster_id' => $_cluster->id]
+        );
+
+        \Log::debug( 'Found ' . count( $_rows ) . ' servers.' );
 
         //  Organize by type
         $_servers = [];
@@ -131,17 +142,19 @@ trait StaticComponentLookup
         }
 
         /**
-         * @type int    $_type
          * @type Server $_server
          */
-        foreach ( $_rows as $_type => $_server )
+        foreach ( $_rows as $_server )
         {
             if ( !isset( $_servers[$_server->server_type_id] ) )
             {
+                \Log::debug( '  * skipping type ' . $_server->server_type_id );
                 continue;
             }
 
-            $_servers[$_server->server_type_id]['data'][$_server->server_id_text] = $_server->toArray();
+            \Log::debug( '  * mapping type ' . $_server->server_type_id . ' to ' . print_r( (array)$_server, true ) );
+
+            $_servers[$_server->server_type_id]['data'][$_server->server_id_text] = (array)$_server;
             $_servers[$_server->server_type_id]['.ids'][] = $_server->id;
         }
 
@@ -178,7 +191,8 @@ trait StaticComponentLookup
             }
         }
 
-        Log::debug( 'I made this: ' . print_r( $_servers, true ) );
+        \Log::debug( 'I made this: ' . print_r( $_servers, true ) );
+        \Log::debug( '<<< lookupClusterServers' );
 
         return $_servers;
     }

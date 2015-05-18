@@ -121,5 +121,4 @@ abstract class BaseUserProvider extends DatabaseUserProvider
     {
         return $this->hasher->check( $credentials['password'], $user->getAuthPassword() );
     }
-
 }
