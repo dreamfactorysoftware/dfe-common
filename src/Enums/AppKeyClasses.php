@@ -35,7 +35,15 @@ class AppKeyClasses extends FactoryEnum
     /**
      * @var string
      */
+    const TESTING = '[testing:testing]';
+    /**
+     * @var string
+     */
     const USER = '[entity:user]';
+    /**
+     * @var string
+     */
+    const SERVICE_USER = '[entity:service-user]';
     /**
      * @var string
      */
