@@ -25,7 +25,7 @@ class BasePacket
         $_elapsed = $_timestamp - $_startTime;
         $_id = sha1( $_startTime . \Request::server( 'HTTP_HOST' ) . \Request::server( 'REMOTE_ADDR' ) );
 
-        return [
+        $_packet = [
             'status_code' => $statusCode,
             'success'     => $success,
             'response'    => $contents,
@@ -38,5 +38,15 @@ class BasePacket
                 'signature' => base64_encode( hash_hmac( 'sha256', $_id, $_id, true ) ),
             ],
         ];
+
+        if ( !$success )
+        {
+            $_packet['error'] = [
+                'message' => null,
+                'code'    => $statusCode,
+            ];
+        }
+
+        return $_packet;
     }
 }
