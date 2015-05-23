@@ -30,7 +30,7 @@ trait HasResults
     /**
      * @param mixed $result
      *
-     * @return EntityLookup
+     * @return $this
      */
     public function setResult( $result )
     {

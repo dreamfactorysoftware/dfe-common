@@ -104,8 +104,6 @@ trait StaticComponentLookup
      */
     protected static function _lookupClusterServers( $clusterId )
     {
-        \Log::debug( '>>> lookupClusterServers clusterId=' . $clusterId );
-
         $_cluster = static::_lookupCluster( $clusterId );
 
         $_rows = \DB::select(
@@ -125,8 +123,6 @@ MYSQL
             ,
             [':cluster_id' => $_cluster->id]
         );
-
-        \Log::debug( 'Found ' . count( $_rows ) . ' servers.' );
 
         //  Organize by type
         $_servers = [];
@@ -148,11 +144,8 @@ MYSQL
         {
             if ( !isset( $_servers[$_server->server_type_id] ) )
             {
-                \Log::debug( '  * skipping type ' . $_server->server_type_id );
                 continue;
             }
-
-            \Log::debug( '  * mapping type ' . $_server->server_type_id . ' to ' . print_r( (array)$_server, true ) );
 
             $_servers[$_server->server_type_id]['data'][$_server->server_id_text] = (array)$_server;
             $_servers[$_server->server_type_id]['.ids'][] = $_server->id;
@@ -190,9 +183,6 @@ MYSQL
                 }
             }
         }
-
-        \Log::debug( 'I made this: ' . print_r( $_servers, true ) );
-        \Log::debug( '<<< lookupClusterServers' );
 
         return $_servers;
     }
