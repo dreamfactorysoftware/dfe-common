@@ -2,13 +2,13 @@
 namespace DreamFactory\Enterprise\Common\Commands;
 
 use DreamFactory\Enterprise\Common\Traits\StaticComponentLookup;
+use DreamFactory\Enterprise\Database\Enums\OwnerTypes;
 use DreamFactory\Enterprise\Services\Enums\ServerTypes;
-use Illuminate\Contracts\Queue\ShouldBeQueued;
 
 /**
  * A base class for all DFE "job" type commands (non-console)
  */
-abstract class EnterpriseJobCommand extends JobCommand implements ShouldBeQueued
+abstract class EnterpriseJobCommand extends JobCommand
 {
     //******************************************************************************
     //* Constants
@@ -41,6 +41,14 @@ abstract class EnterpriseJobCommand extends JobCommand implements ShouldBeQueued
      * @type int An OwnerTypes enum
      */
     protected $_serverType;
+    /**
+     * @type int
+     */
+    protected $_ownerId;
+    /**
+     * @type int
+     */
+    protected $_ownerType;
 
     //******************************************************************************
     //* Methods
@@ -117,4 +125,46 @@ abstract class EnterpriseJobCommand extends JobCommand implements ShouldBeQueued
         $this->_serverType = ServerTypes::contains( $serverType, true ) ?: ServerTypes::WEB;
     }
 
+    /**
+     * @return int
+     */
+    public function getOwnerId()
+    {
+        return $this->_ownerId;
+    }
+
+    /**
+     * @param int $ownerId
+     *
+     * @return $this
+     */
+    public function setOwnerId( $ownerId )
+    {
+        $this->_ownerId = $ownerId;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOwnerType()
+    {
+        return $this->_ownerType;
+    }
+
+    /**
+     * @param int $ownerType
+     *
+     * @return $this
+     */
+    public function setOwnerType( $ownerType = OwnerTypes::USER )
+    {
+        $this->_ownerType =
+            ( is_numeric( $ownerType ) && OwnerTypes::contains( $ownerType ) )
+                ? $ownerType
+                : OwnerTypes::defines( $ownerType, true );
+
+        return $this;
+    }
 }

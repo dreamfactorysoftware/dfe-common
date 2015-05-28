@@ -39,6 +39,4 @@ class EnterprisePatterns extends FactoryEnum
      * @type string
      */
     const DEFAULT_RESOLVER_CLASS = '\\DreamFactory\\Library\\Enterprise\\Storage\\Resolver';
-    /** @type string The default hash algorithm to use for creating structure */
-    const DEFAULT_DATA_STORAGE_HASH = 'sha256';
 }

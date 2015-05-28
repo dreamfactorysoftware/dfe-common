@@ -59,18 +59,18 @@ class MailTemplates extends FactoryEnum
     /**
      * @var string
      */
-    const LAUNCH_SUCCESS_TEXT = 'Your DSP has been created. You may now reach it by going to <a href="http://%%DSP_NAME%%.cloud.dreamfactory.com">http://%%DSP_NAME%%.cloud.dreamfactory.com</a> from any browser.';
+    const LAUNCH_SUCCESS_TEXT = 'Your instance has been created. You can reach it by going to <a href="http://%%DSP_NAME%%.cloud.dreamfactory.com" target="_blank">http://%%DSP_NAME%%.cloud.dreamfactory.com</a> from any browser.';
     /**
      * @var string
      */
-    const LAUNCH_FAILURE_TEXT = 'Your DSP launch did not succeed. Our engineers will examine the issue and notify you when it has been resolved. Hang tight, we\'ve got it.';
+    const LAUNCH_FAILURE_TEXT = 'Your instance launch did not succeed. Our engineers will examine the issue and, if necessary, notify you when it has been resolved.';
     /**
      * @var string
      */
-    const DEPROVISION_SUCCESS_TEXT = 'Your DSP destruction was successful. If you would like to launch another one, just visit your dashboard.';
+    const DEPROVISION_SUCCESS_TEXT = 'Your instance retirement was successful. If you would like to launch another one, just visit your dashboard.';
     /**
      * @var string
      */
-    const DEPROVISION_FAILURE_TEXT = 'Your DSP destruction request did not succeed. Our engineers will examine the issue and notify you when/if it has been resolved. Hang tight, we\'ve got it.';
+    const DEPROVISION_FAILURE_TEXT = 'Your instance retirement did not succeed. Our engineers will examine the issue and, if necessary, notify you when it has been resolved.';
 
 }

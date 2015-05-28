@@ -5,25 +5,28 @@ use DreamFactory\Library\Utility\FileSystem;
 use DreamFactory\Library\Utility\JsonFile;
 
 /**
- * Represents the file that contains the cluster connection information that is deployed to each web server
+ * Represents the file that contains the cluster connection information which is deployed to each web server
  *
  * {
- *      "cluster-id":       "cluster-east-2",
- *      "default-domain":   ".enterprise.dreamfactory.com",
+ *      "cluster-id":       "your-cluster",
+ *      "default-domain":   "your domain",
  *      "signature-method": "sha256",
  *      "storage-root":     "/data/storage",
- *      "console-api-url":  "http://console.enterprise.dreamfactory.com/api/v1/ops/",
- *      "console-api-key":  "%]3,]~&t,EOxL30[wKw3auju:[+L>eYEVWEP,@3n79Qy",
- *      "client-id":        "28b23fedb0b186fc00e9dceba473a3326f36fbc79b390c615a199603fdb1b13f",
- *      "client-secret":    "5a1a84735446812372ae7e380a413348a7b94e42b444424abed0b5197678d625"
+ *      "console-api-url":  "http://console.pasture.farm.com/api/v1/ops/",
+ *      "console-api-key":  "lkajhdsf;asdlfja;sdjfasdf",
+ *      "client-id":        "some key",
+ *      "client-secret":    "some secret"
  * }
  */
-class ClusterBag extends GenericBag
+class ClusterEnvironmentBag extends GenericBag
 {
     //******************************************************************************
     //* Constants
     //******************************************************************************
 
+    /**
+     * @type string The default name of the cluster environment file
+     */
     const ENVIRONMENT_FILE_NAME = '.env.cluster.json';
 
     //******************************************************************************
