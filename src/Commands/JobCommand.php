@@ -1,6 +1,7 @@
 <?php
 namespace DreamFactory\Enterprise\Common\Commands;
 
+use DreamFactory\Enterprise\Common\Exceptions\NotImplementedException;
 use DreamFactory\Enterprise\Common\Traits\HasResults;
 use Illuminate\Contracts\Queue\ShouldBeQueued;
 use Illuminate\Queue\InteractsWithQueue;
@@ -32,7 +33,11 @@ abstract class JobCommand implements ShouldBeQueued
 
     /**
      * @return string The handler class for this job if different from "[class-name]Handler"
+     * @throws NotImplementedException
      */
-    abstract public function getHandler();
+    public function getHandler()
+    {
+        throw new NotImplementedException( 'No handler defined for this job type.' );
+    }
 
 }

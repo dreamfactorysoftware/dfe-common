@@ -10,13 +10,17 @@ class EnterprisePaths extends EnterpriseKeys
     //*************************************************************************
 
     /**
-     * @type string Absolute path where storage is mounted
+     * @type string Absolute path where data is mounted
      */
     const MOUNT_POINT = '/data';
     /**
-     * @type string Relative path under storage mount
+     * @type string Relative path under data mount
      */
     const STORAGE_PATH = '/storage';
+    /**
+     * @type string Absolute path to all storage
+     */
+    const DEFAULT_HOSTED_BASE_PATH = '/data/storage';
     /**
      * @type string Relative path under storage base
      */
