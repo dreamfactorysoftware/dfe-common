@@ -13,15 +13,6 @@ use Illuminate\Contracts\Support\Jsonable;
 class ClusterManifest implements Arrayable, Jsonable
 {
     //******************************************************************************
-    //* Constants
-    //******************************************************************************
-
-    /**
-     * @type string The manifest file name
-     */
-    const MANIFEST_FILE_NAME = '.env.cluster.json';
-
-    //******************************************************************************
     //* Members
     //******************************************************************************
 
@@ -65,7 +56,7 @@ class ClusterManifest implements Arrayable, Jsonable
     public function __construct( $basePath )
     {
         $_path = rtrim( realpath( $basePath ), DIRECTORY_SEPARATOR );
-        $_file = $_path . DIRECTORY_SEPARATOR . static::MANIFEST_FILE_NAME;
+        $_file = $_path . DIRECTORY_SEPARATOR . EnterpriseDefaults::CLUSTER_MANIFEST_FILE_NAME;
 
         $this->_basePath = $_path;
         $this->_filename = $_file;

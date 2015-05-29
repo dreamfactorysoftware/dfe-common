@@ -40,6 +40,10 @@ abstract class JobCommand implements ShouldBeQueued
      * @type InputInterface
      */
     protected $_input;
+    /**
+     * @type string The fully qualified handler class name
+     */
+    protected $_handlerClass = null;
 
     //******************************************************************************
     //* Methods
@@ -50,7 +54,27 @@ abstract class JobCommand implements ShouldBeQueued
      *
      * @throws \DreamFactory\Enterprise\Common\Exceptions\NotImplementedException
      */
-    abstract public function getHandler();
+    public function getHandler()
+    {
+        if ( !$this->_handlerClass )
+        {
+            throw new \RuntimeException( 'No "handler" defined for this command.' );
+        }
+
+        return $this->_handlerClass;
+    }
+
+    public function setHandler( $handlerClass )
+    {
+        if ( !class_exists( $handlerClass, false ) )
+        {
+            throw new \InvalidArgumentException( 'The class "' . $handlerClass . '" cannot be found or loaded."' );
+        }
+
+        $this->_handlerClass = $handlerClass;
+
+        return $this;
+    }
 
     /**
      * @return OutputInterface

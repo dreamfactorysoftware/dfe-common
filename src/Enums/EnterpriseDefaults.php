@@ -45,4 +45,9 @@ class EnterpriseDefaults extends FactoryEnum
     const PRIVATE_STORAGE_COOKIE = 'dfe.private-id';
     /** @type string The default hash algorithm to use for signing requests */
     const DEFAULT_SIGNATURE_METHOD = 'sha256';
+    /**
+     * @type string The manifest file name
+     */
+    const CLUSTER_MANIFEST_FILE_NAME = '.dfe.cluster.json';
+
 }
