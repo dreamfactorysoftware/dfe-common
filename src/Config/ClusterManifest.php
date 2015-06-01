@@ -68,6 +68,19 @@ class ClusterManifest implements Arrayable, Jsonable
     }
 
     /**
+     * @param string $basePath  The base path in which to write the manifest
+     * @param array  $contents  The contents of the manifest
+     * @param bool   $overwrite If true, any previously generated file will be overwritten
+     */
+    public static function make( $basePath, $contents = [], $overwrite = true )
+    {
+        $_manifest = new static( $basePath );
+        $_manifest->fill( $contents );
+
+        return $_manifest->write();
+    }
+
+    /**
      * Reads a file and decodes the contents
      *
      * @param string $filename The absolute /path/to/manifest/file
@@ -141,7 +154,7 @@ class ClusterManifest implements Arrayable, Jsonable
     /**
      * Writes the manifest to disk
      *
-     * @return $this
+     * @return bool
      */
     public function write()
     {
