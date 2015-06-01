@@ -36,14 +36,18 @@ class ClusterManifest implements Arrayable, Jsonable
      * @type array The template for the manifest
      */
     private $_template = [
-        'cluster-id'       => null,
-        'default-domain'   => null,
-        'signature-method' => EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD,
-        'storage-root'     => EnterprisePaths::DEFAULT_HOSTED_BASE_PATH,
-        'console-api-url'  => null,
-        'console-api-key'  => null,
-        'client-id'        => null,
-        'client-secret'    => null,
+        'cluster-id'                => null,
+        'default-domain'            => null,
+        'signature-method'          => EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD,
+        'storage-root'              => EnterprisePaths::DEFAULT_HOSTED_BASE_PATH,
+        'console-api-url'           => null,
+        'console-api-key'           => null,
+        'console-api-client-id'     => null,
+        'console-api-client-secret' => null,
+        'dashboard-client-id'       => null,
+        'dashboard-client-secret'   => null,
+        'client-id'                 => null,
+        'client-secret'             => null,
     ];
 
     //******************************************************************************
@@ -59,7 +63,7 @@ class ClusterManifest implements Arrayable, Jsonable
         $_file = $_path . DIRECTORY_SEPARATOR . EnterpriseDefaults::CLUSTER_MANIFEST_FILE_NAME;
 
         $this->_basePath = $_path;
-        $this->_filename = $_file;
+        $this->_filename = basename( $_file );
         ( $this->_existed = ( !is_dir( $_path ) || !is_readable( $_file ) ) ) && $this->read();
     }
 
@@ -122,7 +126,7 @@ class ClusterManifest implements Arrayable, Jsonable
                 {
                     $_cleaned[$_key] =
                         !is_scalar( $_value ) && !is_array( $_value )
-                            ? (array)$_value
+                            ? ( null === $_value ? null : (array)$_value )
                             : $_value;
                 }
             }
