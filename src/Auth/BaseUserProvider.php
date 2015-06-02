@@ -45,6 +45,13 @@ abstract class BaseUserProvider extends DatabaseUserProvider
             }
         }
 
+        /** Only allow active users to login
+         *  0 = not active, 1 = active
+         */
+        $_condition[] = 'active_ind = :active_ind';
+        $_data[':active_ind'] = 1;
+
+
         /** @type ServiceUser|User $_model */
         $_model = new $this->_userClass;
 
