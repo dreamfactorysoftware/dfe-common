@@ -1,6 +1,5 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
-use Illuminate\Support\Facades\Log;
 use Psr\Log\LoggerAwareTrait;
 
 /**
@@ -36,7 +35,7 @@ trait Lumberjack
      */
     public function emergency( $message, array $context = array() )
     {
-        Log::emergency( $message, $context );
+        \Log::emergency( $message, $context );
     }
 
     /**
@@ -52,7 +51,7 @@ trait Lumberjack
      */
     public function alert( $message, array $context = array() )
     {
-        Log::alert( $message, $context );
+        \Log::alert( $message, $context );
     }
 
     /**
@@ -67,7 +66,7 @@ trait Lumberjack
      */
     public function critical( $message, array $context = array() )
     {
-        Log::critical( $message, $context );
+        \Log::critical( $message, $context );
     }
 
     /**
@@ -81,7 +80,7 @@ trait Lumberjack
      */
     public function error( $message, array $context = array() )
     {
-        Log::error( $message, $context );
+        \Log::error( $message, $context );
     }
 
     /**
@@ -97,7 +96,7 @@ trait Lumberjack
      */
     public function warning( $message, array $context = array() )
     {
-        Log::warning( $message, $context );
+        \Log::warning( $message, $context );
     }
 
     /**
@@ -110,7 +109,7 @@ trait Lumberjack
      */
     public function notice( $message, array $context = array() )
     {
-        Log::notice( $message, $context );
+        \Log::notice( $message, $context );
     }
 
     /**
@@ -125,7 +124,7 @@ trait Lumberjack
      */
     public function info( $message, array $context = array() )
     {
-        Log::info( $message, $context );
+        \Log::info( $message, $context );
     }
 
     /**
@@ -138,7 +137,7 @@ trait Lumberjack
      */
     public function debug( $message, array $context = array() )
     {
-        Log::debug( $message, $context );
+        \Log::debug( $message, $context );
     }
 
     /**
@@ -152,7 +151,7 @@ trait Lumberjack
      */
     public function log( $level, $message, array $context = array() )
     {
-        Log::log( $level, $message, $context );
+        \Log::log( $level, $message, $context );
 
         return $this;
     }

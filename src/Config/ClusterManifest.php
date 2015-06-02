@@ -2,6 +2,7 @@
 
 use DreamFactory\Enterprise\Common\Enums\EnterpriseDefaults;
 use DreamFactory\Enterprise\Common\Enums\EnterprisePaths;
+use DreamFactory\Library\Utility\Exceptions\FileException;
 use DreamFactory\Library\Utility\IfSet;
 use DreamFactory\Library\Utility\JsonFile;
 use Illuminate\Contracts\Support\Arrayable;
@@ -56,28 +57,36 @@ class ClusterManifest implements Arrayable, Jsonable
 
     /**
      * @param string $basePath The base path of the instance installation
+     * @param array  $contents Optional contents to fill
      */
-    public function __construct( $basePath )
+    public function __construct( $basePath, $contents = [] )
     {
         $_path = rtrim( realpath( $basePath ), DIRECTORY_SEPARATOR );
         $_file = $_path . DIRECTORY_SEPARATOR . EnterpriseDefaults::CLUSTER_MANIFEST_FILE_NAME;
 
+        $this->_contents = [];
         $this->_basePath = $_path;
-        $this->_filename = basename( $_file );
+        $this->_filename = ltrim( basename( $_file ), DIRECTORY_SEPARATOR );
+
         ( $this->_existed = ( !is_dir( $_path ) || !is_readable( $_file ) ) ) && $this->read();
+
+        !$this->_existed && !empty( $contents ) && $this->fill( $contents );
     }
 
     /**
      * @param string $basePath  The base path in which to write the manifest
      * @param array  $contents  The contents of the manifest
      * @param bool   $overwrite If true, any previously generated file will be overwritten
+     *
+     * @return static
      */
     public static function make( $basePath, $contents = [], $overwrite = true )
     {
-        $_manifest = new static( $basePath );
-        $_manifest->fill( $contents );
+        /** @type ClusterManifest $_manifest */
+        $_manifest = new static( $basePath, $contents );
+        $_manifest->write( $overwrite );
 
-        return $_manifest->write();
+        return $_manifest;
     }
 
     /**
@@ -98,13 +107,17 @@ class ClusterManifest implements Arrayable, Jsonable
      * Fill the manifest with fresh contents
      *
      * @param array $contents
+     *
+     * @return ClusterManifest|$this
      */
     public function fill( array $contents = [] )
     {
         foreach ( $contents as $_key => $_value )
         {
-            array_key_exists( $_key, $this->_contents ) && ( $this->_contents[$_key] = $_value );
+            array_key_exists( $_key, $this->_template ) && ( $this->_contents[$_key] = $_value );
         }
+
+        return $this;
     }
 
     /**
@@ -116,7 +129,7 @@ class ClusterManifest implements Arrayable, Jsonable
     {
         try
         {
-            $_contents = JsonFile::decodeFile( $this->_basePath . DIRECTORY_SEPARATOR . $this->_filename );
+            $_contents = JsonFile::decodeFile( $this->getFullFilename() );
         }
         catch ( \InvalidArgumentException $_ex )
         {
@@ -154,16 +167,25 @@ class ClusterManifest implements Arrayable, Jsonable
     /**
      * Writes the manifest to disk
      *
+     * @param bool $overwrite Overwrite any existing manifest
+     *
      * @return bool
      */
-    public function write()
+    public function write( $overwrite = true )
     {
         if ( empty( $this->_contents ) )
         {
             return false;
         }
 
-        JsonFile::encodeFile( $this->_basePath . DIRECTORY_SEPARATOR . $this->_filename, $this->_contents );
+        $_filename = $this->getFullFilename();
+
+        if ( !$overwrite && file_exists( $_filename ) )
+        {
+            throw new FileException( 'A manifest already exists and $overwrite is set to "FALSE".' );
+        }
+
+        JsonFile::encodeFile( $_filename, $this->_contents );
 
         return true;
     }
@@ -253,5 +275,14 @@ class ClusterManifest implements Arrayable, Jsonable
     public function toJson( $options = JsonFile::DEFAULT_JSON_ENCODE_OPTIONS )
     {
         return JsonFile::encode( $this->_contents, $options );
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullFilename()
+    {
+        //  These should be cleaned from construction
+        return $this->_basePath . DIRECTORY_SEPARATOR . $this->_filename;
     }
 }
