@@ -20,9 +20,9 @@ trait CommonLogging
         $_straps = array_flip( $this->bootstrappers );
 
         /** @noinspection PhpUndefinedFieldInspection */
-        $_oldClass = $this->app->make( 'config' )->get( 'dfe.common.logging.old-log-config-class' );
+        $_oldClass = \Config::get( 'dfe.common.logging.old-log-config-class' );
         /** @noinspection PhpUndefinedFieldInspection */
-        $_newClass = $this->app->make( 'config' )->get( 'dfe.common.logging.new-log-config-class' );
+        $_newClass = \Config::get( 'dfe.common.logging.new-log-config-class' );
 
         if ( array_key_exists( $_oldClass, $_straps ) )
         {
