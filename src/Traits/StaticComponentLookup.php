@@ -100,7 +100,7 @@ trait StaticComponentLookup
      *
      * @param int $clusterId
      *
-     * @return Collection
+     * @return array
      */
     protected static function _lookupClusterServers( $clusterId )
     {
