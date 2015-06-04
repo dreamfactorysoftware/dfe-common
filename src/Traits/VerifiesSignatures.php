@@ -1,10 +1,12 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
 use DreamFactory\Enterprise\Common\Enums\EnterpriseDefaults;
-use Symfony\Component\Console\Output\OutputInterface;
+use DreamFactory\Enterprise\Database\Models\AppKey;
 
 /**
  * A trait that adds signature verification functionality
+ *
+ * Be sure to call _setSigningCredentials() before trying to verify
  */
 trait VerifiesSignatures
 {
@@ -13,13 +15,46 @@ trait VerifiesSignatures
     //******************************************************************************
 
     /**
-     * @type OutputInterface
+     * @type string
      */
-    protected $_signatureMethod;
+    protected $_vsSignature = null;
+    /**
+     * @type string
+     */
+    protected $_vsClientId = null;
+    /**
+     * @type string
+     */
+    protected $_vsClientSecret = null;
 
     //******************************************************************************
     //* Methods
     //******************************************************************************
+
+    /**
+     * Validates a client key pair and generates a signature for verification.
+     *
+     * @param string $clientId
+     * @param string $clientSecret
+     *
+     * @return $this
+     */
+    protected function _setSigningCredentials( $clientId, $clientSecret )
+    {
+        $_key = AppKey::byClientId( $clientId )->first();
+
+        if ( empty( $_key ) || $clientSecret != $_key->client_secret )
+        {
+            throw new \InvalidArgumentException( 'Invalid credentials.' );
+        }
+
+        //  Looks good
+        $this->_vsClientId = $_key->client_id;
+        $this->_vsClientSecret = $_key->client_secret;
+        $this->_vsSignature = $this->_generateSignature();
+
+        return $this;
+    }
 
     /**
      * @param string $token        The client-provided "access token"
@@ -30,20 +65,34 @@ trait VerifiesSignatures
      */
     protected function _verifySignature( $token, $clientId, $clientSecret )
     {
-        return
-            $token === $this->_generateSignature( $clientId, $clientSecret );
+        return $token === $this->_vsSignature;
     }
 
     /**
-     * @param string $clientId
-     * @param string $clientSecret
-     *
      * @return string
      */
-    protected function _generateSignature( $clientId, $clientSecret )
+    private function _generateSignature()
     {
-        !$this->_signatureMethod && ( $this->_signatureMethod = config( 'dfe.signature-method', EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD ) );
+        return hash_hmac(
+            config( 'dfe.signature-method', EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD ),
+            $this->_vsClientId,
+            $this->_vsClientSecret
+        );
+    }
 
-        return hash_hmac( $this->_signatureMethod, $clientId, $clientSecret );
+    /**
+     * @param array $payload
+     *
+     * @return array
+     */
+    protected function _signRequest( array $payload )
+    {
+        return array_merge(
+            array(
+                'client-id'    => $this->_vsClientId,
+                'access-token' => $this->_vsSignature,
+            ),
+            $payload ?: []
+        );
     }
 }
