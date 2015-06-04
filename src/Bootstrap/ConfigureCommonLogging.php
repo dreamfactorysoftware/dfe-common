@@ -2,10 +2,10 @@
 
 use DreamFactory\Library\Utility\FileSystem;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Foundation\Bootstrap\ConfigureLogging as BaseLoggingConfiguration;
+use Illuminate\Foundation\Bootstrap\ConfigureLogging;
 use Illuminate\Log\Writer;
 
-class CommonLoggingConfiguration extends BaseLoggingConfiguration
+class ConfigureCommonLogging extends ConfigureLogging
 {
     //******************************************************************************
     //* Members
@@ -22,25 +22,25 @@ class CommonLoggingConfiguration extends BaseLoggingConfiguration
     /**
      * @type bool
      */
-    protected $_useCustomPlacement = false;
+    protected $_useCommonLogging = false;
 
     //******************************************************************************
     //* Methods
     //******************************************************************************
 
     /**
-     * @param \Illuminate\Contracts\Foundation\Application $app
+     * @param Application $app
      */
     public function bootstrap( Application $app )
     {
-        $this->_logFileName = config( 'dfe.common.log-file-name' );
+        $this->_logFileName = $app->make( 'config' )->get( 'dfe.common.log-file-name' );
 
-        if ( null !== ( $this->_logPath = config( 'dfe.common.log-path' ) ) )
+        if ( null !== ( $this->_logPath = $app->make( 'config' )->get( 'dfe.common.log-path' ) ) )
         {
             $this->_logPath = rtrim( $this->_logPath, ' ' . DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
         }
 
-        $this->_useCustomPlacement =
+        $this->_useCommonLogging =
             ( !empty( $this->_logPath ) && !empty( $this->_logFileName ) )
                 ? FileSystem::ensurePath( $this->_logPath )
                 : false;
@@ -51,30 +51,52 @@ class CommonLoggingConfiguration extends BaseLoggingConfiguration
     /** @inheritdoc */
     protected function configureSingleHandler( Application $app, Writer $log )
     {
-        if ( $this->_useCustomPlacement )
+        if ( !$this->useCommonLogging() )
         {
-            $_file = $this->_logPath . $this->_logFileName;
-            $log->useFiles( $_file );
+            parent::configureSingleHandler( $app, $log );
 
             return;
         }
 
-        parent::configureSingleHandler( $app, $log );
+        $_file = $this->_logPath . $this->_logFileName;
+        $log->useFiles( $_file );
     }
 
     /** @inheritdoc */
     protected function configureDailyHandler( Application $app, Writer $log )
     {
-        if ( $this->_useCustomPlacement )
+        if ( !$this->useCommonLogging() )
         {
-            $_file = $this->_logPath . $this->_logFileName;
-
-            $log->useDailyFiles( $_file, $app->make( 'config' )->get( 'app.log_max_files', 5 ) );
+            parent::configureDailyHandler( $app, $log );
 
             return;
         }
 
-        parent::configureDailyHandler( $app, $log );
+        $_file = $this->_logPath . $this->_logFileName;
+        $log->useDailyFiles( $_file, $app->make( 'config' )->get( 'app.log_max_files', 5 ) );
     }
 
+    /**
+     * @return boolean
+     */
+    public function useCommonLogging()
+    {
+        return $this->_useCommonLogging;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCommonLogPath()
+    {
+        return $this->_logPath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCommonLogFileName()
+    {
+        return $this->_logFileName;
+    }
 }
