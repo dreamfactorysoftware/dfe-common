@@ -7,21 +7,46 @@ trait CustomLogPath
     //******************************************************************************
 
     /**
-     * @param string $fromClass The class to replace
-     * @param string $toClass   The replacement
+     * @type string
      */
-    protected function _replaceLoggingConfigurationClass( $fromClass, $toClass )
+    protected $_clpOldClass;
+    /**
+     * @type string
+     */
+    protected $_clpNewClass;
+
+    //******************************************************************************
+    //* Members
+    //******************************************************************************
+
+    /**
+     * Boot up
+     */
+    public function boot()
     {
-        if ( empty( $fromClass ) || empty( $toClass ) )
-        {
-            throw new \InvalidArgumentException( 'Neither $fromClass or $toClass may be blank.' );
-        }
+        \Log::debug( '[dfe.common.custom-log-path] booting' );
 
-        $_straps = array_flip( $this->bootstrappers );
+        $this->_clpOldClass = config( 'dfe.common.old-log-config-class' );
+        $this->_clpNewClass = config( 'dfe.common.new-log-config-class' );
 
-        if ( array_key_exists( $fromClass, $_straps ) )
+        $this->_replaceLoggingConfigurationClass();
+    }
+
+    /**
+     * Make the replacements if all is good...
+     */
+    private function _replaceLoggingConfigurationClass()
+    {
+        if ( !empty( $this->_clpNewClass ) && !empty( $this->_clpOldClass ) )
         {
-            $this->bootstrappers[$_straps[$fromClass]] = $toClass;
+            /** @noinspection PhpUndefinedFieldInspection */
+            $_straps = array_flip( $this->bootstrappers );
+
+            if ( array_key_exists( $this->_clpOldClass, $_straps ) )
+            {
+                /** @noinspection PhpUndefinedFieldInspection */
+                $this->bootstrappers[$_straps[$this->_clpOldClass]] = $this->_clpNewClass;
+            }
         }
     }
 }
