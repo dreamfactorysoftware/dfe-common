@@ -1,5 +1,10 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
+/**
+ * Provides a means to store log files in a place other than /storage/logs/laravel.log
+ *
+ * @package DreamFactory\Enterprise\Common\Traits
+ */
 trait CommonLogging
 {
     //******************************************************************************
@@ -14,8 +19,10 @@ trait CommonLogging
         /** @noinspection PhpUndefinedFieldInspection */
         $_straps = array_flip( $this->bootstrappers );
 
-        $_oldClass = $this->app->make( 'config' )->get( 'dfe.common.old-log-config-class' );
-        $_newClass = $this->app->make( 'config' )->get( 'dfe.common.new-log-config-class' );
+        /** @noinspection PhpUndefinedFieldInspection */
+        $_oldClass = $this->app->make( 'config' )->get( 'dfe.common.logging.old-log-config-class' );
+        /** @noinspection PhpUndefinedFieldInspection */
+        $_newClass = $this->app->make( 'config' )->get( 'dfe.common.logging.new-log-config-class' );
 
         if ( array_key_exists( $_oldClass, $_straps ) )
         {
@@ -24,6 +31,7 @@ trait CommonLogging
         }
 
         /** @noinspection PhpUndefinedClassInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
         parent::bootstrap();
     }
 }
