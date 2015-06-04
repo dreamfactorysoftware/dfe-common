@@ -33,17 +33,25 @@ class ConfigureCommonLogging extends ConfigureLogging
      */
     public function bootstrap( Application $app )
     {
-        $this->_logFileName = $app->make( 'config' )->get( 'dfe.common.logging.log-file-name' );
-
-        if ( null !== ( $this->_logPath = $app->make( 'config' )->get( 'dfe.common.logging.log-path' ) ) )
+        if ( isset( $app['config'] ) )
         {
-            $this->_logPath = rtrim( $this->_logPath, ' ' . DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
-        }
+            error_log( 'yep' );
+            $this->_logFileName = $app['config']->get( 'dfe.common.logging.log-file-name' );
 
-        $this->_useCommonLogging =
-            ( !empty( $this->_logPath ) && !empty( $this->_logFileName ) )
-                ? FileSystem::ensurePath( $this->_logPath )
-                : false;
+            if ( null !== ( $this->_logPath = $app['config']->get( 'dfe.common.logging.log-path' ) ) )
+            {
+                $this->_logPath = rtrim( $this->_logPath, ' ' . DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
+            }
+
+            $this->_useCommonLogging =
+                ( !empty( $this->_logPath ) && !empty( $this->_logFileName ) )
+                    ? FileSystem::ensurePath( $this->_logPath )
+                    : false;
+        }
+        else
+        {
+            error_log( 'nope' );
+        }
 
         parent::bootstrap( $app );
     }
