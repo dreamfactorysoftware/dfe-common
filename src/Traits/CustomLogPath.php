@@ -20,6 +20,17 @@ trait CustomLogPath
     //******************************************************************************
 
     /**
+     * Override the bootstrap method to boot me
+     */
+    public function bootstrap()
+    {
+        $this->boot();
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        parent::bootstrap();
+    }
+
+    /**
      * Boot up
      */
     public function boot()
