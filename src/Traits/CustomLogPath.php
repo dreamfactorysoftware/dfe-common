@@ -1,7 +1,5 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
-use Illuminate\Support\Facades\Log;
-
 trait CustomLogPath
 {
     //******************************************************************************
@@ -37,8 +35,6 @@ trait CustomLogPath
      */
     public function boot()
     {
-        Log::debug( '[dfe.common.custom-log-path] booting' );
-
         $this->_clpOldClass = config( 'dfe.common.old-log-config-class' );
         $this->_clpNewClass = config( 'dfe.common.new-log-config-class' );
 
