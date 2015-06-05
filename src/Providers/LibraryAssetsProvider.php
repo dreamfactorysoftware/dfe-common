@@ -19,10 +19,6 @@ class LibraryAssetsProvider extends BaseServiceProvider
      */
     const CONFIG_NAME = 'dfe.common.php';
     /**
-     * @type string Relative path to logging config file
-     */
-    const LOGGING_CONFIG_NAME = 'dfe.common.logging.php';
-    /**
      * @type string Relative path of asset installation
      */
     const ASSET_PUBLISH_PATH = '/vendor/dfe-common';
@@ -43,7 +39,6 @@ class LibraryAssetsProvider extends BaseServiceProvider
 
         //  Config
         $this->publishes( [$_configPath . '/' . static::CONFIG_NAME => config_path( static::CONFIG_NAME ),], 'config' );
-        $this->publishes( [$_configPath . '/' . static::CONFIG_NAME => config_path( static::LOGGING_CONFIG_NAME ),], 'config' );
 
         //  And assets...
         $this->publishes( [$_resourcesPath . '/assets' => public_path( static::ASSET_PUBLISH_PATH )], 'public' );
