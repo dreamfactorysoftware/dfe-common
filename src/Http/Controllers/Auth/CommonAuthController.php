@@ -40,7 +40,11 @@ class CommonAuthController extends BaseController
     /** @inheritdoc */
     public function getRegister()
     {
-        return view( 'dfe-common::auth.register' );
+        return view(
+            config( 'auth.open-registration', false )
+                ? 'dfe-common::auth.register'
+                : 'dfe-common::auth.no-register'
+        );
     }
 
 }
