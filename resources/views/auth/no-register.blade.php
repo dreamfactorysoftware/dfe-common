@@ -15,17 +15,21 @@
 @section('content')
     <div id="container-login" class="container-fluid">
         <div class="row">
-            <div class="col-md-offset-3 col-md-6 col-md-offset-3 col-sm-offset-3 col-sm-6 col-sm-offset-3">
-                <div class="container-logo">
-                    <img src="/vendor/dfe-common/img/registration-closed.png">
-                </div>
-
+            <div class="col-sm-offset-3 col-sm-6 col-sm-offset-3">
                 <div class="jumbotron">
-                    <h1>Sorry...</h1>
+                    <div class="container-logo" style="margin-bottom: 15px;">
+                        <img src="/vendor/dfe-common/img/registration-closed.png">
+                    </div>
+                    <div class="pull-center">
+                        <h3>This system is closed to new registrations</h3>
 
-                    <p>Self-registration on this system is not allowed. Please contact your system's administrator for more information.</p>
+                        <p class="text-warning"
+                            style="font-size: 15px; margin-top: 0; padding-top: 0">Please contact your system's administrator for more information.</p>
 
-                    <p><a class="btn btn-primary btn-lg" href="#" role="button">Login</a></p>
+                        <p><a href="/auth/login"
+                                class="btn btn-success"
+                                role="button"><i class="fa fa-fw fa-angle-double-left" style="text-align: left;"></i>Back to Login</a></p>
+                    </div>
                 </div>
 
             </div>

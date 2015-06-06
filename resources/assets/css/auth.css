@@ -125,3 +125,10 @@ body {
 .pull-center {
 	text-align: center;
 }
+
+.jumbotron > .pull-center > h3 {
+	color:         #fff;
+	font-family:   "Montserrat", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size:     18px;
+	margin-bottom: 5px;
+}
