@@ -7,6 +7,7 @@ use DreamFactory\Enterprise\Database\Models\Cluster;
 use DreamFactory\Enterprise\Database\Models\ClusterServer;
 use DreamFactory\Enterprise\Database\Models\Instance;
 use DreamFactory\Enterprise\Database\Models\InstanceServer;
+use DreamFactory\Enterprise\Database\Models\Mount;
 use DreamFactory\Enterprise\Database\Models\Server;
 use DreamFactory\Enterprise\Database\Models\User;
 use DreamFactory\Enterprise\Database\Models\UserRole;
@@ -149,5 +150,15 @@ trait EntityLookup
     protected function _locateOwner( $id, $type = OwnerTypes::USER )
     {
         return OwnerTypes::getOwner( $id, $type );
+    }
+
+    /**
+     * @param string|int $id
+     *
+     * @return Mount
+     */
+    protected function _findMount( $id )
+    {
+        return Mount::byNameOrId( $id )->firstOrFail();
     }
 }
