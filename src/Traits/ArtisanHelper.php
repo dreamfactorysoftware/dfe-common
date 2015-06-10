@@ -1,6 +1,5 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
-use DreamFactory\Library\Utility\JsonFile;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -15,11 +14,11 @@ trait ArtisanHelper
     /**
      * @type string An optional prefix, such as the command name, which will be prepended to output
      */
-    private $outputPrefix = false;
+    private $outputPrefix;
     /**
      * @type string The currently buffered output
      */
-    private $lineBuffer = false;
+    private $lineBuffer;
 
     //******************************************************************************
     //* Methods
@@ -32,18 +31,17 @@ trait ArtisanHelper
      *
      * @return $this
      */
-    protected function writeHeader( $newline = true )
+    protected function writeHeader($newline = true)
     {
         /** @noinspection PhpUndefinedFieldInspection */
         $this->output->writeln(
-            $this->context( config( 'dfe.commands.display-name' ), 'info' ) .
-            ' (' . $this->context( config( 'dfe.commands.display-version', 'Alpha' ), 'comment' ) . ')'
+            $this->context(config('dfe.commands.display-name'), 'info') .
+            ' (' . $this->context(config('dfe.commands.display-version', 'Alpha'), 'comment') . ')'
         );
 
-        if ( null !== ( $_copyright = config( 'dfe.commands.display-copyright' ) ) )
-        {
+        if (null !== ($_copyright = config('dfe.commands.display-copyright'))) {
             /** @noinspection PhpUndefinedFieldInspection */
-            $this->output->writeln( $this->context( $_copyright, 'info' ) . ( $newline ? PHP_EOL : null ) );
+            $this->output->writeln($this->context($_copyright, 'info') . ($newline ? PHP_EOL : null));
         }
 
         return $this;
@@ -54,10 +52,10 @@ trait ArtisanHelper
      * @param string       $context The message context (info, comment, error, or question)
      * @param int          $type
      */
-    protected function writeln( $messages, $context = null, $type = OutputInterface::OUTPUT_NORMAL )
+    protected function writeln($messages, $context = null, $type = OutputInterface::OUTPUT_NORMAL)
     {
         /** @noinspection PhpUndefinedFieldInspection */
-        $this->output->writeln( $this->formatMessages( $messages, $context ), $type );
+        $this->output->writeln($this->formatMessages($messages, $context), $type);
     }
 
     /**
@@ -66,10 +64,10 @@ trait ArtisanHelper
      * @param string       $context The message context (info, comment, error, or question)
      * @param int          $type
      */
-    protected function write( $messages, $newline = false, $context = null, $type = OutputInterface::OUTPUT_NORMAL )
+    protected function write($messages, $newline = false, $context = null, $type = OutputInterface::OUTPUT_NORMAL)
     {
         /** @noinspection PhpUndefinedFieldInspection */
-        $this->output->write( $this->formatMessages( $messages, $context ), $newline, $type );
+        $this->output->write($this->formatMessages($messages, $context), $newline, $type);
     }
 
     /**
@@ -78,7 +76,7 @@ trait ArtisanHelper
      *
      * @return string
      */
-    protected function context( $content, $tag )
+    protected function context($content, $tag)
     {
         return '<' . $tag . '>' . $content . '</' . $tag . '>';
     }
@@ -86,15 +84,14 @@ trait ArtisanHelper
     /**
      * Buffers a string (optionally contextual) to write when flush() is called
      *
-     * @param string $text
+     * @param string      $text
+     * @param string|null $context
      *
      * @return $this
      */
-    protected function concat( $text )
+    protected function concat($text, $context = null)
     {
-        //  Initialize to an array and add text
-        false === $this->lineBuffer && ( $this->lineBuffer = [] );
-        $this->lineBuffer[] = $text;
+        $this->lineBuffer .= ($context ? $this->context($text, $context) : $text);
 
         return $this;
     }
@@ -102,49 +99,49 @@ trait ArtisanHelper
     /**
      * Buffers an "info" string to write at a later time
      *
-     * @param string|array $messages
+     * @param string $text
      *
      * @return $this
      */
-    protected function asInfo( $messages )
+    protected function asInfo($text)
     {
-        return $this->concat( $this->context( $messages, 'info' ) );
+        return $this->concat($text, 'info');
     }
 
     /**
      * Buffers an "info" string to write at a later time
      *
-     * @param string|array $messages
+     * @param string $text
      *
      * @return $this
      */
-    protected function asComment( $messages )
+    protected function asComment($text)
     {
-        return $this->concat( $this->context( $messages, 'comment' ) );
+        return $this->concat($text, 'comment');
     }
 
     /**
      * Buffers an "info" string to write at a later time
      *
-     * @param string|array $messages
+     * @param string $text
      *
      * @return $this
      */
-    protected function asQuestion( $messages )
+    protected function asQuestion($text)
     {
-        return $this->concat( $this->context( $messages, 'question' ) );
+        return $this->concat($text, 'question');
     }
 
     /**
      * Buffers an "info" string to write at a later time
      *
-     * @param string|array $messages
+     * @param string $text
      *
      * @return $this
      */
-    protected function asError( $messages )
+    protected function asError($text)
     {
-        return $this->concat( $this->context( $messages, 'error' ) );
+        return $this->concat($text, 'error');
     }
 
     /**
@@ -153,12 +150,17 @@ trait ArtisanHelper
      * @param string|null $message Any text to add to the buffer before flushing
      * @param string|null $context The context of $message
      */
-    protected function flush( $message = null, $context = null )
+    protected function flush($message = null, $context = null)
     {
-        ( $message && $context ) && $this->concat( $this->context( $message, $context ) );
+        if (null !== $message) {
+            $this->concat($message, $context);
+        }
 
-        !empty( $this->lineBuffer ) && $this->writeln( $this->formatMessages( implode( '', $this->lineBuffer ), null, false ) );
-        $this->lineBuffer = false;
+        if (!empty($this->lineBuffer)) {
+            $this->writeln($this->lineBuffer);
+        }
+
+        $this->lineBuffer = null;
     }
 
     /**
@@ -168,111 +170,35 @@ trait ArtisanHelper
      *
      * @return array|string
      */
-    protected function formatMessages( $messages, $context = null, $prefix = true )
+    protected function formatMessages($messages, $context = null, $prefix = true)
     {
         $_scrubbed = [];
-        $_data = !is_array( $messages ) ? [$messages] : $messages;
+        $_data = !is_array($messages) ? [$messages] : $messages;
 
-        if ( !empty( $this->outputPrefix ) && ': ' != substr( $this->outputPrefix, -2 ) )
-        {
-            $this->outputPrefix = trim( $this->outputPrefix, ':' ) . ': ';
+        if (!empty($this->outputPrefix) && ': ' != substr($this->outputPrefix, -2)) {
+            $this->outputPrefix = trim($this->outputPrefix, ':') . ': ';
         }
 
-        foreach ( $_data as $_message )
-        {
-            $context && ( $_message = $this->context( trim( $_message ), $context ) );
-            $_scrubbed[] = ( $prefix && $this->outputPrefix ? $this->outputPrefix : null ) . $_message;
+        foreach ($_data as $_message) {
+            $context && ($_message = $this->context(trim($_message), $context));
+            $_scrubbed[] = ($prefix && $this->outputPrefix ? $this->outputPrefix : null) . $_message;
         }
 
-        return is_array( $messages ) ? $_scrubbed : $_scrubbed[0];
+        return is_array($messages) ? $_scrubbed : $_scrubbed[0];
     }
 
     /**
      * Retrieve any configuration settings for a command.
      *
-     * @param string|null $command The command in question. If not specified, derived from $this->name minus 'dfe:' prefix
+     * @param string|null $command The command in question. If not specified, derived from $this->name minus 'dfe:'
+     *                             prefix
      *
      * @return array
      */
-    protected function getCommandConfig( $command = null )
+    protected function getCommandConfig($command = null)
     {
         /** @noinspection PhpUndefinedFieldInspection */
-        return config( 'dfe.commands.' . $command ?: str_replace( 'dfe:', null, $this->name ), [] );
-    }
-
-    /**
-     * @param string|null $optionKey
-     * @param string|null $arrayKey
-     * @param array       $array
-     * @param bool        $required
-     *
-     * @return bool
-     */
-    protected function optionString( $optionKey = null, $arrayKey = null, array &$array = null, $required = false )
-    {
-        /** @noinspection PhpUndefinedMethodInspection */
-        $_string = $this->option( $optionKey );
-
-        if ( $required && empty( $_string ) )
-        {
-            $this->writeln( '"' . $optionKey . '" is a required option for this operation.' );
-
-            return false;
-        }
-
-        !empty( $_string ) && ( $array[$arrayKey] = $_string );
-
-        return true;
-    }
-
-    /**
-     * Retrieves an input argument and checks for valid JSON.
-     *
-     * @param string|null $optionKey The option name to retrieve
-     * @param string|null $arrayKey  If specified, decoded array will be placed into $array[$arrayKey]
-     * @param array|null  $array     The $array in which to place the result
-     * @param bool        $required  If this is required
-     *
-     * @return bool|array
-     */
-    protected function optionArray( $optionKey = null, $arrayKey = null, array &$array = null, $required = false )
-    {
-        /** @noinspection PhpUndefinedMethodInspection */
-        $_data = $this->option( $optionKey );
-
-        if ( null === $arrayKey )
-        {
-            return $_data;
-        }
-
-        if ( empty( $_data ) )
-        {
-            if ( $required )
-            {
-                $this->writeln( '"' . $optionKey . '" is a required option for this operation.' );
-
-                return false;
-            }
-
-            $array[$arrayKey] = $_data = [];
-
-            return true;
-        }
-
-        try
-        {
-            $_data = JsonFile::decode( $_data );
-        }
-        catch ( \Exception $_ex )
-        {
-            $this->writeln( 'the "' . $optionKey . '" provided does not contain valid JSON.' );
-
-            return false;
-        }
-
-        $array[$arrayKey] = $_data;
-
-        return true;
+        return config('dfe.commands.' . $command ?: str_replace('dfe:', null, $this->name), []);
     }
 
     /**
@@ -288,7 +214,7 @@ trait ArtisanHelper
      *
      * @return ArtisanHelper
      */
-    public function setOutputPrefix( $outputPrefix )
+    public function setOutputPrefix($outputPrefix)
     {
         $this->outputPrefix = $outputPrefix;
 
