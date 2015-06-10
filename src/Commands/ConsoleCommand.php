@@ -1,6 +1,7 @@
 <?php namespace DreamFactory\Enterprise\Common\Commands;
 
 use DreamFactory\Enterprise\Common\Traits\ArtisanHelper;
+use DreamFactory\Enterprise\Common\Traits\ArtisanOptionHelper;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Composer;
@@ -14,7 +15,7 @@ abstract class ConsoleCommand extends Command
     //* Traits
     //******************************************************************************
 
-    use ArtisanHelper;
+    use ArtisanHelper, ArtisanOptionHelper;
 
     //******************************************************************************
     //* Members
@@ -34,10 +35,10 @@ abstract class ConsoleCommand extends Command
     //******************************************************************************
 
     /**
-     * @param Composer   $composer
+     * @param Composer $composer
      * @param Filesystem $filesystem
      */
-    public function __construct( Composer $composer, Filesystem $filesystem )
+    public function __construct(Composer $composer, Filesystem $filesystem)
     {
         parent::__construct();
 
@@ -50,9 +51,8 @@ abstract class ConsoleCommand extends Command
      */
     public function fire()
     {
-        if ( null === $this->getOutputPrefix() )
-        {
-            $this->setOutputPrefix( str_replace( 'dfe:', null, $this->name ) );
+        if (null === $this->getOutputPrefix()) {
+            $this->setOutputPrefix(str_replace('dfe:', null, $this->name));
         }
 
         $this->writeHeader();
