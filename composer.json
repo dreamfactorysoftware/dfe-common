@@ -25,6 +25,10 @@
 		{
 			"type": "vcs",
 			"url":  "git@github.com:dreamfactorysoftware/dfe-database.git"
+		},
+		{
+			"type": "vcs",
+			"url":  "git@github.com:dreamfactorysoftware/dfe-storage.git"
 		}
 	],
 	"minimum-stability": "dev",
@@ -41,7 +45,7 @@
 		"doctrine/dbal":               "~2.3",
 		"phpspec/phpspec":             "~2.1",
 		"way/generators":              "~3.0",
-		"laravel/framework":           "5.0.*",
+		"laravel/framework":           "5.1.*",
 		"phpspec/phpspec":             "~2.1"
 	},
 	"autoload":          {
