@@ -59,18 +59,15 @@ class ClusterManifest implements Arrayable, Jsonable
      * @param string $basePath The base path of the instance installation
      * @param array  $contents Optional contents to fill
      */
-    public function __construct( $basePath, $contents = [] )
+    public function __construct($basePath, $contents = [])
     {
-        $_path = rtrim( realpath( $basePath ), DIRECTORY_SEPARATOR );
-        $_file = $_path . DIRECTORY_SEPARATOR . EnterpriseDefaults::CLUSTER_MANIFEST_FILE_NAME;
+        $_path = rtrim(realpath($basePath), DIRECTORY_SEPARATOR);
 
         $this->_contents = [];
         $this->_basePath = $_path;
-        $this->_filename = ltrim( basename( $_file ), DIRECTORY_SEPARATOR );
+        $this->_filename = EnterpriseDefaults::CLUSTER_MANIFEST_FILE_NAME;
 
-        ( $this->_existed = ( !is_dir( $_path ) || !is_readable( $_file ) ) ) && $this->read();
-
-        !$this->_existed && !empty( $contents ) && $this->fill( $contents );
+        $this->fill($contents);
     }
 
     /**
@@ -80,11 +77,11 @@ class ClusterManifest implements Arrayable, Jsonable
      *
      * @return static
      */
-    public static function make( $basePath, $contents = [], $overwrite = true )
+    public static function make($basePath, $contents = [], $overwrite = true)
     {
         /** @type ClusterManifest $_manifest */
-        $_manifest = new static( $basePath, $contents );
-        $_manifest->write( $overwrite );
+        $_manifest = new static($basePath, $contents);
+        $_manifest->write($overwrite);
 
         return $_manifest;
     }
@@ -96,9 +93,9 @@ class ClusterManifest implements Arrayable, Jsonable
      *
      * @return $this
      */
-    public static function createFromFile( $filename )
+    public static function createFromFile($filename)
     {
-        $_manifest = new static( dirname( $filename ) );
+        $_manifest = new static(dirname($filename));
 
         return $_manifest;
     }
@@ -110,12 +107,17 @@ class ClusterManifest implements Arrayable, Jsonable
      *
      * @return ClusterManifest|$this
      */
-    public function fill( array $contents = [] )
+    public function fill(array $contents = [])
     {
-        foreach ( $contents as $_key => $_value )
-        {
-            array_key_exists( $_key, $this->_template ) && ( $this->_contents[$_key] = $_value );
+        \Log::debug('contents to fill: ' . print_r($contents,true));
+
+        foreach ($contents as $_key => $_value) {
+            if (array_key_exists($_key, $this->_template)) {
+                $this->_contents[$_key] = $_value;
+            }
         }
+
+        \Log::debug('contents after fill: ' . print_r($this->_contents,true));
 
         return $this;
     }
@@ -127,12 +129,9 @@ class ClusterManifest implements Arrayable, Jsonable
      */
     public function read()
     {
-        try
-        {
-            $_contents = JsonFile::decodeFile( $this->getFullFilename() );
-        }
-        catch ( \InvalidArgumentException $_ex )
-        {
+        try {
+            $_contents = JsonFile::decodeFile($this->getFullFilename());
+        } catch (\InvalidArgumentException $_ex) {
             //  Reset contents to default
             $this->_contents = $this->_template;
 
@@ -140,20 +139,14 @@ class ClusterManifest implements Arrayable, Jsonable
             return $this;
         }
 
-        if ( !empty( $_contents ) )
-        {
+        if (!empty($_contents)) {
             $_cleaned = $this->_template;
 
-            foreach ( $_contents as $_key => $_value )
-            {
-                $_key = str_replace( ['_', ' '], ['-', null], strtolower( trim( $_key ) ) );
+            foreach ($_contents as $_key => $_value) {
+                $_key = str_replace(['_', ' '], ['-', null], strtolower(trim($_key)));
 
-                if ( array_key_exists( $_key, $_cleaned ) )
-                {
-                    $_cleaned[$_key] =
-                        !is_scalar( $_value ) && !is_array( $_value )
-                            ? ( null === $_value ? null : (array)$_value )
-                            : $_value;
+                if (array_key_exists($_key, $_cleaned)) {
+                    $_cleaned[$_key] = !is_scalar($_value) && !is_array($_value) ? (null === $_value ? null : (array)$_value) : $_value;
                 }
             }
 
@@ -171,21 +164,19 @@ class ClusterManifest implements Arrayable, Jsonable
      *
      * @return bool
      */
-    public function write( $overwrite = true )
+    public function write($overwrite = true)
     {
-        if ( empty( $this->_contents ) )
-        {
+        if (empty($this->_contents)) {
             return false;
         }
 
         $_filename = $this->getFullFilename();
 
-        if ( !$overwrite && file_exists( $_filename ) )
-        {
-            throw new FileException( 'A manifest already exists and $overwrite is set to "FALSE".' );
+        if (!$overwrite && file_exists($_filename)) {
+            throw new FileException('A manifest already exists and $overwrite is set to "FALSE".');
         }
 
-        JsonFile::encodeFile( $_filename, $this->_contents );
+        JsonFile::encodeFile($_filename, $this->_contents);
 
         return true;
     }
@@ -198,9 +189,9 @@ class ClusterManifest implements Arrayable, Jsonable
      *
      * @return mixed
      */
-    public function get( $key, $default = null )
+    public function get($key, $default = null)
     {
-        return IfSet::get( $this->_contents, $key, $default );
+        return IfSet::get($this->_contents, $key, $default);
     }
 
     /**
@@ -211,11 +202,10 @@ class ClusterManifest implements Arrayable, Jsonable
      *
      * @return $this
      */
-    public function set( $key, $value )
+    public function set($key, $value)
     {
-        if ( !array_key_exists( $key, $this->_contents ) )
-        {
-            throw new \InvalidArgumentException( 'The key "' . $key . '" is not valid.' );
+        if (!array_key_exists($key, $this->_contents)) {
+            throw new \InvalidArgumentException('The key "' . $key . '" is not valid.');
         }
 
         $this->_contents[$key] = $value;
@@ -272,9 +262,9 @@ class ClusterManifest implements Arrayable, Jsonable
      *
      * @return string
      */
-    public function toJson( $options = JsonFile::DEFAULT_JSON_ENCODE_OPTIONS )
+    public function toJson($options = JsonFile::DEFAULT_JSON_ENCODE_OPTIONS)
     {
-        return JsonFile::encode( $this->_contents, $options );
+        return JsonFile::encode($this->_contents, $options);
     }
 
     /**
