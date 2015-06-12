@@ -27,7 +27,7 @@ class SideloadServiceProvider extends BaseServiceProvider
     public function boot()
     {
         //  Call my autoload method
-        app( static::IOC_NAME )->autoload();
+        app(static::IOC_NAME)->autoload();
     }
 
     /**
@@ -42,8 +42,7 @@ class SideloadServiceProvider extends BaseServiceProvider
         //  Register object into instance container
         $this->singleton(
             static::IOC_NAME,
-            function ( $app )
-            {
+            function ($app) {
                 return new SideloadService($app);
             }
         );

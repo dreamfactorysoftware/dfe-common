@@ -39,13 +39,12 @@ trait VerifiesSignatures
      *
      * @return $this
      */
-    protected function _setSigningCredentials( $clientId, $clientSecret )
+    protected function _setSigningCredentials($clientId, $clientSecret)
     {
-        $_key = AppKey::byClientId( $clientId )->first();
+        $_key = AppKey::byClientId($clientId)->first();
 
-        if ( empty( $_key ) || $clientSecret != $_key->client_secret )
-        {
-            throw new \InvalidArgumentException( 'Invalid credentials.' );
+        if (empty($_key) || $clientSecret != $_key->client_secret) {
+            throw new \InvalidArgumentException('Invalid credentials.');
         }
 
         //  Looks good
@@ -63,7 +62,7 @@ trait VerifiesSignatures
      *
      * @return bool
      */
-    protected function _verifySignature( $token, $clientId, $clientSecret )
+    protected function _verifySignature($token, $clientId, $clientSecret)
     {
         return $token === $this->_vsSignature;
     }
@@ -74,7 +73,7 @@ trait VerifiesSignatures
     private function _generateSignature()
     {
         return hash_hmac(
-            config( 'dfe.signature-method', EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD ),
+            config('dfe.signature-method', EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD),
             $this->_vsClientId,
             $this->_vsClientSecret
         );
@@ -85,13 +84,13 @@ trait VerifiesSignatures
      *
      * @return array
      */
-    protected function _signRequest( array $payload )
+    protected function _signRequest(array $payload)
     {
         return array_merge(
-            array(
+            [
                 'client-id'    => $this->_vsClientId,
                 'access-token' => $this->_vsSignature,
-            ),
+            ],
             $payload ?: []
         );
     }

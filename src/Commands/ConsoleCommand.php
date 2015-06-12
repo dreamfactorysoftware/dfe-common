@@ -35,7 +35,7 @@ abstract class ConsoleCommand extends Command
     //******************************************************************************
 
     /**
-     * @param Composer $composer
+     * @param Composer   $composer
      * @param Filesystem $filesystem
      */
     public function __construct(Composer $composer, Filesystem $filesystem)

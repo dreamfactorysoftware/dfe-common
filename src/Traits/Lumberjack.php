@@ -33,9 +33,9 @@ trait Lumberjack
      *
      * @return null
      */
-    public function emergency( $message, array $context = array() )
+    public function emergency($message, array $context = [])
     {
-        \Log::emergency( $message, $context );
+        \Log::emergency($message, $context);
     }
 
     /**
@@ -49,9 +49,9 @@ trait Lumberjack
      *
      * @return null
      */
-    public function alert( $message, array $context = array() )
+    public function alert($message, array $context = [])
     {
-        \Log::alert( $message, $context );
+        \Log::alert($message, $context);
     }
 
     /**
@@ -64,9 +64,9 @@ trait Lumberjack
      *
      * @return null
      */
-    public function critical( $message, array $context = array() )
+    public function critical($message, array $context = [])
     {
-        \Log::critical( $message, $context );
+        \Log::critical($message, $context);
     }
 
     /**
@@ -78,9 +78,9 @@ trait Lumberjack
      *
      * @return null
      */
-    public function error( $message, array $context = array() )
+    public function error($message, array $context = [])
     {
-        \Log::error( $message, $context );
+        \Log::error($message, $context);
     }
 
     /**
@@ -94,9 +94,9 @@ trait Lumberjack
      *
      * @return null
      */
-    public function warning( $message, array $context = array() )
+    public function warning($message, array $context = [])
     {
-        \Log::warning( $message, $context );
+        \Log::warning($message, $context);
     }
 
     /**
@@ -107,9 +107,9 @@ trait Lumberjack
      *
      * @return null
      */
-    public function notice( $message, array $context = array() )
+    public function notice($message, array $context = [])
     {
-        \Log::notice( $message, $context );
+        \Log::notice($message, $context);
     }
 
     /**
@@ -122,9 +122,9 @@ trait Lumberjack
      *
      * @return null
      */
-    public function info( $message, array $context = array() )
+    public function info($message, array $context = [])
     {
-        \Log::info( $message, $context );
+        \Log::info($message, $context);
     }
 
     /**
@@ -135,9 +135,9 @@ trait Lumberjack
      *
      * @return null
      */
-    public function debug( $message, array $context = array() )
+    public function debug($message, array $context = [])
     {
-        \Log::debug( $message, $context );
+        \Log::debug($message, $context);
     }
 
     /**
@@ -149,9 +149,9 @@ trait Lumberjack
      *
      * @return null
      */
-    public function log( $level, $message, array $context = array() )
+    public function log($level, $message, array $context = [])
     {
-        \Log::log( $level, $message, $context );
+        \Log::log($level, $message, $context);
 
         return $this;
     }

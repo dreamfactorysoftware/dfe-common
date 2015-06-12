@@ -27,9 +27,9 @@ trait EntityLookup
      *
      * @return Cluster
      */
-    protected function _findCluster( $clusterId )
+    protected function _findCluster($clusterId)
     {
-        return Cluster::byNameOrId( $clusterId )->firstOrFail();
+        return Cluster::byNameOrId($clusterId)->firstOrFail();
     }
 
     /**
@@ -37,9 +37,9 @@ trait EntityLookup
      *
      * @return Server
      */
-    protected function _findServer( $serverId )
+    protected function _findServer($serverId)
     {
-        return Server::byNameOrId( $serverId )->firstOrFail();
+        return Server::byNameOrId($serverId)->firstOrFail();
     }
 
     /**
@@ -47,9 +47,9 @@ trait EntityLookup
      *
      * @return Instance
      */
-    protected function _findInstance( $instanceId )
+    protected function _findInstance($instanceId)
     {
-        return Instance::with( ['user', 'guest'] )->byNameOrId( $instanceId )->firstOrFail();
+        return Instance::with(['user', 'guest'])->byNameOrId($instanceId)->firstOrFail();
     }
 
     /**
@@ -57,9 +57,9 @@ trait EntityLookup
      *
      * @return User
      */
-    protected function _findUser( $userId )
+    protected function _findUser($userId)
     {
-        return User::where( 'id', '=', $userId )->findOrfail( $userId );
+        return User::where('id', '=', $userId)->findOrfail($userId);
     }
 
     /**
@@ -69,16 +69,16 @@ trait EntityLookup
      *
      * @return Collection
      */
-    protected function _clusterServers( $clusterId )
+    protected function _clusterServers($clusterId)
     {
-        $_rows = ClusterServer::join( 'server_t', 'id', '=', 'server_id' )
-            ->where( 'cluster_id', '=', $clusterId )
+        $_rows = ClusterServer::join('server_t', 'id', '=', 'server_id')
+            ->where('cluster_id', '=', $clusterId)
             ->get(
                 [
                     'server_t.id',
                     'server_t.server_id_text',
                     'server_t.server_type_id',
-                    'cluster_server_asgn_t.cluster_id'
+                    'cluster_server_asgn_t.cluster_id',
                 ]
             );
 
@@ -90,8 +90,7 @@ trait EntityLookup
         ];
 
         /** @type Server $_server */
-        foreach ( $_rows as $_server )
-        {
+        foreach ($_rows as $_server) {
             $_servers[$_server->server_type_id][$_server->server_id_text] = $_server;
         }
 
@@ -105,9 +104,9 @@ trait EntityLookup
      *
      * @return Collection
      */
-    protected function _serverClusters( $serverId )
+    protected function _serverClusters($serverId)
     {
-        return ClusterServer::where( 'server_id', '=', $serverId )
+        return ClusterServer::where('server_id', '=', $serverId)
             ->get();
     }
 
@@ -118,12 +117,12 @@ trait EntityLookup
      *
      * @return Collection
      */
-    protected function _serverInstances( $serverId )
+    protected function _serverInstances($serverId)
     {
-        return InstanceServer::join( 'instance_t', 'id', '=', 'instance_id' )
-            ->where( 'server_id', '=', $serverId )
-            ->orderBy( 'instance_t.instance_id_text' )
-            ->get( ['instance_t.*'] );
+        return InstanceServer::join('instance_t', 'id', '=', 'instance_id')
+            ->where('server_id', '=', $serverId)
+            ->orderBy('instance_t.instance_id_text')
+            ->get(['instance_t.*']);
     }
 
     /**
@@ -133,12 +132,12 @@ trait EntityLookup
      *
      * @return Collection
      */
-    protected function _userRoles( $userId )
+    protected function _userRoles($userId)
     {
-        return UserRole::join( 'role_t', 'id', '=', 'role_id' )
-            ->where( 'user_id', '=', $userId )
-            ->orderBy( 'role_t.role_name_text' )
-            ->get( ['role_t.*'] );
+        return UserRole::join('role_t', 'id', '=', 'role_id')
+            ->where('user_id', '=', $userId)
+            ->orderBy('role_t.role_name_text')
+            ->get(['role_t.*']);
     }
 
     /**
@@ -147,9 +146,9 @@ trait EntityLookup
      *
      * @return \DreamFactory\Enterprise\Database\Models\Cluster|\DreamFactory\Enterprise\Database\Models\Instance|\DreamFactory\Enterprise\Database\Models\Server|\DreamFactory\Enterprise\Database\Models\User
      */
-    protected function _locateOwner( $id, $type = OwnerTypes::USER )
+    protected function _locateOwner($id, $type = OwnerTypes::USER)
     {
-        return OwnerTypes::getOwner( $id, $type );
+        return OwnerTypes::getOwner($id, $type);
     }
 
     /**
@@ -157,8 +156,8 @@ trait EntityLookup
      *
      * @return Mount
      */
-    protected function _findMount( $id )
+    protected function _findMount($id)
     {
-        return Mount::byNameOrId( $id )->firstOrFail();
+        return Mount::byNameOrId($id)->firstOrFail();
     }
 }

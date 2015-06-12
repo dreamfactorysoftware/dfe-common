@@ -28,9 +28,9 @@ trait StaticComponentLookup
      *
      * @return Cluster
      */
-    protected static function _lookupCluster( $clusterId )
+    protected static function _lookupCluster($clusterId)
     {
-        return Cluster::byNameOrId( $clusterId )->firstOrFail();
+        return Cluster::byNameOrId($clusterId)->firstOrFail();
     }
 
     /**
@@ -40,9 +40,9 @@ trait StaticComponentLookup
      *
      * @return AppKey
      */
-    protected static function _lookupAppKey( $ownerId, $ownerType )
+    protected static function _lookupAppKey($ownerId, $ownerType)
     {
-        return AppKey::mine( $ownerId, $ownerType );
+        return AppKey::mine($ownerId, $ownerType);
     }
 
     /**
@@ -50,9 +50,9 @@ trait StaticComponentLookup
      *
      * @return Server
      */
-    protected static function _lookupServer( $serverId )
+    protected static function _lookupServer($serverId)
     {
-        return Server::byNameOrId( $serverId )->firstOrFail();
+        return Server::byNameOrId($serverId)->firstOrFail();
     }
 
     /**
@@ -60,9 +60,9 @@ trait StaticComponentLookup
      *
      * @return Instance
      */
-    protected static function _lookupInstance( $instanceId )
+    protected static function _lookupInstance($instanceId)
     {
-        return Instance::byNameOrId( $instanceId )->firstOrFail();
+        return Instance::byNameOrId($instanceId)->firstOrFail();
     }
 
     /**
@@ -70,9 +70,9 @@ trait StaticComponentLookup
      *
      * @return Instance
      */
-    protected static function _lookupMount( $mountId )
+    protected static function _lookupMount($mountId)
     {
-        return Mount::byNameOrId( $mountId )->firstOrFail();
+        return Mount::byNameOrId($mountId)->firstOrFail();
     }
 
     /**
@@ -80,9 +80,9 @@ trait StaticComponentLookup
      *
      * @return User
      */
-    protected static function _lookupUser( $userId )
+    protected static function _lookupUser($userId)
     {
-        return User::findOrFail( $userId );
+        return User::findOrFail($userId);
     }
 
     /**
@@ -90,9 +90,9 @@ trait StaticComponentLookup
      *
      * @return User
      */
-    protected static function _lookupServiceUser( $serviceUserId )
+    protected static function _lookupServiceUser($serviceUserId)
     {
-        return ServiceUser::findOrFail( $serviceUserId );
+        return ServiceUser::findOrFail($serviceUserId);
     }
 
     /**
@@ -102,9 +102,9 @@ trait StaticComponentLookup
      *
      * @return array
      */
-    protected static function _lookupClusterServers( $clusterId )
+    protected static function _lookupClusterServers($clusterId)
     {
-        $_cluster = static::_lookupCluster( $clusterId );
+        $_cluster = static::_lookupCluster($clusterId);
 
         $_rows = \DB::select(
             <<<MYSQL
@@ -127,8 +127,7 @@ MYSQL
         //  Organize by type
         $_servers = [];
 
-        foreach ( ServerTypes::getDefinedConstants() as $_name => $_value )
-        {
+        foreach (ServerTypes::getDefinedConstants() as $_name => $_value) {
             $_servers[$_value] = [
                 '.id'   => null,
                 '.ids'  => [],
@@ -140,10 +139,8 @@ MYSQL
         /**
          * @type Server $_server
          */
-        foreach ( $_rows as $_server )
-        {
-            if ( !isset( $_servers[$_server->server_type_id] ) )
-            {
+        foreach ($_rows as $_server) {
+            if (!isset($_servers[$_server->server_type_id])) {
                 continue;
             }
 
@@ -152,30 +149,22 @@ MYSQL
         }
 
         //  Set the single id for quick lookups
-        foreach ( $_servers as $_type => $_group )
-        {
-            if ( null !== IfSet::get( $_group, '.id' ) )
-            {
+        foreach ($_servers as $_type => $_group) {
+            if (null !== IfSet::get($_group, '.id')) {
                 continue;
             }
 
-            if ( null !== ( $_list = IfSet::get( $_group, '.ids' ) ) )
-            {
-                if ( !empty( $_list ) && is_array( $_list ) )
-                {
+            if (null !== ($_list = IfSet::get($_group, '.ids'))) {
+                if (!empty($_list) && is_array($_list)) {
                     $_servers[$_type]['.id'] = $_list[0];
                     continue;
                 }
             }
 
-            if ( null !== ( $_list = IfSet::get( $_group, 'data' ) ) )
-            {
-                if ( !empty( $_list ) && is_array( $_list ) )
-                {
-                    foreach ( $_list as $_item )
-                    {
-                        if ( isset( $_item['id'] ) )
-                        {
+            if (null !== ($_list = IfSet::get($_group, 'data'))) {
+                if (!empty($_list) && is_array($_list)) {
+                    foreach ($_list as $_item) {
+                        if (isset($_item['id'])) {
                             $_servers[$_type['.id']] = $_item['id'];
                             continue;
                         }
@@ -194,12 +183,12 @@ MYSQL
      *
      * @return Collection
      */
-    protected static function _lookupServerInstances( $serverId )
+    protected static function _lookupServerInstances($serverId)
     {
-        return InstanceServer::join( 'instance_t', 'id', '=', 'instance_id' )
-            ->where( 'server_id', '=', $serverId )
-            ->orderBy( 'instance_t.instance_id_text' )
-            ->get( ['instance_t.*'] );
+        return InstanceServer::join('instance_t', 'id', '=', 'instance_id')
+            ->where('server_id', '=', $serverId)
+            ->orderBy('instance_t.instance_id_text')
+            ->get(['instance_t.*']);
     }
 
     /**
@@ -209,11 +198,11 @@ MYSQL
      *
      * @return Collection
      */
-    protected static function _lookupUserRoles( $userId )
+    protected static function _lookupUserRoles($userId)
     {
-        return UserRole::join( 'role_t', 'id', '=', 'role_id' )
-            ->where( 'user_id', '=', $userId )
-            ->orderBy( 'role_t.role_name_text' )
-            ->get( ['role_t.*'] );
+        return UserRole::join('role_t', 'id', '=', 'role_id')
+            ->where('user_id', '=', $userId)
+            ->orderBy('role_t.role_name_text')
+            ->get(['role_t.*']);
     }
 }

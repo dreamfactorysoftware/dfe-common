@@ -28,11 +28,11 @@ abstract class BaseManager extends BaseService implements ManagerContract
      *
      * @return mixed
      */
-    public function __call( $method, $arguments )
+    public function __call($method, $arguments)
     {
-        list( $_tag, $_args ) = $this->_filterTag( $arguments );
+        list($_tag, $_args) = $this->_filterTag($arguments);
 
-        return call_user_func_array( [$this->resolve( $_tag ), $method], $_args );
+        return call_user_func_array([$this->resolve($_tag), $method], $_args);
     }
 
     /**
@@ -42,18 +42,16 @@ abstract class BaseManager extends BaseService implements ManagerContract
      *
      * @return array [$tag, $newArguments]
      */
-    protected function _filterTag( array $arguments )
+    protected function _filterTag(array $arguments)
     {
-        if ( empty( $arguments ) )
-        {
-            throw new \LogicException( 'You must have at least one argument.' );
+        if (empty($arguments)) {
+            throw new \LogicException('You must have at least one argument.');
         }
 
-        $_tag = array_shift( $arguments );
+        $_tag = array_shift($arguments);
 
-        if ( !is_string( $_tag ) )
-        {
-            throw new \InvalidArgumentException( 'First argument must be a string' );
+        if (!is_string($_tag)) {
+            throw new \InvalidArgumentException('First argument must be a string');
         }
 
         return [$_tag, $arguments];

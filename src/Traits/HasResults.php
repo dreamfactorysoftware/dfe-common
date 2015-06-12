@@ -32,7 +32,7 @@ trait HasResults
      *
      * @return $this
      */
-    public function setResult( $result )
+    public function setResult($result)
     {
         $this->_result = $result;
 

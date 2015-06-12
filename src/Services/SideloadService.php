@@ -36,17 +36,15 @@ class SideloadService extends BaseService
      *
      * @return int
      */
-    public function autoload( $providers = [] )
+    public function autoload($providers = [])
     {
         /** @type Application $_app */
         $_app = @app();
         $_count = 0;
 
-        if ( $_app && null !== ( $_services = array_merge( config( 'services.auto-register', [] ), $providers ) ) )
-        {
-            foreach ( $_services as $_tag => $_service )
-            {
-                $_app->register( new $_service( $_app ), config( 'services.' . $_tag, [] ) );
+        if ($_app && null !== ($_services = array_merge(config('services.auto-register', []), $providers))) {
+            foreach ($_services as $_tag => $_service) {
+                $_app->register(new $_service($_app), config('services.' . $_tag, []));
 
                 $_count++;
             }

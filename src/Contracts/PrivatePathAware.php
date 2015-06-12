@@ -17,14 +17,14 @@ interface PrivatePathAware
      *
      * @return string
      */
-    public function getPrivatePath( $append = null );
+    public function getPrivatePath($append = null);
 
     /**
      * @param string $append
      *
      * @return string
      */
-    public function getOwnerPrivatePath( $append = null );
+    public function getOwnerPrivatePath($append = null);
 
     /**
      * Create a hash that will serve as the root directory for this user's space
@@ -33,7 +33,7 @@ interface PrivatePathAware
      *
      * @return string
      */
-    public function getOwnerHash( Instance $instance );
+    public function getOwnerHash(Instance $instance);
 
     /**
      * Returns an array of storage path segment mappings. i.e. ['zone'=>'xyz', 'partition' => 'abc', 'root-hash' => 'hash']

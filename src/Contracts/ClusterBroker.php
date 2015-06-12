@@ -35,5 +35,5 @@ interface ClusterBroker
      *
      * @return mixed
      */
-    public function consoleRequest( $verb = Request::METHOD_GET, $payload = [], $options = [] );
+    public function consoleRequest($verb = Request::METHOD_GET, $payload = [], $options = []);
 }

@@ -22,11 +22,11 @@ class ScalpelService extends BaseService
      *
      * @return $this
      */
-    public function make( $templateKey, $data = [], $mergeData = [] )
+    public function make($templateKey, $data = [], $mergeData = [])
     {
         /** @noinspection PhpUndefinedMethodInspection */
         return
-            $this->makeFromString( Config::get( $templateKey ), $data, $mergeData );
+            $this->makeFromString(Config::get($templateKey), $data, $mergeData);
     }
 
     /**
@@ -36,19 +36,19 @@ class ScalpelService extends BaseService
      *
      * @return mixed|string
      */
-    public function makeFromString( $template, $data = [], $mergeData = [] )
+    public function makeFromString($template, $data = [], $mergeData = [])
     {
         $_json = false;
         $_workTemplate = $template;
 
-        !is_string( $_workTemplate ) && ( $_workTemplate = JsonFile::encode( $_workTemplate ) ) && ( $_json = true );
+        !is_string($_workTemplate) && ($_workTemplate = JsonFile::encode($_workTemplate)) && ($_json = true);
 
         /** @type \Wpb\StringBladeCompiler\StringView $_view */
         /** @noinspection PhpUndefinedMethodInspection */
         $_view = StringView::make(
             [
                 'template'   => $_workTemplate,
-                'cache_key'  => md5( IfSet::get( $data, 'cache_key', microtime( true ) ) . sha1( $_workTemplate ) ),
+                'cache_key'  => md5(IfSet::get($data, 'cache_key', microtime(true)) . sha1($_workTemplate)),
                 'updated_at' => time(),
             ],
             $data,
@@ -59,7 +59,7 @@ class ScalpelService extends BaseService
 
         return
             $_json
-                ? JsonFile::decode( $_workTemplate, true )
+                ? JsonFile::decode($_workTemplate, true)
                 : $_workTemplate;
     }
 

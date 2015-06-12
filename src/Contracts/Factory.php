@@ -18,6 +18,6 @@ interface Factory
      *
      * @return mixed
      */
-    public function make( $abstract, $data = [] );
+    public function make($abstract, $data = []);
 
 }

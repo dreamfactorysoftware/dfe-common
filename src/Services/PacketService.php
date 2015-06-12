@@ -31,7 +31,7 @@ class PacketService extends BaseService
     /**
      * @param string $version
      */
-    public function __construct( $version = self::PACKET_VERSION )
+    public function __construct($version = self::PACKET_VERSION)
     {
         $this->_version = $version;
 
@@ -44,9 +44,9 @@ class PacketService extends BaseService
      *
      * @return array
      */
-    public function success( $contents = null, $code = Response::HTTP_OK )
+    public function success($contents = null, $code = Response::HTTP_OK)
     {
-        return SuccessPacket::make( $contents, $code );
+        return SuccessPacket::make($contents, $code);
     }
 
     /**
@@ -56,8 +56,8 @@ class PacketService extends BaseService
      *
      * @return array
      */
-    public function failure( $contents = null, $code = Response::HTTP_NOT_FOUND, $message = null )
+    public function failure($contents = null, $code = Response::HTTP_NOT_FOUND, $message = null)
     {
-        return ErrorPacket::make( $contents, $code, $message );
+        return ErrorPacket::make($contents, $code, $message);
     }
 }

@@ -77,16 +77,15 @@ class AppKeyClasses extends FactoryEnum
      *
      * @return string
      */
-    public static function make( $type, $entity = self::TYPE_ENTITY )
+    public static function make($type, $entity = self::TYPE_ENTITY)
     {
         static $_pattern = '[{entity}:{type}]';
 
-        if ( empty( $entity ) || empty( $type ) )
-        {
-            throw new \InvalidArgumentException( 'Neither $entity or $type may be blank.' );
+        if (empty($entity) || empty($type)) {
+            throw new \InvalidArgumentException('Neither $entity or $type may be blank.');
         }
 
-        return strtolower( str_replace( ['{entity}', '{type}'], [$entity, $type], $_pattern ) );
+        return strtolower(str_replace(['{entity}', '{type}'], [$entity, $type], $_pattern));
     }
 
     /**
@@ -96,11 +95,11 @@ class AppKeyClasses extends FactoryEnum
      *
      * @return string
      */
-    public static function fromOwnerType( $ownerType )
+    public static function fromOwnerType($ownerType)
     {
         return static::defines(
             strtoupper(
-                OwnerTypes::nameOf( $ownerType, !is_numeric( $ownerType ) )
+                OwnerTypes::nameOf($ownerType, !is_numeric($ownerType))
             ),
             true
         );
@@ -111,8 +110,8 @@ class AppKeyClasses extends FactoryEnum
      *
      * @return bool
      */
-    public static function mapOwnerType( $entityType )
+    public static function mapOwnerType($entityType)
     {
-        return OwnerTypes::defines( strtoupper( trim( $entityType ) ), true );
+        return OwnerTypes::defines(strtoupper(trim($entityType)), true);
     }
 }

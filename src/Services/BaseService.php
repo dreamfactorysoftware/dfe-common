@@ -36,7 +36,7 @@ class BaseService implements LoggerInterface
      *
      * @param Application $app
      */
-    public function __construct( $app = null )
+    public function __construct($app = null)
     {
         $this->app = $app;
         $this->logger = Log::getMonolog();
@@ -58,9 +58,9 @@ class BaseService implements LoggerInterface
      *
      * @return string
      */
-    protected function _jsonEncode( $object, $options = JsonFile::DEFAULT_JSON_ENCODE_OPTIONS )
+    protected function _jsonEncode($object, $options = JsonFile::DEFAULT_JSON_ENCODE_OPTIONS)
     {
-        return JsonFile::encode( $object, $options );
+        return JsonFile::encode($object, $options);
     }
 
     /**
@@ -71,9 +71,9 @@ class BaseService implements LoggerInterface
      *
      * @return array|\stdClass
      */
-    protected function _jsonDecode( $json, $asArray = true, $depth = 512, $options = 0 )
+    protected function _jsonDecode($json, $asArray = true, $depth = 512, $options = 0)
     {
-        return JsonFile::decode( $json, $asArray, $depth, $options );
+        return JsonFile::decode($json, $asArray, $depth, $options);
     }
 
     /**

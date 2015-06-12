@@ -18,7 +18,7 @@ interface SnapshotArchivist
      *
      * @return mixed
      */
-    public function import( $instanceId, $snapshot );
+    public function import($instanceId, $snapshot);
 
     /**
      * Exports instance $instanceId to snapshot file $snapshot
@@ -28,5 +28,5 @@ interface SnapshotArchivist
      *
      * @return mixed
      */
-    public function export( $instanceId, $snapshot );
+    public function export($instanceId, $snapshot);
 }

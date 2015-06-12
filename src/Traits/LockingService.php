@@ -24,9 +24,9 @@ trait LockingService
      *
      * @return bool True if a lock file exists
      */
-    protected function _isLocked( $tag )
+    protected function _isLocked($tag)
     {
-        return file_exists( $_lockFile = $this->_getLockFile( $tag ) );
+        return file_exists($_lockFile = $this->_getLockFile($tag));
     }
 
     /**
@@ -34,20 +34,18 @@ trait LockingService
      *
      * @return bool
      */
-    protected function _unlock( $tag )
+    protected function _unlock($tag)
     {
-        $_lockFile = $this->_getLockFile( $tag );
+        $_lockFile = $this->_getLockFile($tag);
 
-        $_lockPath = dirname( $_lockFile );
+        $_lockPath = dirname($_lockFile);
 
-        if ( !is_dir( $_lockPath ) && false === mkdir( $_lockPath, 0777, true ) )
-        {
-            throw new \RuntimeException( 'Unable to create lock file directory. Check permissions.' );
+        if (!is_dir($_lockPath) && false === mkdir($_lockPath, 0777, true)) {
+            throw new \RuntimeException('Unable to create lock file directory. Check permissions.');
         }
 
-        if ( false === file_put_contents( $_lockFile, getmypid() ) )
-        {
-            throw new \RuntimeException( 'Unable to create lock file. Check permissions.' );
+        if (false === file_put_contents($_lockFile, getmypid())) {
+            throw new \RuntimeException('Unable to create lock file. Check permissions.');
         }
 
         return true;
@@ -58,13 +56,11 @@ trait LockingService
      *
      * @return bool
      */
-    protected function _lock( $tag )
+    protected function _lock($tag)
     {
-        if ( file_exists( $_lockFile = $this->_getLockFile( $tag ) ) )
-        {
-            if ( false === unlink( $_lockFile ) )
-            {
-                throw new \RuntimeException( 'Unable to remove lock file. Check permissions.' );
+        if (file_exists($_lockFile = $this->_getLockFile($tag))) {
+            if (false === unlink($_lockFile)) {
+                throw new \RuntimeException('Unable to remove lock file. Check permissions.');
             }
         }
 
@@ -76,8 +72,8 @@ trait LockingService
      *
      * @return string
      */
-    protected function _getLockFile( $tag )
+    protected function _getLockFile($tag)
     {
-        return str_replace( ['{:tag}', '{:pid}'], [$tag, getmypid()], $this->_lockFileTemplate );
+        return str_replace(['{:tag}', '{:pid}'], [$tag, getmypid()], $this->_lockFileTemplate);
     }
 }

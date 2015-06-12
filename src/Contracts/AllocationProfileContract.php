@@ -11,12 +11,12 @@ interface AllocationProfileContract
     //******************************************************************************
 
     /**
-     * @param int $allocationProfile The profile type as defined in {@see Enums\AllocationProfiles}
-     * @param int|float|double $amount The value to set for this
+     * @param int              $allocationProfile The profile type as defined in {@see Enums\AllocationProfiles}
+     * @param int|float|double $amount            The value to set for this
      *
      * @return mixed
      */
-    public function setValue( $allocationProfile, $amount );
+    public function setValue($allocationProfile, $amount);
 
     /**
      * @param int   $allocationProfile The profile type as defined in {@see Enums\AllocationProfiles}
@@ -24,5 +24,5 @@ interface AllocationProfileContract
      *
      * @return mixed
      */
-    public function getValue( $allocationProfile, $default = null );
+    public function getValue($allocationProfile, $default = null);
 }

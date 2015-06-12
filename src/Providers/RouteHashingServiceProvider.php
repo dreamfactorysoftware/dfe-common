@@ -41,9 +41,8 @@ class RouteHashingServiceProvider extends BaseServiceProvider
         //  Register object into instance container
         $this->app->singleton(
             static::IOC_NAME,
-            function ( $app )
-            {
-                return new RouteHashingService( $app );
+            function ($app) {
+                return new RouteHashingService($app);
             }
         );
     }

@@ -22,15 +22,15 @@ class RouteHashingService extends BaseService implements RouteHasher
      *
      * @return string The hash/token representing the unique owner-path pair.
      */
-    public function create( $pathToHash, $keepDays = 30 )
+    public function create($pathToHash, $keepDays = 30)
     {
-        $_hash = sha1( md5( $pathToHash ) . microtime( true ) . getmypid() );
+        $_hash = sha1(md5($pathToHash) . microtime(true) . getmypid());
 
         RouteHash::insert(
             [
                 'hash_text'        => $_hash,
                 'actual_path_text' => $pathToHash,
-                'expire_date'      => $keepDays ? date( 'c', time() + ( $keepDays * 86400 ) ) : null,
+                'expire_date'      => $keepDays ? date('c', time() + ($keepDays * 86400)) : null,
             ]
         );
 
@@ -43,9 +43,9 @@ class RouteHashingService extends BaseService implements RouteHasher
      * @return string Returns the path that belongs to the given hash
      * @throws \InvalidArgumentException when the owner-hash pair is invalid
      */
-    public function resolve( $hashToResolve )
+    public function resolve($hashToResolve)
     {
-        return RouteHash::where( 'hash_text', '=', $hashToResolve )->pluck( 'actual_path_text' ) ?: false;
+        return RouteHash::where('hash_text', '=', $hashToResolve)->pluck('actual_path_text') ?: false;
     }
 
     /**
@@ -53,26 +53,23 @@ class RouteHashingService extends BaseService implements RouteHasher
      *
      * @return int Returns the number of files that were spoiled.
      */
-    public static function expireFiles( $fsToCheck )
+    public static function expireFiles($fsToCheck)
     {
         /** @type Collection $_hashes */
-        $_hashes = RouteHash::where( 'expire_date', '<', DB::raw( 'CURRENT_DATE' ) )->get();
+        $_hashes = RouteHash::where('expire_date', '<', DB::raw('CURRENT_DATE'))->get();
         $_count = 0;
 
-        if ( !empty( $_hashes ) )
-        {
-            foreach ( $_hashes as $_hash )
-            {
-                if ( $fsToCheck->has( $_hash->actual_path_text ) )
-                {
-                    $fsToCheck->delete( $_hash->actual_path_text );
+        if (!empty($_hashes)) {
+            foreach ($_hashes as $_hash) {
+                if ($fsToCheck->has($_hash->actual_path_text)) {
+                    $fsToCheck->delete($_hash->actual_path_text);
                 }
 
                 $_hash->delete();
-                unset( $_hash );
+                unset($_hash);
             }
 
-            unset( $_hashes );
+            unset($_hashes);
         }
 
         return $_count;

@@ -18,12 +18,12 @@ class BasePacket
      *
      * @return array
      */
-    protected static function _create( $success = true, $contents = null, $statusCode = null )
+    protected static function _create($success = true, $contents = null, $statusCode = null)
     {
-        $_timestamp = microtime( true );
-        $_startTime = IfSet::get( $_SERVER, 'REQUEST_TIME_FLOAT', IfSet::get( $_SERVER, 'REQUEST_TIME', $_timestamp ) );
+        $_timestamp = microtime(true);
+        $_startTime = IfSet::get($_SERVER, 'REQUEST_TIME_FLOAT', IfSet::get($_SERVER, 'REQUEST_TIME', $_timestamp));
         $_elapsed = $_timestamp - $_startTime;
-        $_id = sha1( $_startTime . \Request::server( 'HTTP_HOST' ) . \Request::server( 'REMOTE_ADDR' ) );
+        $_id = sha1($_startTime . \Request::server('HTTP_HOST') . \Request::server('REMOTE_ADDR'));
 
         $_packet = [
             'status_code' => $statusCode,
@@ -31,16 +31,15 @@ class BasePacket
             'response'    => $contents,
             'request'     => [
                 'id'        => $_id,
-                'timestamp' => date( 'c', $_startTime ),
-                'elapsed'   => (float)number_format( $_elapsed, 4 ),
+                'timestamp' => date('c', $_startTime),
+                'elapsed'   => (float)number_format($_elapsed, 4),
                 'verb'      => \Request::method(),
                 'uri'       => \Request::url(),
-                'signature' => base64_encode( hash_hmac( 'sha256', $_id, $_id, true ) ),
+                'signature' => base64_encode(hash_hmac('sha256', $_id, $_id, true)),
             ],
         ];
 
-        if ( !$success )
-        {
+        if (!$success) {
             $_packet['error'] = [
                 'message' => null,
                 'code'    => $statusCode,

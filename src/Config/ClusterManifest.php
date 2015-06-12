@@ -109,15 +109,11 @@ class ClusterManifest implements Arrayable, Jsonable
      */
     public function fill(array $contents = [])
     {
-        \Log::debug('contents to fill: ' . print_r($contents,true));
-
         foreach ($contents as $_key => $_value) {
             if (array_key_exists($_key, $this->_template)) {
                 $this->_contents[$_key] = $_value;
             }
         }
-
-        \Log::debug('contents after fill: ' . print_r($this->_contents,true));
 
         return $this;
     }
