@@ -41,9 +41,8 @@ class ScalpelServiceProvider extends BaseServiceProvider
         //  Register object into instance container
         $this->singleton(
             static::IOC_NAME,
-            function ( $app )
-            {
-                return new ScalpelService( $app );
+            function ($app) {
+                return new ScalpelService($app);
             }
         );
     }

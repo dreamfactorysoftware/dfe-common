@@ -25,20 +25,20 @@ trait ElapsedTimer
      *
      * @return array ['result'=> closure_result, 'elapsed' => elapsed_time
      */
-    public function elapsed( \Closure $closure )
+    public function elapsed(\Closure $closure)
     {
-        $this->startTimer( $_id = spl_object_hash( $closure ) );
-        $_result = call_user_func( $closure );
+        $this->startTimer($_id = spl_object_hash($closure));
+        $_result = call_user_func($closure);
 
-        return ['result' => $_result, 'elapsed' => $this->stopTimer( $_id )];
+        return ['result' => $_result, 'elapsed' => $this->stopTimer($_id)];
     }
 
     /**
      * @param string $id An optional name for this timer.
      */
-    public function startTimer( $id = null )
+    public function startTimer($id = null)
     {
-        $_timers[$this->_etScrubTimerId( $id )] = ['start' => microtime( true ), 'end' => null, 'elapsed' => null];
+        $_timers[$this->_etScrubTimerId($id)] = ['start' => microtime(true), 'end' => null, 'elapsed' => null];
     }
 
     /**
@@ -46,14 +46,13 @@ trait ElapsedTimer
      *
      * @return bool|float Returns the elapsed time or false if no timer exists
      */
-    public function stopTimer( $id = null )
+    public function stopTimer($id = null)
     {
-        if ( false === ( $_timer = $this->getTimer( $id ) ) )
-        {
+        if (false === ($_timer = $this->getTimer($id))) {
             return false;
         }
 
-        $this->_timers[$id]['end'] = microtime( true );
+        $this->_timers[$id]['end'] = microtime(true);
 
         return $this->_timers[$id]['elapsed'] = $this->_timers[$id]['end'] - $this->_timers[$id]['start'];
     }
@@ -63,10 +62,9 @@ trait ElapsedTimer
      *
      * @return bool|array Returns the internal timer array structure or false if not found
      */
-    public function getTimer( $id = null )
+    public function getTimer($id = null)
     {
-        if ( array_key_exists( $_id = $this->_etScrubTimerId( $id ), $this->_timers ) )
-        {
+        if (array_key_exists($_id = $this->_etScrubTimerId($id), $this->_timers)) {
             return $this->_timers[$_id];
         }
 
@@ -80,10 +78,9 @@ trait ElapsedTimer
      *
      * @return bool|float The elapsed time of $id, or false if not found or timer still running
      */
-    public function getElapsedTime( $id = null )
+    public function getElapsedTime($id = null)
     {
-        if ( false === ( $_timer = $this->getTimer( $id ) ) || null === $_timer['end'] )
-        {
+        if (false === ($_timer = $this->getTimer($id)) || null === $_timer['end']) {
             return false;
         }
 
@@ -95,9 +92,9 @@ trait ElapsedTimer
      *
      * @return string
      */
-    protected function _etScrubTimerId( $id )
+    protected function _etScrubTimerId($id)
     {
-        return $id = $id ?: spl_object_hash( $this );
+        return $id = $id ?: spl_object_hash($this);
     }
 
 }

@@ -17,7 +17,7 @@ interface ResourceProvisionerAware
      *
      * @return ResourceProvisioner
      */
-    public function getProvisioner( $name = null );
+    public function getProvisioner($name = null);
 
     /**
      * Returns an instance of the storage provisioner $name
@@ -26,7 +26,7 @@ interface ResourceProvisionerAware
      *
      * @return ResourceProvisioner
      */
-    public function getStorageProvisioner( $name = null );
+    public function getStorageProvisioner($name = null);
 
     /**
      * Returns an instance of the db provisioner $name
@@ -35,5 +35,5 @@ interface ResourceProvisionerAware
      *
      * @return ResourceProvisioner
      */
-    public function getDatabaseProvisioner( $name = null );
+    public function getDatabaseProvisioner($name = null);
 }

@@ -37,10 +37,10 @@ abstract class BaseServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function singleton( $abstract, $concrete )
+    public function singleton($abstract, $concrete)
     {
         //  Register object into instance container
-        $this->app->singleton( $abstract ?: static::IOC_NAME, $concrete );
+        $this->app->singleton($abstract ?: static::IOC_NAME, $concrete);
     }
 
     /**
@@ -52,10 +52,10 @@ abstract class BaseServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function bind( $abstract, $concrete, $shared = false )
+    public function bind($abstract, $concrete, $shared = false)
     {
         //  Register object into instance container
-        $this->app->bind( $abstract ?: static::IOC_NAME, $concrete, $shared );
+        $this->app->bind($abstract ?: static::IOC_NAME, $concrete, $shared);
     }
 
     /**

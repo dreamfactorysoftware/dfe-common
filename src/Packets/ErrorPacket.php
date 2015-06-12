@@ -16,14 +16,13 @@ class ErrorPacket extends BasePacket
      *
      * @return array The packetized contents
      */
-    public static function make( $contents = null, $statusCode = Response::HTTP_NOT_FOUND, $message = null )
+    public static function make($contents = null, $statusCode = Response::HTTP_NOT_FOUND, $message = null)
     {
-        if ( $contents instanceof \Exception )
-        {
-            return static::makeFromException( $contents );
+        if ($contents instanceof \Exception) {
+            return static::makeFromException($contents);
         }
 
-        $_packet = static::_create( false, $contents, $statusCode );
+        $_packet = static::_create(false, $contents, $statusCode);
         $_packet['error']['message'] = $message;
 
         return $_packet;
@@ -35,14 +34,13 @@ class ErrorPacket extends BasePacket
      *
      * @return array
      */
-    public static function makeFromException( \Exception $exception, $contents = null )
+    public static function makeFromException(\Exception $exception, $contents = null)
     {
-        $_packet = static::make( $contents, $exception->getCode(), $exception->getMessage() );
+        $_packet = static::make($contents, $exception->getCode(), $exception->getMessage());
 
-        if ( in_array( $exception->getCode(), range( Response::HTTP_MULTIPLE_CHOICES, Response::HTTP_PERMANENTLY_REDIRECT ) ) )
-        {
-            if ( method_exists( $exception, 'getRedirectUri' ) )
-            {
+        if (in_array($exception->getCode(),
+            range(Response::HTTP_MULTIPLE_CHOICES, Response::HTTP_PERMANENTLY_REDIRECT))) {
+            if (method_exists($exception, 'getRedirectUri')) {
                 $_packet['location'] = $exception->getRedirectUri();
             }
         }
@@ -59,13 +57,12 @@ class ErrorPacket extends BasePacket
      *
      * @return array The packetized contents
      */
-    public static function create( $statusCode = Response::HTTP_NOT_FOUND, $message = null, $contents = null )
+    public static function create($statusCode = Response::HTTP_NOT_FOUND, $message = null, $contents = null)
     {
-        if ( $statusCode instanceof \Exception )
-        {
-            return static::makeFromException( $statusCode, $contents );
+        if ($statusCode instanceof \Exception) {
+            return static::makeFromException($statusCode, $contents);
         }
 
-        return static::make( $contents, $statusCode, $message );
+        return static::make($contents, $statusCode, $message);
     }
 }

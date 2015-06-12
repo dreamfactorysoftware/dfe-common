@@ -50,23 +50,21 @@ trait TemplateEmailQueueing
      * @return bool
      * @throws \Exception
      */
-    public function queueTemplateEmail( $template = MailTemplates::NOTIFICATION, $envelope, $body )
+    public function queueTemplateEmail($template = MailTemplates::NOTIFICATION, $envelope, $body)
     {
-        $_first = IfSet::get( $envelope, 'first-name' );
-        $_last = IfSet::get( $envelope, 'last-name' );
-        $_email = IfSet::get( $envelope, 'email' );
-        $_full = IfSet::get( $envelope, 'full-name', $_first . ' ' . $_last );
-        $_subject = IfSet::get( $envelope, 'subject' );
-        $_from = IfSet::get( $envelope, 'from', $this->_defaultFrom );
-        $_bccList = array_merge( $this->_defaultBcc, IfSet::get( $envelope, 'bcc', [] ) );
-        $_cc = IfSet::get( $envelope, 'cc', [] );
+        $_first = IfSet::get($envelope, 'first-name');
+        $_last = IfSet::get($envelope, 'last-name');
+        $_email = IfSet::get($envelope, 'email');
+        $_full = IfSet::get($envelope, 'full-name', $_first . ' ' . $_last);
+        $_subject = IfSet::get($envelope, 'subject');
+        $_from = IfSet::get($envelope, 'from', $this->_defaultFrom);
+        $_bccList = array_merge($this->_defaultBcc, IfSet::get($envelope, 'bcc', []));
+        $_cc = IfSet::get($envelope, 'cc', []);
 
         $_bcc = [];
 
-        if ( !empty( $_bccList ) )
-        {
-            foreach ( $_bccList as $_item )
-            {
+        if (!empty($_bccList)) {
+            foreach ($_bccList as $_item) {
                 $_bcc[$_item] = $this->_defaultPrefix . $_subject;
             }
         }
@@ -81,20 +79,16 @@ trait TemplateEmailQueueing
             'from'            => $_from,
         ];
 
-        if ( !empty( $_cc ) )
-        {
+        if (!empty($_cc)) {
             $_data['cc'] = $_cc;
         }
 
-        try
-        {
+        try {
             //@todo queue email
-            app( 'mail' )->send( $template, $_data );
+            app('mail')->send($template, $_data);
 
             return true;
-        }
-        catch ( \Exception $_ex )
-        {
+        } catch (\Exception $_ex) {
             throw $_ex;
         }
     }
@@ -105,7 +99,7 @@ trait TemplateEmailQueueing
      *
      * @return array
      */
-    protected function _createEnvelopeFromUser( User $user, $extras = [] )
+    protected function _createEnvelopeFromUser(User $user, $extras = [])
     {
         return array_merge(
             [

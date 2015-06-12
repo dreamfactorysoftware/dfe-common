@@ -15,9 +15,9 @@ class SuccessPacket extends BasePacket
      *
      * @return array The packetized contents
      */
-    public static function make( $contents = null, $statusCode = Response::HTTP_OK )
+    public static function make($contents = null, $statusCode = Response::HTTP_OK)
     {
-        return static::_create( true, $contents, $statusCode );
+        return static::_create(true, $contents, $statusCode);
     }
 
 }

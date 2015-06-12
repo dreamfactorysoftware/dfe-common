@@ -30,16 +30,14 @@ abstract class BaseUserProvider extends DatabaseUserProvider
      *
      * @return \Illuminate\Contracts\Auth\Authenticatable
      */
-    public function retrieveByCredentials( array $credentials )
+    public function retrieveByCredentials(array $credentials)
     {
         $_condition = [];
         $_data = [];
 
-        foreach ( $credentials as $_key => $_value )
-        {
-            if ( !str_contains( $_key, 'password' ) )
-            {
-                $_realKey = $this->_mapKey( $_key );
+        foreach ($credentials as $_key => $_value) {
+            if (!str_contains($_key, 'password')) {
+                $_realKey = $this->_mapKey($_key);
                 $_condition[] = $_realKey . ' = :' . $_realKey;
                 $_data[':' . $_realKey] = $_value;
             }
@@ -55,7 +53,7 @@ abstract class BaseUserProvider extends DatabaseUserProvider
         /** @type ServiceUser|User $_model */
         $_model = new $this->_userClass;
 
-        return $_model->whereRaw( implode( ' AND ', $_condition ), $_data )->first();
+        return $_model->whereRaw(implode(' AND ', $_condition), $_data)->first();
     }
 
     /**
@@ -65,12 +63,12 @@ abstract class BaseUserProvider extends DatabaseUserProvider
      *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
-    public function retrieveById( $identifier )
+    public function retrieveById($identifier)
     {
         /** @type ServiceUser|User $_model */
         $_model = new $this->_userClass;
 
-        return $_model->find( $identifier );
+        return $_model->find($identifier);
     }
 
     /**
@@ -81,12 +79,12 @@ abstract class BaseUserProvider extends DatabaseUserProvider
      *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
-    public function retrieveByToken( $identifier, $token )
+    public function retrieveByToken($identifier, $token)
     {
         /** @type ServiceUser|User $_model */
         $_model = new $this->_userClass;
 
-        return $_model->where( 'id', $identifier )->where( 'remember_token', $token )->first();
+        return $_model->where('id', $identifier)->where('remember_token', $token)->first();
     }
 
     /**
@@ -96,10 +94,9 @@ abstract class BaseUserProvider extends DatabaseUserProvider
      *
      * @return string
      */
-    protected function _mapKey( $key )
+    protected function _mapKey($key)
     {
-        switch ( $key )
-        {
+        switch ($key) {
             case 'password':
                 $key = 'password_text';
                 break;
@@ -124,8 +121,8 @@ abstract class BaseUserProvider extends DatabaseUserProvider
      *
      * @return bool
      */
-    public function validateCredentials( Authenticatable $user, array $credentials )
+    public function validateCredentials(Authenticatable $user, array $credentials)
     {
-        return $this->hasher->check( $credentials['password'], $user->getAuthPassword() );
+        return $this->hasher->check($credentials['password'], $user->getAuthPassword());
     }
 }

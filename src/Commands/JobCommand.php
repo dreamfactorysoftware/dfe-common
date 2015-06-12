@@ -56,19 +56,17 @@ abstract class JobCommand implements ShouldBeQueued
      */
     public function getHandler()
     {
-        if ( !$this->_handlerClass )
-        {
-            throw new \RuntimeException( 'No "handler" defined for this command.' );
+        if (!$this->_handlerClass) {
+            throw new \RuntimeException('No "handler" defined for this command.');
         }
 
         return $this->_handlerClass;
     }
 
-    public function setHandler( $handlerClass )
+    public function setHandler($handlerClass)
     {
-        if ( !class_exists( $handlerClass, false ) )
-        {
-            throw new \InvalidArgumentException( 'The class "' . $handlerClass . '" cannot be found or loaded."' );
+        if (!class_exists($handlerClass, false)) {
+            throw new \InvalidArgumentException('The class "' . $handlerClass . '" cannot be found or loaded."');
         }
 
         $this->_handlerClass = $handlerClass;
@@ -89,7 +87,7 @@ abstract class JobCommand implements ShouldBeQueued
      *
      * @return $this
      */
-    public function setOutput( OutputInterface $output )
+    public function setOutput(OutputInterface $output)
     {
         $this->_output = $output;
 
@@ -109,7 +107,7 @@ abstract class JobCommand implements ShouldBeQueued
      *
      * @return $this
      */
-    public function setInput( InputInterface $input )
+    public function setInput(InputInterface $input)
     {
         $this->_input = $input;
 

@@ -4,8 +4,8 @@ use DreamFactory\Enterprise\Common\Providers\ScalpelServiceProvider;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static string make( string $templateKey, array $data = [], array $mergeData = [] )
- * @method static string makeFromString( string $template, array $data = [], array $mergeData = [] )
+ * @method static string make(string $templateKey, array $data = [], array $mergeData = [])
+ * @method static string makeFromString(string $template, array $data = [], array $mergeData = [])
  */
 class Scalpel extends Facade
 {

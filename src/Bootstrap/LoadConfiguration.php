@@ -19,33 +19,31 @@ class LoadConfiguration
      *
      * @return void
      */
-    public function bootstrap( Application $app )
+    public function bootstrap(Application $app)
     {
         $items = [];
 
         // First we will see if we have a cache configuration file. If we do, we'll load
         // the configuration items from that file so that it is very quick. Otherwise
         // we will need to spin through every configuration file and load them all.
-        if ( file_exists( $cached = $app->getCachedConfigPath() ) )
-        {
+        if (file_exists($cached = $app->getCachedConfigPath())) {
             $items = require $cached;
 
             $loadedFromCache = true;
         }
 
-        $app->instance( 'config', $config = new Repository( $items ) );
+        $app->instance('config', $config = new Repository($items));
 
         // Next we will spin through all of the configuration files in the configuration
         // directory and load each one into the repository. This will make all of the
         // options available to the developer for use in various parts of this app.
-        if ( !isset( $loadedFromCache ) )
-        {
-            $this->loadConfigurationFiles( $app, $config );
+        if (!isset($loadedFromCache)) {
+            $this->loadConfigurationFiles($app, $config);
         }
 
-        date_default_timezone_set( $config['app.timezone'] );
+        date_default_timezone_set($config['app.timezone']);
 
-        mb_internal_encoding( 'UTF-8' );
+        mb_internal_encoding('UTF-8');
     }
 
     /**
@@ -56,16 +54,15 @@ class LoadConfiguration
      *
      * @return void
      */
-    protected function loadConfigurationFiles( Application $app, RepositoryContract $config )
+    protected function loadConfigurationFiles(Application $app, RepositoryContract $config)
     {
-        $_files = $this->getConfigurationFiles( $app );
+        $_files = $this->getConfigurationFiles($app);
 
-        foreach ( $_files as $key => $path )
-        {
+        foreach ($_files as $key => $path) {
             /** @noinspection PhpIncludeInspection */
             $_data = require $path;
 
-            $config->set( $key, $_data );
+            $config->set($key, $_data);
         }
     }
 
@@ -76,16 +73,15 @@ class LoadConfiguration
      *
      * @return array
      */
-    protected function getConfigurationFiles( Application $app )
+    protected function getConfigurationFiles(Application $app)
     {
         $files = [];
 
-        $_files = Finder::create()->files()->name( '*.php' )->in( $app->configPath() );
+        $_files = Finder::create()->files()->name('*.php')->in($app->configPath());
 
-        foreach ( $_files as $file )
-        {
-            $nesting = $this->getConfigurationNesting( $file );
-            $_key = $nesting . basename( $file->getRealPath(), '.php' );
+        foreach ($_files as $file) {
+            $nesting = $this->getConfigurationNesting($file);
+            $_key = $nesting . basename($file->getRealPath(), '.php');
 
             $files[$_key] = $file->getRealPath();
         }
@@ -100,13 +96,12 @@ class LoadConfiguration
      *
      * @return string
      */
-    private function getConfigurationNesting( SplFileInfo $file )
+    private function getConfigurationNesting(SplFileInfo $file)
     {
-        $directory = dirname( $file->getRealPath() );
+        $directory = dirname($file->getRealPath());
 
-        if ( $tree = trim( str_replace( config_path(), '', $directory ), DIRECTORY_SEPARATOR ) )
-        {
-            $tree = str_replace( DIRECTORY_SEPARATOR, '.', $tree ) . '.';
+        if ($tree = trim(str_replace(config_path(), '', $directory), DIRECTORY_SEPARATOR)) {
+            $tree = str_replace(DIRECTORY_SEPARATOR, '.', $tree) . '.';
         }
 
         return $tree;

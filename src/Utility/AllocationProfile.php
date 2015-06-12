@@ -27,11 +27,10 @@ class AllocationProfile
      *                           "$feature" allocated to this profile. A value of null or zero represents "no limit" on the min/max allocation. If a
      *                           single value is specified, both the min and max are set to this value. Examples:
      */
-    public function __construct( $allocations = [] )
+    public function __construct($allocations = [])
     {
-        foreach ( $allocations as $_feature => $_minMax )
-        {
-            $this->allocate( $_feature, $_minMax );
+        foreach ($allocations as $_feature => $_minMax) {
+            $this->allocate($_feature, $_minMax);
         }
     }
 
@@ -49,16 +48,14 @@ class AllocationProfile
      *
      * @return $this
      */
-    public function allocate( $feature, $minMax = [0, 0] )
+    public function allocate($feature, $minMax = [0, 0])
     {
-        if ( !AllocationFeatures::contains( $feature ) )
-        {
-            throw new \InvalidArgumentException( 'The feature "' . $feature . '" is not valid.' );
+        if (!AllocationFeatures::contains($feature)) {
+            throw new \InvalidArgumentException('The feature "' . $feature . '" is not valid.');
         }
 
         //  Convert single-value input to array
-        if ( !is_array( $minMax ) && is_numeric( $minMax ) )
-        {
+        if (!is_array($minMax) && is_numeric($minMax)) {
             $minMax = [$minMax, $minMax];
         }
 
@@ -80,6 +77,6 @@ class AllocationProfile
      */
     public function __toString()
     {
-        return JsonFile::encode( $this->toArray() );
+        return JsonFile::encode($this->toArray());
     }
 }

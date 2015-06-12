@@ -20,7 +20,7 @@ interface StorageMounter
      *
      * @return Filesystem
      */
-    public function mount( $name, $options = [] );
+    public function mount($name, $options = []);
 
     /**
      * Unmount the filesystem "$name" as defined in "config/filesystems.php"
@@ -30,5 +30,5 @@ interface StorageMounter
      *
      * @return StorageMounter
      */
-    public function unmount( $name, $options = [] );
+    public function unmount($name, $options = []);
 }

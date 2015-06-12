@@ -16,7 +16,7 @@ interface ResourceProvisioner
      *
      * @return mixed
      */
-    public function provision( $request, $options = [] );
+    public function provision($request, $options = []);
 
     /**
      * @param \DreamFactory\Enterprise\Services\Provisioners\ProvisioningRequest|mixed $request
@@ -24,5 +24,5 @@ interface ResourceProvisioner
      *
      * @return mixed
      */
-    public function deprovision( $request, $options = [] );
+    public function deprovision($request, $options = []);
 }

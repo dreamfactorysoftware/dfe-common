@@ -17,15 +17,14 @@ trait CommonLogging
     public function bootstrap()
     {
         /** @noinspection PhpUndefinedFieldInspection */
-        $_straps = array_flip( $this->bootstrappers );
+        $_straps = array_flip($this->bootstrappers);
 
         /** @noinspection PhpUndefinedFieldInspection */
-        $_oldClass = config( 'dfe.common.logging.old-log-config-class' );
+        $_oldClass = config('dfe.common.logging.old-log-config-class');
         /** @noinspection PhpUndefinedFieldInspection */
-        $_newClass = config( 'dfe.common.logging.new-log-config-class' );
+        $_newClass = config('dfe.common.logging.new-log-config-class');
 
-        if ( array_key_exists( $_oldClass, $_straps ) )
-        {
+        if (array_key_exists($_oldClass, $_straps)) {
             /** @noinspection PhpUndefinedFieldInspection */
             $this->bootstrappers[$_straps[$_oldClass]] = $_newClass;
         }

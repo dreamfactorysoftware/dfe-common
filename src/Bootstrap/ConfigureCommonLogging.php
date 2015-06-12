@@ -31,57 +31,51 @@ class ConfigureCommonLogging extends ConfigureLogging
     /**
      * @param Application $app
      */
-    public function bootstrap( Application $app )
+    public function bootstrap(Application $app)
     {
-        if ( isset( $app['config'] ) )
-        {
-            error_log( 'yep' );
-            $this->_logFileName = $app['config']->get( 'dfe.common.logging.log-file-name' );
+        if (isset($app['config'])) {
+            error_log('yep');
+            $this->_logFileName = $app['config']->get('dfe.common.logging.log-file-name');
 
-            if ( null !== ( $this->_logPath = $app['config']->get( 'dfe.common.logging.log-path' ) ) )
-            {
-                $this->_logPath = rtrim( $this->_logPath, ' ' . DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
+            if (null !== ($this->_logPath = $app['config']->get('dfe.common.logging.log-path'))) {
+                $this->_logPath = rtrim($this->_logPath, ' ' . DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
             }
 
             $this->_useCommonLogging =
-                ( !empty( $this->_logPath ) && !empty( $this->_logFileName ) )
-                    ? FileSystem::ensurePath( $this->_logPath )
+                (!empty($this->_logPath) && !empty($this->_logFileName))
+                    ? FileSystem::ensurePath($this->_logPath)
                     : false;
-        }
-        else
-        {
-            error_log( 'nope' );
+        } else {
+            error_log('nope');
         }
 
-        parent::bootstrap( $app );
+        parent::bootstrap($app);
     }
 
     /** @inheritdoc */
-    protected function configureSingleHandler( Application $app, Writer $log )
+    protected function configureSingleHandler(Application $app, Writer $log)
     {
-        if ( !$this->useCommonLogging() )
-        {
-            parent::configureSingleHandler( $app, $log );
+        if (!$this->useCommonLogging()) {
+            parent::configureSingleHandler($app, $log);
 
             return;
         }
 
         $_file = $this->_logPath . $this->_logFileName;
-        $log->useFiles( $_file );
+        $log->useFiles($_file);
     }
 
     /** @inheritdoc */
-    protected function configureDailyHandler( Application $app, Writer $log )
+    protected function configureDailyHandler(Application $app, Writer $log)
     {
-        if ( !$this->useCommonLogging() )
-        {
-            parent::configureDailyHandler( $app, $log );
+        if (!$this->useCommonLogging()) {
+            parent::configureDailyHandler($app, $log);
 
             return;
         }
 
         $_file = $this->_logPath . $this->_logFileName;
-        $log->useDailyFiles( $_file, $app->make( 'config' )->get( 'app.log_max_files', 5 ) );
+        $log->useDailyFiles($_file, $app->make('config')->get('app.log_max_files', 5));
     }
 
     /**

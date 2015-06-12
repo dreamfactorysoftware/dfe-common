@@ -38,9 +38,8 @@ class PacketServiceProvider extends BaseServiceProvider
         //  Register object into instance container
         $this->singleton(
             static::IOC_NAME,
-            function ( $app )
-            {
-                return new PacketService( $app );
+            function ($app) {
+                return new PacketService($app);
             }
         );
     }

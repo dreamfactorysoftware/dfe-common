@@ -14,9 +14,8 @@ class ConsoleAuthProvider extends ServiceProvider
     {
         $this->app['auth']->extend(
             'console',
-            function ()
-            {
-                return new ConsoleUserProvider( $this->app['db']->connection(), $this->app['hash'], 'service_user_t' );
+            function () {
+                return new ConsoleUserProvider($this->app['db']->connection(), $this->app['hash'], 'service_user_t');
             }
         );
     }

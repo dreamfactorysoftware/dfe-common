@@ -30,18 +30,18 @@ class LibraryAssetsProvider extends BaseServiceProvider
     /** @inheritdoc */
     public function boot()
     {
-        $_libBase = realpath( __DIR__ . '/../../' );
+        $_libBase = realpath(__DIR__ . '/../../');
         $_configPath = $_libBase . '/config';
         $_resourcesPath = $_libBase . '/resources';
 
         //  Views
-        $this->loadViewsFrom( $_resourcesPath . '/views', static::IOC_NAME );
+        $this->loadViewsFrom($_resourcesPath . '/views', static::IOC_NAME);
 
         //  Config
-        $this->publishes( [$_configPath . '/' . static::CONFIG_NAME => config_path( static::CONFIG_NAME ),], 'config' );
+        $this->publishes([$_configPath . '/' . static::CONFIG_NAME => config_path(static::CONFIG_NAME),], 'config');
 
         //  And assets...
-        $this->publishes( [$_resourcesPath . '/assets' => public_path( static::ASSET_PUBLISH_PATH )], 'public' );
+        $this->publishes([$_resourcesPath . '/assets' => public_path(static::ASSET_PUBLISH_PATH)], 'public');
     }
 
     /** @inheritdoc */

@@ -17,14 +17,14 @@ interface ManagerContract
      *
      * @return ManagerContract
      */
-    public function manage( $tag, $thing, $shared = false );
+    public function manage($tag, $thing, $shared = false);
 
     /**
      * @param string $tag The tag to remove from the manager
      *
      * @return ManagerContract
      */
-    public function unmanage( $tag );
+    public function unmanage($tag);
 
     /**
      * Returns the thing assigned to $tag.
@@ -34,5 +34,5 @@ interface ManagerContract
      * @return mixed
      * @throws \InvalidArgumentException when nothing is managed under $tag
      */
-    public function resolve( $tag );
+    public function resolve($tag);
 }

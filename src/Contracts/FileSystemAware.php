@@ -15,5 +15,5 @@ interface FileSystemAware
      *
      * @return $this
      */
-    public function setFileSystem( FilesystemInterface $fileSystem );
+    public function setFileSystem(FilesystemInterface $fileSystem);
 }

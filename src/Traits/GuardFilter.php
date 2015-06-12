@@ -26,7 +26,7 @@ trait GuardFilter
     /**
      * @param Guard $guard
      */
-    public function __construct( Guard $guard )
+    public function __construct(Guard $guard)
     {
         $this->_guard = $guard;
     }
@@ -39,7 +39,7 @@ trait GuardFilter
      *
      * @return bool
      */
-    public function check( $request, Closure $next )
+    public function check($request, Closure $next)
     {
         return $this->_guard && $this->_guard->check();
     }
