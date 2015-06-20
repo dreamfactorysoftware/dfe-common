@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Utility;
+<?php namespace DreamFactory\Enterprise\Common\Utility;
 
 use DreamFactory\Library\Utility\JsonFile;
 
