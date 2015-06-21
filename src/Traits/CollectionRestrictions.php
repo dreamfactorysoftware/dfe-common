@@ -1,8 +1,6 @@
-<?php namespace DreamFactory\Enterprise\Common\Utility;
+<?php namespace DreamFactory\Enterprise\Common\Traits;
 
-use Illuminate\Support\Collection;
-
-class RestrictedCollection extends Collection
+trait CollectionRestrictions
 {
     //******************************************************************************
     //* Members
@@ -48,6 +46,7 @@ class RestrictedCollection extends Collection
      */
     public function toArray()
     {
+        /** @noinspection PhpUndefinedClassInspection */
         return $this->restrict(parent::toArray());
     }
 

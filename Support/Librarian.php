@@ -1,20 +1,22 @@
-<?php namespace DreamFactory\Enterprise\Common\Utility;
+<?php namespace DreamFactory\Enterprise\Common\Support;
 
 use DreamFactory\Enterprise\Common\Contracts\Archivist;
 use DreamFactory\Enterprise\Common\Contracts\Curated;
 use DreamFactory\Enterprise\Common\Contracts\Custodial;
+use DreamFactory\Enterprise\Common\Traits\CollectionRestrictions;
 use DreamFactory\Enterprise\Common\Traits\Curator;
 use DreamFactory\Enterprise\Common\Traits\Custodian;
 use DreamFactory\Library\Utility\Json;
+use Illuminate\Support\Collection;
 use League\Flysystem\Filesystem;
 
-abstract class Librarian extends RestrictedCollection implements Custodial, Curated, Archivist
+abstract class Librarian extends Collection implements Custodial, Curated, Archivist
 {
     //******************************************************************************
     //* Traits
     //******************************************************************************
 
-    use Custodian, Curator;
+    use Custodian, Curator, CollectionRestrictions;
 
     //******************************************************************************
     //* Methods
