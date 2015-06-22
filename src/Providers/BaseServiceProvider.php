@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Providers;
+<?php namespace DreamFactory\Enterprise\Common\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -64,6 +63,25 @@ abstract class BaseServiceProvider extends ServiceProvider
     public function provides()
     {
         return [static::IOC_NAME];
+    }
+
+    /**
+     * Returns the service configuration either based on class name or argument name. Override method to provide custom configurations
+     *
+     * @param string|null $name
+     * @param array       $default
+     *
+     * @return array
+     */
+    public static function getServiceConfig($name = null, $default = [])
+    {
+        if (null === ($_name = $name)) {
+            $_mirror = new \ReflectionClass(get_called_class());
+            $_name = snake_case(str_ireplace('ServiceProvider', null, $_mirror->getShortName()));
+            unset($_mirror);
+        }
+
+        return config($_name, $default);
     }
 
     /**
