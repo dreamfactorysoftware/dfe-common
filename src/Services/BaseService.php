@@ -2,15 +2,14 @@
 namespace DreamFactory\Enterprise\Common\Services;
 
 use DreamFactory\Enterprise\Common\Traits\Lumberjack;
-use DreamFactory\Library\Utility\JsonFile;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Support\Facades\Log;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 
 /**
  * A base class for services that are logger-aware
  */
-class BaseService implements LoggerInterface
+class BaseService implements LoggerInterface, LoggerAwareInterface
 {
     //******************************************************************************
     //* Traits
@@ -39,7 +38,7 @@ class BaseService implements LoggerInterface
     public function __construct($app = null)
     {
         $this->app = $app;
-        $this->logger = Log::getMonolog();
+        $this->setLogger(\Log::getMonolog());
 
         $this->boot();
     }
@@ -50,30 +49,7 @@ class BaseService implements LoggerInterface
     public function boot()
     {
         //  Called after constructor
-    }
 
-    /**
-     * @param mixed $object
-     * @param int   $options
-     *
-     * @return string
-     */
-    protected function _jsonEncode($object, $options = JsonFile::DEFAULT_JSON_ENCODE_OPTIONS)
-    {
-        return JsonFile::encode($object, $options);
-    }
-
-    /**
-     * @param string $json
-     * @param bool   $asArray
-     * @param int    $depth
-     * @param int    $options
-     *
-     * @return array|\stdClass
-     */
-    protected function _jsonDecode($json, $asArray = true, $depth = 512, $options = 0)
-    {
-        return JsonFile::decode($json, $asArray, $depth, $options);
     }
 
     /**

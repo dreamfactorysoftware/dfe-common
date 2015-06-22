@@ -38,4 +38,12 @@ interface Custodial
      * @return array
      */
     public function getActivities();
+
+    /**
+     * @param string $where The key in the manifest to place the custody logs
+     * @param bool   $flush if true, any cached entries are cleared
+     *
+     * @return $this
+     */
+    public function addCustodyLogs($where, $flush = false);
 }

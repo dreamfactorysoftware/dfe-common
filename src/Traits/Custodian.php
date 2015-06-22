@@ -6,19 +6,29 @@
 trait Custodian /** @implements \DreamFactory\Enterprise\Common\Contracts\Custodial */
 {
     //******************************************************************************
+    //* Members
+    //******************************************************************************
+
+    /**
+     * @type array Data to write to manifest
+     */
+    private $custodianActivity = [];
+
+    //******************************************************************************
     //* Methods
     //******************************************************************************
 
     /** @inheritdoc */
     public function addActivity($activity, $extras = null)
     {
-        $_log = $this->get(static::CUSTODY_LOG_KEY, []);
+        !isset($this->custodianActivity) && ($this->custodianActivity = []);
+        !isset($this->custodianActivity[$activity]) && ($this->custodianActivity[$activity] = []);
 
-        !is_array($_log) && $_log = [$_log];
-        !isset($_log[$activity]) && $_log[$activity] = [];
-        $_log[$activity][] = array_merge($extras, ['time' => microtime(true), 'timestamp' => date('c')]);
-
-        $this->put(static::CUSTODY_LOG_KEY, $_log);
+        $this->custodianActivity[$activity][] =
+            array_merge(
+                $extras,
+                ['time' => microtime(true), 'timestamp' => date('c')]
+            );
 
         return $this;
     }
@@ -26,6 +36,18 @@ trait Custodian /** @implements \DreamFactory\Enterprise\Common\Contracts\Custod
     /** @inheritdoc */
     public function getActivities()
     {
-        return $this->get(static::CUSTODY_LOG_KEY, []);
+        return $this->custodianActivity;
     }
+
+    /** @inheritdoc */
+    public function addCustodyLogs($where, $flush = false)
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->set($where, $this->getActivities());
+
+        $flush && ($this->custodianActivity = []);
+
+        return $this;
+    }
+
 }

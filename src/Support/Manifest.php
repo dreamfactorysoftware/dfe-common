@@ -131,7 +131,7 @@ abstract class Manifest implements Arrayable, Jsonable
             }
         }
 
-        $this->addActivity('read');
+        $this->addActivity('read')->addCustodyLogs(static::CUSTODY_LOG_KEY);
 
         //  If not resetting, return data read
         if (!$reset) {
@@ -160,7 +160,7 @@ abstract class Manifest implements Arrayable, Jsonable
             throw new FileException('A manifest already exists and $overwrite is set to "FALSE".');
         }
 
-        $this->addActivity('write');
+        $this->addActivity('write')->addCustodyLogs(static::CUSTODY_LOG_KEY, true);
 
         return $this->filesystem->put($this->manifest, $this->contents->toJson());
     }
@@ -188,7 +188,9 @@ abstract class Manifest implements Arrayable, Jsonable
      */
     public function set($key, $value)
     {
-        return $this->contents->put($key, $value);
+        $this->contents->put($key, $value);
+
+        return $this;
     }
 
     /** @inheritdoc */
