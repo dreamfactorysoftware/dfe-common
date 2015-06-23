@@ -6,7 +6,7 @@ use DreamFactory\Enterprise\Database\Models\AppKey;
 /**
  * A trait that adds signature verification functionality
  *
- * Be sure to call _setSigningCredentials() before trying to verify
+ * Be sure to call setSigningCredentials() before trying to verify
  */
 trait VerifiesSignatures
 {
@@ -39,7 +39,7 @@ trait VerifiesSignatures
      *
      * @return $this
      */
-    protected function _setSigningCredentials($clientId, $clientSecret)
+    protected function setSigningCredentials($clientId, $clientSecret)
     {
         $_key = AppKey::byClientId($clientId)->first();
 
