@@ -30,7 +30,7 @@ interface Custodial
      *
      * @return $this
      */
-    public function addActivity($activity, $extras = null);
+    public function addActivity($activity, array $extras = null);
 
     /**
      * Get the logged activity

@@ -19,16 +19,13 @@ trait Custodian /** @implements \DreamFactory\Enterprise\Common\Contracts\Custod
     //******************************************************************************
 
     /** @inheritdoc */
-    public function addActivity($activity, $extras = null)
+    public function addActivity($activity, array $extras = null)
     {
         !isset($this->custodianActivity) && ($this->custodianActivity = []);
         !isset($this->custodianActivity[$activity]) && ($this->custodianActivity[$activity] = []);
 
         $this->custodianActivity[$activity][] =
-            array_merge(
-                $extras,
-                ['time' => microtime(true), 'timestamp' => date('c')]
-            );
+            array_merge(is_array($extras) ? $extras : [], ['time' => microtime(true), 'timestamp' => date('c')]);
 
         return $this;
     }
