@@ -1,7 +1,6 @@
 <?php namespace DreamFactory\Enterprise\Common\Support;
 
 use DreamFactory\Enterprise\Common\Enums\ManifestTypes;
-use DreamFactory\Library\Utility\FlyJson;
 use League\Flysystem\Filesystem;
 
 /**

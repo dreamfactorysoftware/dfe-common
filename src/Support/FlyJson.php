@@ -1,8 +1,9 @@
-<?php namespace DreamFactory\Library\Utility;
+<?php namespace DreamFactory\Enterprise\Common\Support;
 
 use DreamFactory\Enterprise\Common\Contracts\Custodial;
 use DreamFactory\Enterprise\Common\Traits\Custodian;
 use DreamFactory\Library\Utility\Exceptions\FileException;
+use DreamFactory\Library\Utility\Json;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Collection;
