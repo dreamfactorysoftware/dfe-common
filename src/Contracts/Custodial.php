@@ -10,13 +10,9 @@ interface Custodial
     //******************************************************************************
 
     /**
-     * @type string The key in an archive containing the custodial information
-     */
-    const CUSTODY_KEY = '_custodial';
-    /**
      * @type string The key in an archive containing the activity logs
      */
-    const CUSTODY_LOG_KEY = '_custodial.activity';
+    const CUSTODY_LOG_KEY = '_custodian';
 
     //******************************************************************************
     //* Methods
@@ -40,10 +36,10 @@ interface Custodial
     public function getActivities();
 
     /**
-     * @param string $where The key in the manifest to place the custody logs
+     * @param string $where The key in the manifest to place the custody logs. Defaults to "_custodian".
      * @param bool   $flush if true, any cached entries are cleared
      *
      * @return $this
      */
-    public function addCustodyLogs($where, $flush = false);
+    public function addCustodyLogs($where = Custodial::CUSTODY_LOG_KEY, $flush = false);
 }

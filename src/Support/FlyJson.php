@@ -119,7 +119,20 @@ class FlyJson extends Json implements Arrayable, Jsonable, Custodial
             $contents = [];
         }
 
-        $this->contents = new Collection(array_merge($existing, $contents));
+        $_items = array_merge($existing, $contents);
+
+        if (empty($this->template)) {
+            $this->contents = new Collection($_items);
+        } else {
+            //  Load only keys that exist in the template
+            $this->contents = new Collection();
+
+            foreach ($_items as $_key => $_value) {
+                if (array_key_exists($_key, $this->template)) {
+                    $this->contents->put($_key, $_value);
+                }
+            }
+        }
 
         return $this;
     }

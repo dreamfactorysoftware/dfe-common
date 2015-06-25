@@ -1,0 +1,266 @@
+{
+  "storage-map": {
+    "zone":      "ec2.us-east-1a",
+    "partition": "91",
+    "root-hash": "91fa21144fac2285f7ce9f5a2b534812d5f8a00298e8c07c76f38c25ba283176"
+  },
+  "paths":       {
+    "private-path":       "bender\/.private",
+    "owner-private-path": ".private",
+    "snapshot-path-name": ".private\/snapshots"
+  },
+  "db":          {
+    "bender": {
+      "id":                    "db-gha-1",
+      "host":                  "localhost",
+      "port":                  "3306",
+      "username":              "ud41d172798021eb",
+      "password":              "ae92aa0feb812dd5c1a4f55c4658f353e1bc53d6",
+      "driver":                "mysql",
+      "default-database-name": "",
+      "database":              "bender",
+      "charset":               "utf8",
+      "collation":             "utf8_unicode_ci",
+      "prefix":                "",
+      "db-server-id":          "db-gha-1"
+    }
+  },
+  "env":         {
+    "cluster-id":       null,
+    "default-domain":   ".dfe.3wipes.com",
+    "signature-method": "sha256",
+    "storage-root":     "\/data\/storage",
+    "console-api-url":  "http:\/\/dfe-console.local\/api\/v1\/ops\/",
+    "console-api-key":  "super-secret-key",
+    "client-id":        "8641315fd089d541c060c82d2365becbd08d807a37cb2f7f06f79f604c77b911",
+    "client-secret":    "1f7f5b0e6d31e0a7ea6d05504152212bc0549cc448a36624c99ce1e0b1484f5e"
+  },
+  "metadata":    {
+    "db":    {
+      "bender": {
+        "id":                    "db-gha-1",
+        "host":                  "localhost",
+        "port":                  "3306",
+        "username":              "ud41d172798021eb",
+        "password":              "ae92aa0feb812dd5c1a4f55c4658f353e1bc53d6",
+        "driver":                "mysql",
+        "default-database-name": "",
+        "database":              "bender",
+        "charset":               "utf8",
+        "collation":             "utf8_unicode_ci",
+        "prefix":                "",
+        "db-server-id":          "db-gha-1"
+      }
+    },
+    "paths": {
+      "private-path":       "bender\/.private",
+      "owner-private-path": ".private",
+      "snapshot-path-name": ".private\/snapshots"
+    },
+    "env":   {
+      "cluster-id":       "cluster-gha-1",
+      "default-domain":   ".dfe.3wipes.com",
+      "signature-method": "sha256",
+      "storage-root":     "\/data\/storage",
+      "console-api-url":  "http:\/\/dfe-console.local\/api\/v1\/ops\/",
+      "console-api-key":  "super-secret-key",
+      "client-id":        "fe567e64ce0c59e14b452fc9176bdac8ac1aa5af25310bcfba2584b29ca1b927",
+      "client-secret":    "f0f0f937d77e2eb649c764b7da341d370c2c711b359a5514d3914be9c0c3a533"
+    }
+  },
+  "_operations": {
+    "2015-06-24T19:45:58-04:00": {
+      "success":  true,
+      "instance": {
+        "user_id":            22,
+        "instance_id_text":   "bender",
+        "instance_name_text": "bender",
+        "guest_location_nbr": 2,
+        "cluster_id":         4,
+        "db_server_id":       12,
+        "app_server_id":      14,
+        "web_server_id":      13,
+        "state_nbr":          2,
+        "trial_instance_ind": 1,
+        "storage_id_text":    "4559A34E-F731-28A5-661C-409C374414D6",
+        "instance_data_text": {
+          "storage-map": {
+            "zone":      "ec2.us-east-1a",
+            "partition": "91",
+            "root-hash": "91fa21144fac2285f7ce9f5a2b534812d5f8a00298e8c07c76f38c25ba283176"
+          },
+          "paths":       {
+            "private-path":       "bender\/.private",
+            "owner-private-path": ".private",
+            "snapshot-path-name": ".private\/snapshots"
+          },
+          "db":          {
+            "bender": {
+              "id":                    "db-gha-1",
+              "host":                  "localhost",
+              "port":                  "3306",
+              "username":              "ud41d172798021eb",
+              "password":              "ae92aa0feb812dd5c1a4f55c4658f353e1bc53d6",
+              "driver":                "mysql",
+              "default-database-name": "",
+              "database":              "bender",
+              "charset":               "utf8",
+              "collation":             "utf8_unicode_ci",
+              "prefix":                "",
+              "db-server-id":          "db-gha-1"
+            }
+          },
+          "env":         {
+            "cluster-id":       null,
+            "default-domain":   ".dfe.3wipes.com",
+            "signature-method": "sha256",
+            "storage-root":     "\/data\/storage",
+            "console-api-url":  "http:\/\/dfe-console.local\/api\/v1\/ops\/",
+            "console-api-key":  "super-secret-key",
+            "client-id":        "8641315fd089d541c060c82d2365becbd08d807a37cb2f7f06f79f604c77b911",
+            "client-secret":    "1f7f5b0e6d31e0a7ea6d05504152212bc0549cc448a36624c99ce1e0b1484f5e"
+          },
+          "metadata":    {
+            "db":    {
+              "bender": {
+                "id":                    "db-gha-1",
+                "host":                  "localhost",
+                "port":                  "3306",
+                "username":              "ud41d172798021eb",
+                "password":              "ae92aa0feb812dd5c1a4f55c4658f353e1bc53d6",
+                "driver":                "mysql",
+                "default-database-name": "",
+                "database":              "bender",
+                "charset":               "utf8",
+                "collation":             "utf8_unicode_ci",
+                "prefix":                "",
+                "db-server-id":          "db-gha-1"
+              }
+            },
+            "paths": {
+              "private-path":       "bender\/.private",
+              "owner-private-path": ".private",
+              "snapshot-path-name": ".private\/snapshots"
+            },
+            "env":   {
+              "cluster-id":       "cluster-gha-1",
+              "default-domain":   ".dfe.3wipes.com",
+              "signature-method": "sha256",
+              "storage-root":     "\/data\/storage",
+              "console-api-url":  "http:\/\/dfe-console.local\/api\/v1\/ops\/",
+              "console-api-key":  "super-secret-key",
+              "client-id":        "fe567e64ce0c59e14b452fc9176bdac8ac1aa5af25310bcfba2584b29ca1b927",
+              "client-secret":    "f0f0f937d77e2eb649c764b7da341d370c2c711b359a5514d3914be9c0c3a533"
+            }
+          }
+        },
+        "lmod_date":          "2015-06-24 19:45:58",
+        "create_date":        "2015-06-24 19:45:57",
+        "id":                 27,
+        "db_host_text":       "localhost",
+        "db_port_nbr":        "3306",
+        "db_name_text":       "bender",
+        "db_user_text":       "ud41d172798021eb",
+        "db_password_text":   "ae92aa0feb812dd5c1a4f55c4658f353e1bc53d6",
+        "ready_state_nbr":    0,
+        "platform_state_nbr": 0,
+        "start_date":         "2015-06-24T19:45:58-04:00",
+        "end_date":           null,
+        "terminate_date":     null,
+        "provision_ind":      1,
+        "deprovision_ind":    0,
+        "user":               {
+          "id":                     "22",
+          "email_addr_text":        "jerryablan@dreamfactory.com",
+          "password_text":          "$2y$10$eHnZZbiJFpaA8o9dJ2lY4u3RCowLjrQredZuojsu\/GJP4BqiC1vRy",
+          "remember_token":         "TnalHkwhmA5ny1RyBiKR1sxWzouqEj7FyIpNK3H0YwxWeLgUKhk5xQUrk3EX",
+          "first_name_text":        "Jerry",
+          "last_name_text":         "Ablan",
+          "nickname_text":          "Jerry",
+          "api_token_text":         "8641315fd089d541c060c82d2365becbd08d807a37cb2f7f06f79f604c77b911",
+          "storage_id_text":        "C9FF457C-E238-B2E4-7692-5BD647CF7858",
+          "external_id_text":       null,
+          "external_password_text": null,
+          "owner_id":               null,
+          "owner_type_nbr":         null,
+          "company_name_text":      null,
+          "title_text":             null,
+          "city_text":              null,
+          "state_province_text":    null,
+          "country_text":           null,
+          "postal_code_text":       null,
+          "phone_text":             null,
+          "opt_in_ind":             "1",
+          "agree_ind":              "0",
+          "last_login_date":        null,
+          "last_login_ip_text":     null,
+          "admin_ind":              "0",
+          "activate_ind":           "0",
+          "active_ind":             "1",
+          "create_date":            "2015-05-09 16:34:15",
+          "lmod_date":              "2015-05-09 16:34:15"
+        },
+        "db_server":          {
+          "id":             12,
+          "server_type_id": 1,
+          "server_id_text": "db-gha-1",
+          "host_text":      "localhost",
+          "mount_id":       2,
+          "config_text":    {
+            "id":                    "db-gha-1",
+            "host":                  "localhost",
+            "port":                  3306,
+            "username":              "cerberus",
+            "password":              "KlL8ZF-E-rBFw_h9ygQZh3ZF",
+            "driver":                "mysql",
+            "default-database-name": ""
+          },
+          "create_date":    "2015-05-18 16:18:54",
+          "lmod_date":      "2015-05-18 17:38:56"
+        },
+        "web_server":         {
+          "id":             13,
+          "server_type_id": 2,
+          "server_id_text": "web-gha-1",
+          "host_text":      "localhost",
+          "mount_id":       2,
+          "config_text":    null,
+          "create_date":    "2015-05-18 16:19:50",
+          "lmod_date":      "2015-05-18 17:38:56",
+          "mount":          {
+            "id":              "2",
+            "mount_type_nbr":  "0",
+            "mount_id_text":   "mount-local-1",
+            "owner_id":        "0",
+            "owner_type_nbr":  null,
+            "root_path_text":  "\/data\/storage",
+            "config_text":     {"disk": "local"},
+            "last_mount_date": null,
+            "create_date":     "2015-04-04 14:05:59",
+            "lmod_date":       "2015-04-04 14:05:49"
+          }
+        },
+        "guest":              null
+      },
+      "log":      [],
+      "result":   {
+        "host":                "bender.dfe.3wipes.com",
+        "storage_key":         "4559A34E-F731-28A5-661C-409C374414D6",
+        "blob_path":           null,
+        "storage_path":        null,
+        "private_path":        "bender\/.private",
+        "owner_private_path":  ".private",
+        "snapshot_path":       ".private\/snapshots",
+        "db_host":             "localhost",
+        "db_port":             "3306",
+        "db_name":             "bender",
+        "db_user":             "ud41d172798021eb",
+        "db_password":         "ae92aa0feb812dd5c1a4f55c4658f353e1bc53d6",
+        "db_config_file_name": ".private\/bender.database.config.php",
+        "cluster":             4,
+        "metadata":            []
+      },
+      "elapsed":  0.5133650302887
+    }
+  }
+}

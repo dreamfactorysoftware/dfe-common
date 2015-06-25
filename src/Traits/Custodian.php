@@ -1,5 +1,7 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
+use DreamFactory\Enterprise\Common\Contracts\Custodial;
+
 /**
  * A trait that keeps track of things checked in and out
  */
@@ -25,7 +27,7 @@ trait Custodian /** @implements \DreamFactory\Enterprise\Common\Contracts\Custod
         !isset($this->custodianActivity[$activity]) && ($this->custodianActivity[$activity] = []);
 
         $this->custodianActivity[$activity][] =
-            array_merge(is_array($extras) ? $extras : [], ['time' => microtime(true), 'timestamp' => date('c')]);
+            array_merge(is_array($extras) ? $extras : [], ['timestamp' => date('c')]);
 
         return $this;
     }
@@ -37,11 +39,12 @@ trait Custodian /** @implements \DreamFactory\Enterprise\Common\Contracts\Custod
     }
 
     /** @inheritdoc */
-    public function addCustodyLogs($where, $flush = false)
+    public function addCustodyLogs($where = Custodial::CUSTODY_LOG_KEY, $flush = false)
     {
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->set($where, $this->getActivities());
+        $_activities = $this->getActivities();
 
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->set($where, $_activities);
         $flush && ($this->custodianActivity = []);
 
         return $this;
