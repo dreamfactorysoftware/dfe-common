@@ -12,16 +12,26 @@ class SnapshotManifest extends Manifest
     /**
      * @type array Basic metadata template
      */
-    protected $template = [
-        'id'              => null,
-        'type'            => null,
-        'snapshot-prefix' => null,
-        'timestamp'       => null,
-        'database-export' => null,
-        'storage-export'  => null,
-        'hash'            => null,
-        'link'            => null,
-
+    protected $allowedKeys = [
+        'id',
+        'type',
+        'name',
+        'instance-id',
+        'cluster-id',
+        'db-server-id',
+        'app-server-id',
+        'web-server-id',
+        'owner-id',
+        'owner-email-address',
+        'owner-storage-key',
+        'storage-key',
+        'snapshot-prefix',
+        'timestamp',
+        'storage-export',
+        'database-export',
+        'hash',
+        'link',
+        self::CUSTODY_LOG_KEY,
     ];
 
     //******************************************************************************
@@ -29,12 +39,21 @@ class SnapshotManifest extends Manifest
     //******************************************************************************
 
     /** @inheritdoc */
-    public function __construct(Filesystem $filesystem, $contents = [], $filename = null)
+    public function __construct($contents = [], $filename = null, Filesystem $filesystem = null, array $template = [])
     {
-        parent::__construct($filesystem,
-            ManifestTypes::METADATA,
+        parent::__construct(ManifestTypes::SNAPSHOT, $filename, $filesystem, $template);
+    }
+
+    /** @inheritdoc */
+    public static function create($contents = [], $filename = null, Filesystem $filesystem = null, array $template = [])
+    {
+        return parent::create(
+            ManifestTypes::SNAPSHOT,
             $contents,
-            $filename);
+            $filename,
+            $filesystem,
+            $template
+        );
     }
 
 }

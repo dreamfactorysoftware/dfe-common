@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Contracts;
+<?php namespace DreamFactory\Enterprise\Common\Contracts;
 
 /**
  * Something that looks like it can provision resources

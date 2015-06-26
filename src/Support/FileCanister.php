@@ -4,15 +4,13 @@ use DreamFactory\Enterprise\Common\Contracts\Custodial;
 use DreamFactory\Enterprise\Common\Traits\Custodian;
 use DreamFactory\Library\Utility\Exceptions\FileException;
 use DreamFactory\Library\Utility\Json;
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Support\Collection;
+use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 
 /**
- * Reads/writes a json file to a flysystem
+ * Reads/writes a canister to a file
  */
-class FlyJson extends Json implements Arrayable, Jsonable, Custodial
+class FileCanister extends Canister implements Custodial
 {
     //******************************************************************************
     //* Traits
@@ -42,10 +40,6 @@ class FlyJson extends Json implements Arrayable, Jsonable, Custodial
      */
     protected $makeBackups = true;
     /**
-     * @type Collection The contents of the file
-     */
-    protected $contents;
-    /**
      * @type Filesystem The filesystem where the file lives
      */
     protected $filesystem;
@@ -54,7 +48,7 @@ class FlyJson extends Json implements Arrayable, Jsonable, Custodial
      */
     protected $filename;
     /**
-     * @type array The template for the file, if any
+     * @type array The default template, or structure, to use when creating a new object
      */
     protected $template = [];
 
@@ -63,91 +57,82 @@ class FlyJson extends Json implements Arrayable, Jsonable, Custodial
     //******************************************************************************
 
     /**
-     * @param \League\Flysystem\Filesystem $filesystem  The filesystem on which this file lives
-     * @param string                       $filename    The name of the file, relative to the root
+     * @param mixed                        $contents    The contents to write to the file if being created
+     * @param string                       $filename    The name of the file, relative to base path or absolute
+     * @param \League\Flysystem\Filesystem $filesystem  The optional filesystem on which this file lives
+     * @param array                        $template    An optional array to use as a default value
      * @param bool                         $makeBackups If true, a copy of files to be overwritten will be made
-     * @param array|object                 $contents    The contents to write to the file if being created
      */
-    public function __construct(Filesystem $filesystem, $filename, $makeBackups = true, $contents = [])
+    public function __construct($contents = [], $filename, Filesystem $filesystem = null, array $template = [], $makeBackups = true)
     {
         $this->makeBackups = $makeBackups;
+
+        //  Map our file system root to parent of $filename
+        if (!$filesystem) {
+            $_path = dirname(realpath($filename));
+
+            if (empty($_path)) {
+                $_path = base_path();
+            }
+
+            $filesystem = new Filesystem(new Local($_path));
+        }
+
         $this->filesystem = $filesystem;
         $this->filename = $filename;
+        $this->template = $template;
 
-        $this->initialize($contents);
+        parent::__construct();
+
+        $this->loadExisting($contents);
     }
 
     /**
-     * @param array $contents The contents with which to initialize. Merged with existing manifest data
+     * Creates a new canister and writes it immediately to file
      *
-     * @return $this
+     * @param mixed           $contents
+     * @param string          $filename
+     * @param Filesystem|null $filesystem
+     * @param array           $template
+     * @param bool|true       $makeBackups
+     *
+     * @return static
      */
-    protected function initialize($contents = [])
+    public static function create($contents = [], $filename, Filesystem $filesystem = null, array $template = [], $makeBackups = true)
     {
-        $_existing = [];
+        $_canister = new static($contents, $filename, $filesystem, $template, $makeBackups);
+        $_canister->write();
 
-        if (!is_array($contents) || empty($contents)) {
-            $contents = [];
-        }
+        return $_canister;
+    }
 
+    /**
+     * Loads the existing canister and resets the collection with the contents and existing data merged
+     *
+     * @param array $contents The contents with which to initialize. Merged with existing data
+     */
+    protected function loadExisting($contents = [])
+    {
         //  See if we have an existing file...
         try {
-            $_existing = $this->read(false);
+            $this->reset($contents, $this->read(false) ?: []);
         } catch (\Exception $_ex) {
             //  Ignored but noted
             \Log::notice('error reading json file "' . $this->filename . '"');
         }
-
-        return $this->reset($contents, $_existing);
-    }
-
-    /**
-     * Completely resets the contents to $contents
-     *
-     * @param array $contents Any fresh contents to save
-     * @param array $existing Any existing contents to merge with fresh content
-     *
-     * @return $this
-     */
-    protected function reset($contents = [], array $existing = [])
-    {
-        if (empty($existing) || !is_array($existing)) {
-            $existing = [];
-        }
-
-        if (empty($contents) || !is_array($contents)) {
-            $contents = [];
-        }
-
-        $_items = array_merge($existing, $contents);
-
-        if (empty($this->template)) {
-            $this->contents = new Collection($_items);
-        } else {
-            //  Load only keys that exist in the template
-            $this->contents = new Collection();
-
-            foreach ($_items as $_key => $_value) {
-                if (array_key_exists($_key, $this->template)) {
-                    $this->contents->put($_key, $_value);
-                }
-            }
-        }
-
-        return $this;
     }
 
     /**
      * Reads and loads the contents
      *
-     * @param bool $reset If true (the default) the contents are reset and loaded from the file. If false, the
-     *                    data is returned but the current contents are left undisturbed.
+     * @param bool $reset     If true (the default) the contents are reset and loaded from the file. If false, the
+     *                        data is returned but the current contents are left undisturbed.
      *
      * @return array
      */
     public function read($reset = true)
     {
-        $_contents = $this->doRead();
+        $_contents = $this->doRead(true);
 
         if ($reset && !empty($_contents)) {
             $this
@@ -170,7 +155,7 @@ class FlyJson extends Json implements Arrayable, Jsonable, Custodial
      */
     protected function doRead($decoded = true, $depth = 512, $options = 0)
     {
-        //  Always start with the current template
+        //  Always start with an empty array
         $_result = $this->template;
 
         //  No existing file, empty array back
@@ -188,7 +173,7 @@ class FlyJson extends Json implements Arrayable, Jsonable, Custodial
             return $_json;
         }
 
-        return static::decode($_json, true, $depth, $options);
+        return Json::decode($_json, true, $depth, $options);
     }
 
     /**
@@ -238,7 +223,7 @@ class FlyJson extends Json implements Arrayable, Jsonable, Custodial
 
         $this->backupExistingFile();
 
-        $_contents = $this->contents->toArray();
+        $_contents = $this->toArray();
 
         if (empty($_contents) || !is_array($_contents)) {
             //  Always use the current template
@@ -247,7 +232,7 @@ class FlyJson extends Json implements Arrayable, Jsonable, Custodial
 
         while ($_attempts--) {
             try {
-                if ($this->filesystem->put($this->filename, static::encode($_contents, $options, $depth))) {
+                if ($this->filesystem->put($this->filename, Json::encode($_contents, $options, $depth))) {
                     break;
                 }
                 throw new FileException('Unable to write data to file "' . $this->filename . '" after ' . $retries . ' attempt(s).');
@@ -282,66 +267,5 @@ class FlyJson extends Json implements Arrayable, Jsonable, Custodial
         }
 
         return true;
-    }
-
-    /**
-     * Gets a value from the manifest
-     *
-     * @param string     $key     The manifest key value to retrieve
-     * @param mixed|null $default The default value to return if key was not found
-     *
-     * @return mixed
-     */
-    public function get($key, $default = null)
-    {
-        return $this->contents->get($key, $default);
-    }
-
-    /**
-     * Sets a value in the manifest
-     *
-     * @param string $key
-     * @param mixed  $value
-     *
-     * @return $this
-     */
-    public function set($key, $value)
-    {
-        return $this->put($key, $value);
-    }
-
-    /**
-     * Sets a value in the manifest
-     *
-     * @param string $key
-     * @param mixed  $value
-     *
-     * @return $this
-     */
-    public function put($key, $value)
-    {
-        $this->contents->put($key, $value);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function toArray()
-    {
-        return $this->contents->toArray();
-    }
-
-    /** @inheritdoc */
-    public function toJson($options = 0)
-    {
-        return $this->contents->toJson($options);
-    }
-
-    /**
-     * @return array The entire manifest
-     */
-    public function all()
-    {
-        return $this->contents->all();
     }
 }

@@ -20,6 +20,10 @@ class ManifestTypes extends FactoryEnum
      */
     const METADATA = 'metadata';
     /**
+     * @var string Instance manifest, stored in owner's private directory
+     */
+    const INSTANCE = 'instance';
+    /**
      * @var string Package (library/app) manifest (package.json)
      */
     const PACKAGE = 'package';
@@ -27,4 +31,8 @@ class ManifestTypes extends FactoryEnum
      * @var string The cluster manifest for instance root (.dfe.cluster.json)
      */
     const CLUSTER = '.dfe.cluster';
+    /**
+     * @var string A snapshot manifest
+     */
+    const SNAPSHOT = 'snapshot';
 }
