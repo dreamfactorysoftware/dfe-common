@@ -2,7 +2,7 @@
 namespace DreamFactory\Enterprise\Common\Commands;
 
 use DreamFactory\Enterprise\Common\Traits\HasResults;
-use Illuminate\Contracts\Queue\ShouldBeQueued;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Symfony\Component\Console\Input\InputInterface;
@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * A base class for all "job" type commands (non-console)
  */
-abstract class JobCommand implements ShouldBeQueued
+abstract class JobCommand implements ShouldQueue
 {
     //******************************************************************************
     //* Constants
@@ -35,15 +35,15 @@ abstract class JobCommand implements ShouldBeQueued
     /**
      * @type OutputInterface
      */
-    protected $_output;
+    protected $output;
     /**
      * @type InputInterface
      */
-    protected $_input;
+    protected $input;
     /**
      * @type string The fully qualified handler class name
      */
-    protected $_handlerClass = null;
+    protected $handlerClass = null;
 
     //******************************************************************************
     //* Methods
@@ -56,11 +56,11 @@ abstract class JobCommand implements ShouldBeQueued
      */
     public function getHandler()
     {
-        if (!$this->_handlerClass) {
+        if (!$this->handlerClass) {
             throw new \RuntimeException('No "handler" defined for this command.');
         }
 
-        return $this->_handlerClass;
+        return $this->handlerClass;
     }
 
     public function setHandler($handlerClass)
@@ -69,7 +69,7 @@ abstract class JobCommand implements ShouldBeQueued
             throw new \InvalidArgumentException('The class "' . $handlerClass . '" cannot be found or loaded."');
         }
 
-        $this->_handlerClass = $handlerClass;
+        $this->handlerClass = $handlerClass;
 
         return $this;
     }
@@ -79,7 +79,7 @@ abstract class JobCommand implements ShouldBeQueued
      */
     public function getOutput()
     {
-        return $this->_output;
+        return $this->output;
     }
 
     /**
@@ -89,7 +89,7 @@ abstract class JobCommand implements ShouldBeQueued
      */
     public function setOutput(OutputInterface $output)
     {
-        $this->_output = $output;
+        $this->output = $output;
 
         return $this;
     }
@@ -99,7 +99,7 @@ abstract class JobCommand implements ShouldBeQueued
      */
     public function getInput()
     {
-        return $this->_input;
+        return $this->input;
     }
 
     /**
@@ -109,7 +109,7 @@ abstract class JobCommand implements ShouldBeQueued
      */
     public function setInput(InputInterface $input)
     {
-        $this->_input = $input;
+        $this->input = $input;
 
         return $this;
     }

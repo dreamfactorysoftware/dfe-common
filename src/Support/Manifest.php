@@ -15,25 +15,14 @@ abstract class Manifest extends FileCanister
     /**
      * @param string                       $manifestType The type of manifest @see ManifestTypes
      * @param array                        $contents     Optional contents to fill
-     * @param string                       $filename     If you do not want the default manifest name for the type, override it with this
+     * @param string                       $filename     If you do not want the default manifest name for the type,
+     *                                                   override it with this
      * @param \League\Flysystem\Filesystem $filesystem   The filesystem where the manifest lives
      * @param array                        $template     The optional structure, or template, for an empty canister
      */
     public function __construct($manifestType, $contents = [], $filename = null, Filesystem $filesystem = null, array $template = [])
     {
         parent::__construct(
-            $contents,
-            static::buildManifestFilename($manifestType, $filename),
-            $filesystem,
-            $template,
-            true
-        );
-    }
-
-    /** @inheritdoc */
-    public static function create($manifestType, $contents = [], $filename = null, Filesystem $filesystem = null, array $template = [])
-    {
-        return parent::create(
             $contents,
             static::buildManifestFilename($manifestType, $filename),
             $filesystem,

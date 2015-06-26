@@ -41,19 +41,6 @@ class SnapshotManifest extends Manifest
     /** @inheritdoc */
     public function __construct($contents = [], $filename = null, Filesystem $filesystem = null, array $template = [])
     {
-        parent::__construct(ManifestTypes::SNAPSHOT, $filename, $filesystem, $template);
+        parent::__construct(ManifestTypes::SNAPSHOT, $contents, $filename, $filesystem, $template);
     }
-
-    /** @inheritdoc */
-    public static function create($contents = [], $filename = null, Filesystem $filesystem = null, array $template = [])
-    {
-        return parent::create(
-            ManifestTypes::SNAPSHOT,
-            $contents,
-            $filename,
-            $filesystem,
-            $template
-        );
-    }
-
 }
