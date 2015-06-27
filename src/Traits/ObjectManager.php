@@ -3,7 +3,9 @@
 use DreamFactory\Enterprise\Common\Contracts\ManagerContract;
 
 /**
- * A trait that adds object management to a class and implements the ObjectManagerContract
+ * A trait that adds object management to a class
+ *
+ * @implements \DreamFactory\Enterprise\Common\Contracts\ManagerContract;
  */
 trait ObjectManager
 {

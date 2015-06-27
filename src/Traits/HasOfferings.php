@@ -30,8 +30,8 @@ trait HasOfferings
         if (null === $this->offerings) {
             $this->offerings = [];
 
-            /** @noinspection PhpUndefinedMethodInspection */
-            $_list = config('provisioners.hosts.' . $this->getProvisionerId() . '.offerings', []);
+            /** @noinspection PhpUndefinedClassConstantInspection */
+            $_list = config('provisioners.hosts.' . static::PROVISIONER_ID . '.offerings', []);
 
             if (is_array($_list) && !empty($_list)) {
                 foreach ($_list as $_key => $_value) {
