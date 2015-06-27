@@ -10,6 +10,13 @@ interface ResourceProvisioner
     //*************************************************************************
 
     /**
+     * Returns the id, config key, or short name, of this provisioner.
+     *
+     * @return string The id of this provisioner
+     */
+    public function getProvisionerId();
+
+    /**
      * @param \DreamFactory\Enterprise\Services\Provisioners\ProvisioningRequest|mixed $request
      * @param array                                                                    $options
      *

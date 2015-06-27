@@ -43,7 +43,7 @@ class Canister implements Arrayable, Jsonable, \JsonSerializable
      *
      * @param array $dataToMerge The data to merge
      *
-     * @return $this
+     * @return Canister
      */
     protected function merge(array $dataToMerge = [])
     {
@@ -61,7 +61,7 @@ class Canister implements Arrayable, Jsonable, \JsonSerializable
      * @param array $existing Any existing contents to merge with fresh content
      * @param array $template An optional template to use as the default value for new canisters
      *
-     * @return $this
+     * @return Canister
      */
     protected function reset($contents = [], array $existing = [], $template = [])
     {
@@ -117,7 +117,7 @@ class Canister implements Arrayable, Jsonable, \JsonSerializable
      * @param string $key
      * @param mixed  $value
      *
-     * @return $this
+     * @return Canister
      */
     public function set($key, $value)
     {
@@ -129,7 +129,7 @@ class Canister implements Arrayable, Jsonable, \JsonSerializable
      *
      * @param  mixed $key
      *
-     * @return $this
+     * @return Canister
      */
     public function forget($key)
     {
@@ -144,7 +144,7 @@ class Canister implements Arrayable, Jsonable, \JsonSerializable
      * @param string $key
      * @param mixed  $value
      *
-     * @return $this
+     * @return Canister
      */
     public function put($key, $value)
     {
