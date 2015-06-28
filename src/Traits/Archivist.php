@@ -150,4 +150,16 @@ trait Archivist
 
         return $file;
     }
+
+    /**
+     * Force-closes a zip archive, writing to disk
+     *
+     * @param \League\Flysystem\Filesystem $filesystem
+     */
+    protected function flushZipArchive(Filesystem $filesystem)
+    {
+        if (($_adapter = $filesystem->getAdapter()) instanceof ZipArchiveAdapter) {
+            $_adapter->getArchive()->close();
+        }
+    }
 }

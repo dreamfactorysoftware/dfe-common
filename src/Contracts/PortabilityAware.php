@@ -15,7 +15,7 @@ interface PortabilityAware
      *
      * @param string $name The provisioner id. If null, the default provisioner is used.
      *
-     * @return array|Portability[] An array of portability services keyed by PortableTypes
+     * @return Portability[] An array of portability services keyed by PortableTypes
      */
     public function getPortableServices($name = null);
 }

@@ -24,6 +24,22 @@ trait Lumberjack
      * @type string The prefix for log entries, if any.
      */
     protected $lumberjackPrefix;
+    /**
+     * @type int The current indent level
+     */
+    protected $indent = 0;
+    /**
+     * @type int The number of spaces per indent level
+     */
+    protected $indentSize = 4;
+    /**
+     * @type string The marker to increment the indent level
+     */
+    protected $indentStartMarker = '>>>';
+    /**
+     * @type string The marker to drop an indent level
+     */
+    protected $indentStopMarker = '<<<';
 
     //******************************************************************************
     //* Methods
@@ -191,6 +207,8 @@ trait Lumberjack
      */
     protected function prefixLogEntry($message)
     {
+        $message = $this->indentMessage($message);
+
         if (empty($this->lumberjackPrefix)) {
             return $message;
         }
@@ -225,5 +243,40 @@ trait Lumberjack
         if (!$this->lumberjackPrefix && $prefix) {
             $this->setLumberjackPrefix($prefix);
         }
+    }
+
+    /**
+     * @param string|array $message
+     *
+     * @return array|string
+     */
+    protected function indentMessage($message)
+    {
+        $_messages = [];
+        $_array = true;
+
+        if (!is_array($message)) {
+            $message = [$message];
+            $_array = false;
+        }
+
+        $_startLength = strlen($this->indentStartMarker);
+        $_stopLength = strlen($this->indentStopMarker);
+
+        foreach ($message as $_message) {
+            if ($this->indentStartMarker == substr($_message, 0, $_startLength)) {
+                $this->indent++;
+            } elseif ($this->indentStopMarker == substr($_message, 0, $_stopLength)) {
+                $this->indent--;
+            }
+
+            $_messages[] =
+                str_pad(trim(str_replace([$this->indentStartMarker, $this->indentStopMarker], null, $_message)),
+                    ($this->indent * $this->indentSize),
+                    ' ',
+                    STR_PAD_LEFT);
+        }
+
+        return $_array ? $_messages : current($_messages);
     }
 }

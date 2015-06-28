@@ -17,7 +17,7 @@ abstract class BaseUserProvider extends DatabaseUserProvider
     /**
      * @type string The model class for the user
      */
-    protected $_userClass = null;
+    protected $userClass = null;
 
     //******************************************************************************
     //* Methods
@@ -49,9 +49,8 @@ abstract class BaseUserProvider extends DatabaseUserProvider
         $_condition[] = 'active_ind = :active_ind';
         $_data[':active_ind'] = 1;
 
-
         /** @type ServiceUser|User $_model */
-        $_model = new $this->_userClass;
+        $_model = new $this->userClass;
 
         return $_model->whereRaw(implode(' AND ', $_condition), $_data)->first();
     }
@@ -66,7 +65,7 @@ abstract class BaseUserProvider extends DatabaseUserProvider
     public function retrieveById($identifier)
     {
         /** @type ServiceUser|User $_model */
-        $_model = new $this->_userClass;
+        $_model = new $this->userClass;
 
         return $_model->find($identifier);
     }
@@ -82,7 +81,7 @@ abstract class BaseUserProvider extends DatabaseUserProvider
     public function retrieveByToken($identifier, $token)
     {
         /** @type ServiceUser|User $_model */
-        $_model = new $this->_userClass;
+        $_model = new $this->userClass;
 
         return $_model->where('id', $identifier)->where('remember_token', $token)->first();
     }

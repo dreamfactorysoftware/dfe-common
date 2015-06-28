@@ -24,11 +24,11 @@ abstract class ConsoleCommand extends Command
     /**
      * @type \Illuminate\Foundation\Composer The Composer class instance.
      */
-    protected $_composer;
+    protected $composer;
     /**
      * @type \Illuminate\Filesystem\Filesystem The filesystem instance.
      */
-    protected $_filesystem;
+    protected $filesystem;
 
     //******************************************************************************
     //* Methods
@@ -42,8 +42,8 @@ abstract class ConsoleCommand extends Command
     {
         parent::__construct();
 
-        $this->_composer = $composer;
-        $this->_filesystem = $filesystem;
+        $this->composer = $composer;
+        $this->filesystem = $filesystem;
     }
 
     /**

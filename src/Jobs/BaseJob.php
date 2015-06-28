@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Commands;
+<?php namespace DreamFactory\Enterprise\Common\Jobs;
 
 use DreamFactory\Enterprise\Common\Traits\HasResults;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * A base class for all "job" type commands (non-console)
  */
-abstract class JobCommand implements ShouldQueue
+abstract class BaseJob implements ShouldQueue
 {
     //******************************************************************************
     //* Constants
@@ -40,36 +39,21 @@ abstract class JobCommand implements ShouldQueue
      * @type InputInterface
      */
     protected $input;
-    /**
-     * @type string The fully qualified handler class name
-     */
-    protected $handlerClass = null;
 
     //******************************************************************************
     //* Methods
     //******************************************************************************
 
     /**
-     * Provide a handler class name
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
-     * @throws \DreamFactory\Enterprise\Common\Exceptions\NotImplementedException
+     * @return $this
      */
-    public function getHandler()
+    public function setInputOutput(InputInterface $input, OutputInterface $output)
     {
-        if (!$this->handlerClass) {
-            throw new \RuntimeException('No "handler" defined for this command.');
-        }
-
-        return $this->handlerClass;
-    }
-
-    public function setHandler($handlerClass)
-    {
-        if (!class_exists($handlerClass, false)) {
-            throw new \InvalidArgumentException('The class "' . $handlerClass . '" cannot be found or loaded."');
-        }
-
-        $this->handlerClass = $handlerClass;
+        $this->input = $input;
+        $this->output = $output;
 
         return $this;
     }

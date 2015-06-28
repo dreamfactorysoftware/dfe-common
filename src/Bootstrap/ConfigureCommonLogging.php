@@ -14,15 +14,15 @@ class ConfigureCommonLogging extends ConfigureLogging
     /**
      * @type string
      */
-    protected $_logPath;
+    protected $logPath;
     /**
      * @type string
      */
-    protected $_logFileName;
+    protected $logFileName;
     /**
      * @type bool
      */
-    protected $_useCommonLogging = false;
+    protected $useCommonLogging = false;
 
     //******************************************************************************
     //* Methods
@@ -35,15 +35,15 @@ class ConfigureCommonLogging extends ConfigureLogging
     {
         if (isset($app['config'])) {
             error_log('yep');
-            $this->_logFileName = $app['config']->get('dfe.common.logging.log-file-name');
+            $this->logFileName = $app['config']->get('dfe.common.logging.log-file-name');
 
-            if (null !== ($this->_logPath = $app['config']->get('dfe.common.logging.log-path'))) {
-                $this->_logPath = rtrim($this->_logPath, ' ' . DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            if (null !== ($this->logPath = $app['config']->get('dfe.common.logging.log-path'))) {
+                $this->logPath = rtrim($this->logPath, ' ' . DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
             }
 
-            $this->_useCommonLogging =
-                (!empty($this->_logPath) && !empty($this->_logFileName))
-                    ? FileSystem::ensurePath($this->_logPath)
+            $this->useCommonLogging =
+                (!empty($this->logPath) && !empty($this->logFileName))
+                    ? FileSystem::ensurePath($this->logPath)
                     : false;
         } else {
             error_log('nope');
@@ -61,7 +61,7 @@ class ConfigureCommonLogging extends ConfigureLogging
             return;
         }
 
-        $_file = $this->_logPath . $this->_logFileName;
+        $_file = $this->logPath . $this->logFileName;
         $log->useFiles($_file);
     }
 
@@ -74,7 +74,7 @@ class ConfigureCommonLogging extends ConfigureLogging
             return;
         }
 
-        $_file = $this->_logPath . $this->_logFileName;
+        $_file = $this->logPath . $this->logFileName;
         $log->useDailyFiles($_file, $app->make('config')->get('app.log_max_files', 5));
     }
 
@@ -83,7 +83,7 @@ class ConfigureCommonLogging extends ConfigureLogging
      */
     public function useCommonLogging()
     {
-        return $this->_useCommonLogging;
+        return $this->useCommonLogging;
     }
 
     /**
@@ -91,7 +91,7 @@ class ConfigureCommonLogging extends ConfigureLogging
      */
     public function getCommonLogPath()
     {
-        return $this->_logPath;
+        return $this->logPath;
     }
 
     /**
@@ -99,6 +99,6 @@ class ConfigureCommonLogging extends ConfigureLogging
      */
     public function getCommonLogFileName()
     {
-        return $this->_logFileName;
+        return $this->logFileName;
     }
 }
