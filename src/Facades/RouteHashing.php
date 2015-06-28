@@ -1,6 +1,7 @@
 <?php namespace DreamFactory\Enterprise\Common\Facades;
 
 use DreamFactory\Enterprise\Common\Providers\RouteHashingServiceProvider;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Facade;
 
 /**
