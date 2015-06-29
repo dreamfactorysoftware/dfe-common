@@ -24,7 +24,7 @@ interface Custodial
      * @param string     $activity A "name" denoting the activity performed. ie. "import" or "export"
      * @param array|null $extras   Any extra data to log along with the activity
      *
-     * @return $this
+     * @return Custodial
      */
     public function addActivity($activity, array $extras = null);
 
@@ -39,7 +39,7 @@ interface Custodial
      * @param string $where The key in the manifest to place the custody logs. Defaults to "_custodian".
      * @param bool   $flush if true, any cached entries are cleared
      *
-     * @return $this
+     * @return Custodial
      */
     public function addCustodyLogs($where = Custodial::CUSTODY_LOG_KEY, $flush = false);
 }
