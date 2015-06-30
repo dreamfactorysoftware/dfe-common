@@ -236,4 +236,31 @@ class Canister implements Arrayable, Jsonable, \JsonSerializable
         return $this->contents->toJson($options);
     }
 
+    /**
+     * Replace case-insensitive tokens in $string with values from me and $data with optional key-wrapping
+     *
+     * @param string             $string  The target string
+     * @param array|\ArrayAccess $data    Extra data to add to replacements
+     * @param string             $wrapper The wrapper for keys. Defaults to {}
+     *
+     * @return string
+     */
+    public function replace($string, $data = [], $wrapper = null)
+    {
+        $_values = [];
+
+        if (empty($data) || !is_array($data) || !($data instanceof \ArrayAccess)) {
+            $data = [];
+        }
+
+        if (!$wrapper || 2 !== strlen($wrapper)) {
+            $wrapper = '{}';
+        }
+
+        foreach (array_merge($this->toArray(), $data) as $_key => $_value) {
+            is_scalar($_value) && $_values[$wrapper[0] . $_key . $wrapper[1]] = $_value;
+        }
+
+        return str_ireplace(array_keys($_values), array_values($_values), $string);
+    }
 }
