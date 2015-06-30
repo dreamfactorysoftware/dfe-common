@@ -6,9 +6,11 @@ use DreamFactory\Enterprise\Database\Enums\ServerTypes;
 use DreamFactory\Enterprise\Database\Models\Cluster;
 use DreamFactory\Enterprise\Database\Models\ClusterServer;
 use DreamFactory\Enterprise\Database\Models\Instance;
+use DreamFactory\Enterprise\Database\Models\InstanceArchive;
 use DreamFactory\Enterprise\Database\Models\InstanceServer;
 use DreamFactory\Enterprise\Database\Models\Mount;
 use DreamFactory\Enterprise\Database\Models\Server;
+use DreamFactory\Enterprise\Database\Models\Snapshot;
 use DreamFactory\Enterprise\Database\Models\User;
 use DreamFactory\Enterprise\Database\Models\UserRole;
 use Illuminate\Support\Collection;
@@ -53,6 +55,26 @@ trait EntityLookup
     }
 
     /**
+     * Looks first in instance_t, then in instance_arch_t. If nothing found returns null.
+     *
+     * @param int|string $instanceId
+     *
+     * @return Instance|null
+     */
+    protected function _locateInstance($instanceId)
+    {
+        if (null !== ($_instance = Instance::with(['user', 'guest'])->byNameOrId($instanceId)->first())) {
+            return $_instance;
+        }
+
+        if (null !== ($_instance = InstanceArchive::with(['user', 'guest'])->byNameOrId($instanceId)->first())) {
+            return $_instance;
+        }
+
+        return null;
+    }
+
+    /**
      * @param int $userId
      *
      * @return User
@@ -60,6 +82,16 @@ trait EntityLookup
     protected function _findUser($userId)
     {
         return User::where('id', '=', $userId)->findOrfail($userId);
+    }
+
+    /**
+     * @param string $snapshotId
+     *
+     * @return Snapshot
+     */
+    protected function _findSnapshot($snapshotId)
+    {
+        return Snapshot::with(['user'])->where('snapshot_id_text', $snapshotId)->firstOrFail();
     }
 
     /**
