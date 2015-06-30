@@ -48,27 +48,7 @@ trait Lumberjack
     /** @inheritdoc */
     public function getLogger()
     {
-        return $this->logger;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLumberjackPrefix()
-    {
-        return $this->lumberjackPrefix;
-    }
-
-    /**
-     * @param string $lumberjackPrefix
-     *
-     * @return $this
-     */
-    public function setLumberjackPrefix($lumberjackPrefix)
-    {
-        $this->lumberjackPrefix = '[' . trim($lumberjackPrefix, '[]') . '] ';
-
-        return $this;
+        return $this->logger = $this->logger ?: \Log::getMonolog();
     }
 
     /**
@@ -80,7 +60,7 @@ trait Lumberjack
      */
     public function log($level, $message, array $context = [])
     {
-        return !$this->logger ? false : $this->logger->log($level, $this->prefixLogEntry($message), $context);
+        return $this->getLogger()->log($level, $this->formatMessage($message), $context);
     }
 
     /**
@@ -199,84 +179,87 @@ trait Lumberjack
     }
 
     /**
-     * Prefixes log messages with the middleware stamp
-     *
-     * @param string|array $message
-     *
-     * @return array|string
-     */
-    protected function prefixLogEntry($message)
-    {
-        $message = $this->indentMessage($message);
-
-        if (empty($this->lumberjackPrefix)) {
-            return $message;
-        }
-
-        $this->lumberjackPrefix = trim($this->lumberjackPrefix);
-
-        $_messages = [];
-        $_array = true;
-
-        if (!is_array($message)) {
-            $message = [$message];
-            $_array = false;
-        }
-
-        foreach ($message as $_message) {
-            $_messages[] = $this->lumberjackPrefix . ' ' . $_message;
-        }
-
-        return $_array ? $_messages : current($_messages);
-    }
-
-    /**
      * Initializes the lumberjack logging faculties
      *
      * @param \Psr\Log\LoggerInterface $logger
      * @param string|null              $prefix
+     *
+     * @return $this
      */
     protected function initializeLumberjack(LoggerInterface $logger, $prefix = null)
     {
-        $logger && !$this->logger && $this->setLogger($logger);
+        $logger && $this->setLogger($logger);
+        $prefix && $this->setLumberjackPrefix($prefix);
 
-        if (!$this->lumberjackPrefix && $prefix) {
-            $this->setLumberjackPrefix($prefix);
-        }
+        return $this;
     }
 
     /**
      * @param string|array $message
+     * @param bool         $addPrefix If true, the message(s) will be prefixed
      *
-     * @return array|string
+     * @return array|false|string
      */
-    protected function indentMessage($message)
+    protected function formatMessage($message, $addPrefix = true)
     {
         $_messages = [];
-        $_array = true;
+        $_wasArray = true;
 
         if (!is_array($message)) {
             $message = [$message];
-            $_array = false;
+            $_wasArray = false;
         }
 
         $_startLength = strlen($this->indentStartMarker);
         $_stopLength = strlen($this->indentStopMarker);
 
+        //  Prepare the prefix for potential prepending!
+        $addPrefix = false;
+
+        $_prefix =
+            (empty($this->lumberjackPrefix) || !$addPrefix)
+                ? null
+                : $this->lumberjackPrefix . ' ';
+
         foreach ($message as $_message) {
+            $_indentAfter = false;
+
             if ($this->indentStartMarker == substr($_message, 0, $_startLength)) {
-                $this->indent++;
+                $_indentAfter = true;
             } elseif ($this->indentStopMarker == substr($_message, 0, $_stopLength)) {
                 $this->indent--;
             }
 
-            $_messages[] =
-                str_pad(trim(str_replace([$this->indentStartMarker, $this->indentStopMarker], null, $_message)),
-                    ($this->indent * $this->indentSize),
-                    ' ',
-                    STR_PAD_LEFT);
+            $_messages[] = $_prefix . str_pad('', ($this->indent * $this->indentSize), ' ') .
+                trim(str_replace([$this->indentStartMarker, $this->indentStopMarker], null, $_message));
+
+            //  Indent after so the first line doesn't get indented
+            $_indentAfter && $this->indent++;
         }
 
-        return $_array ? $_messages : current($_messages);
+        return $_wasArray ? $_messages : reset($_messages);
     }
+
+    /**
+     * @return string
+     */
+    protected function getLumberjackPrefix()
+    {
+        return $this->lumberjackPrefix;
+    }
+
+    /**
+     * @param string $lumberjackPrefix
+     * @param bool   $brackets If true, prefix is ensconced in lovely square brackets with a space on top.
+     *
+     * @return $this
+     */
+    protected function setLumberjackPrefix($lumberjackPrefix, $brackets = true)
+    {
+        $this->lumberjackPrefix = trim($lumberjackPrefix, '[]');
+        $brackets && $this->lumberjackPrefix = '[' . $this->lumberjackPrefix . '] ';
+
+        return $this;
+    }
+
 }

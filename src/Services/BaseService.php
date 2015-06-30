@@ -38,7 +38,7 @@ class BaseService implements LoggerInterface, LoggerAwareInterface
     public function __construct($app = null)
     {
         $this->app = $app;
-        $this->setLogger(\Log::getMonolog());
+        $this->initializeLumberjack(\Log::getMonolog());
 
         $this->boot();
     }
@@ -48,8 +48,6 @@ class BaseService implements LoggerInterface, LoggerAwareInterface
      */
     public function boot()
     {
-        //  Called after constructor
-
     }
 
     /**
