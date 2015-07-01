@@ -40,7 +40,7 @@ trait InteractsWithConsole
      *
      * @return $this
      */
-    public function setInput($input)
+    public function setInput(InputInterface $input)
     {
         $this->input = $input;
 
@@ -60,7 +60,7 @@ trait InteractsWithConsole
      *
      * @return $this
      */
-    public function setOutput($output)
+    public function setOutput(OutputInterface $output)
     {
         $this->output = $output;
 
