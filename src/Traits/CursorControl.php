@@ -25,6 +25,7 @@ trait CursorControl
      */
     public function write($messages, $newline = false, $type = OutputInterface::OUTPUT_NORMAL)
     {
+        /** @noinspection PhpUndefinedFieldInspection */
         $this->clearArea('line')->output->write($messages, $newline, $type);
 
         return $this;
@@ -42,7 +43,7 @@ trait CursorControl
      */
     public function writeCode($code, $value1 = 1, $value2 = 1)
     {
-        $this->output->write(AnsiCodes::render($code, $value1, $value2));
+        isset($this->output) && $this->output->write(AnsiCodes::render($code, $value1, $value2));
 
         return $this;
     }
@@ -57,7 +58,7 @@ trait CursorControl
      */
     public function moveCursor($moves, $count = 1)
     {
-        $this->output->write(Cursor::move($moves, $count));
+        isset($this->output) && $this->output->write(Cursor::move($moves, $count));
 
         return $this;
     }
@@ -71,7 +72,7 @@ trait CursorControl
      */
     public function clearArea($areas)
     {
-        $this->output->write(Cursor::clear($areas));
+        isset($this->output) && $this->output->write(Cursor::clear($areas));
 
         return $this;
     }

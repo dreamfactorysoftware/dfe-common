@@ -4,8 +4,9 @@ use DreamFactory\Enterprise\Common\Contracts\Custodial;
 
 /**
  * A trait that keeps track of things checked in and out
+ * @implements \DreamFactory\Enterprise\Common\Contracts\Custodial
  */
-trait Custodian /** @implements \DreamFactory\Enterprise\Common\Contracts\Custodial */
+trait Custodian
 {
     //******************************************************************************
     //* Members
@@ -14,7 +15,7 @@ trait Custodian /** @implements \DreamFactory\Enterprise\Common\Contracts\Custod
     /**
      * @type array Data to write to manifest
      */
-    private $custodianActivity = [];
+    private $custodialActivity = [];
 
     //******************************************************************************
     //* Methods
@@ -30,9 +31,9 @@ trait Custodian /** @implements \DreamFactory\Enterprise\Common\Contracts\Custod
      */
     public function addActivity($activity, array $extras = [])
     {
-        !isset($this->custodianActivity) && ($this->custodianActivity = []);
+        !isset($this->custodialActivity) && ($this->custodialActivity = []);
 
-        $this->custodianActivity[] = [
+        $this->custodialActivity[] = [
             $activity => array_merge($extras, ['timestamp' => date('c')]),
         ];
 
@@ -46,7 +47,7 @@ trait Custodian /** @implements \DreamFactory\Enterprise\Common\Contracts\Custod
      */
     public function getActivities()
     {
-        return $this->custodianActivity;
+        return $this->custodialActivity;
     }
 
     /**
@@ -61,7 +62,7 @@ trait Custodian /** @implements \DreamFactory\Enterprise\Common\Contracts\Custod
 
         /** @noinspection PhpUndefinedMethodInspection */
         $this->set($where, $_activities);
-        $flush && ($this->custodianActivity = []);
+        $flush && ($this->custodialActivity = []);
 
         return $this;
     }

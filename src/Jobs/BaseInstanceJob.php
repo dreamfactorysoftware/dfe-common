@@ -1,12 +1,13 @@
 <?php
 namespace DreamFactory\Enterprise\Common\Jobs;
 
+use DreamFactory\Enterprise\Common\Contracts\InstanceAware;
 use DreamFactory\Enterprise\Database\Models\Instance;
 
 /**
  * A base class for all DFE instance-related "job" commands (non-console)
  */
-abstract class BaseInstanceJob extends BaseJob
+abstract class BaseInstanceJob extends BaseEnterpriseJob implements InstanceAware
 {
     //******************************************************************************
     //* Members
@@ -19,7 +20,7 @@ abstract class BaseInstanceJob extends BaseJob
     /**
      * @type array
      */
-    protected $options = [];
+    protected $options;
 
     //******************************************************************************
     //* Methods
@@ -28,13 +29,15 @@ abstract class BaseInstanceJob extends BaseJob
     /**
      * Create a new command instance.
      *
-     * @param string $instanceId The instance to provision
-     * @param array  $options    Provisioning options
+     * @param string|int $instanceId The instance to provision
+     * @param array      $options    Provisioning options
      */
-    public function __construct($instanceId, $options = [])
+    public function __construct($instanceId, array $options = [])
     {
         $this->instanceId = $instanceId;
         $this->options = $options;
+
+        parent::__construct(array_get($options, 'cluster-id'), array_get($options, 'server-id'));
     }
 
     /**
@@ -51,5 +54,13 @@ abstract class BaseInstanceJob extends BaseJob
     public function getOptions()
     {
         return $this->options;
+    }
+
+    /**
+     * @return \DreamFactory\Enterprise\Database\Models\Instance|null
+     */
+    public function getInstance()
+    {
+        return $this->instanceId ? $this->_findInstance($this->instanceId) : null;
     }
 }

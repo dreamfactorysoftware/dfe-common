@@ -1,11 +1,11 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
-use DreamFactory\Enterprise\Services\Provisioners\ProvisionerOffering;
+use DreamFactory\Enterprise\Common\Provisioners\ProvisionerOffering;
 
 /**
  * A trait that adds offerings capabilities to provisioners
  *
- * @implements \DreamFactory\Enterprise\Common\Contracts\ProvidesOfferings
+ * @implements \DreamFactory\Enterprise\Common\Contracts\OfferingsAware
  */
 trait HasOfferings
 {
@@ -23,15 +23,19 @@ trait HasOfferings
     //******************************************************************************
 
     /**
-     * Boot the trait
+     * Returns the list of offerings for this provider
+     *
+     * @param string|null $provisionerId
+     *
+     * @return array|null Array of offerings or null if none
      */
-    public function bootTrait()
+    public function getOfferings($provisionerId = null)
     {
         if (null === $this->offerings) {
             $this->offerings = [];
 
-            /** @noinspection PhpUndefinedClassConstantInspection */
-            $_list = config('provisioners.hosts.' . static::PROVISIONER_ID . '.offerings', []);
+            /** @noinspection PhpUndefinedMethodInspection */
+            $_list = config('provisioners.hosts.' . ($provisionerId ?: $this->getProvisionerId()) . '.offerings', []);
 
             if (is_array($_list) && !empty($_list)) {
                 foreach ($_list as $_key => $_value) {
@@ -42,15 +46,7 @@ trait HasOfferings
                 }
             }
         }
-    }
 
-    /**
-     * Returns the list of offerings for this provider
-     *
-     * @return array|null Array of offerings or null if none
-     */
-    public function getOfferings()
-    {
         return $this->offerings;
     }
 }

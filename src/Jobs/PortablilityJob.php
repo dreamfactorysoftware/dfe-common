@@ -11,13 +11,9 @@ abstract class PortabilityJob extends BaseInstanceJob
     //******************************************************************************
 
     /**
-     * @type mixed The target
+     * @type mixed The job target
      */
-    protected $to;
-    /**
-     * @type mixed The source
-     */
-    protected $from;
+    protected $target;
 
     //******************************************************************************
     //* Methods
@@ -27,32 +23,34 @@ abstract class PortabilityJob extends BaseInstanceJob
      * Create a new command instance.
      *
      * @param string $instanceId The instance to provision
-     * @param mixed  $to         The target
-     * @param mixed  $from       The source
+     * @param mixed  $target     The target
      * @param array  $options    Provisioning options
      */
-    public function __construct($instanceId, $to = null, $from = null, $options = [])
+    public function __construct($instanceId, $target = null, $options = [])
     {
         parent::__construct($instanceId, $options);
 
-        $this->to = $to;
-        $this->from = $from;
+        $this->target = $target;
     }
 
     /**
-     * @return mixed
+     * @param mixed $target
+     *
+     * @return $this
      */
-    public function getTo()
+    public function setTarget($target)
     {
-        return $this->to;
+        $this->target = $target;
+
+        return $this;
     }
 
     /**
-     * @return mixed
+     * @return mixed|null
      */
-    public function getFrom()
+    public function getTarget()
     {
-        return $this->from;
+        return $this->target;
     }
 
 }

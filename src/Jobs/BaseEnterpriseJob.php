@@ -1,17 +1,19 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Jobs;
+<?php namespace DreamFactory\Enterprise\Common\Jobs;
 
-use DreamFactory\Enterprise\Common\Jobs\BaseJob;
-use DreamFactory\Enterprise\Common\Traits\StaticComponentLookup;
-use DreamFactory\Enterprise\Database\Enums\OwnerTypes;
-use DreamFactory\Enterprise\Services\Contracts\EnterpriseJob;
-use DreamFactory\Enterprise\Services\Enums\ServerTypes;
+use DreamFactory\Enterprise\Common\Contracts\EnterpriseJob;
+use DreamFactory\Enterprise\Common\Traits\EntityLookup;
 
 /**
  * A base class for all DFE non-instance "job" type commands (non-console)
  */
 abstract class BaseEnterpriseJob extends BaseJob implements EnterpriseJob
 {
+    //******************************************************************************
+    //* Traits
+    //******************************************************************************
+
+    use EntityLookup;
+
     //******************************************************************************
     //* Constants
     //******************************************************************************
@@ -20,12 +22,6 @@ abstract class BaseEnterpriseJob extends BaseJob implements EnterpriseJob
      * @type string|bool The queue upon which to push myself. Set to false to not use queuing
      */
     const JOB_QUEUE = 'enterprise';
-
-    //******************************************************************************
-    //* Traits
-    //******************************************************************************
-
-    use StaticComponentLookup;
 
     //******************************************************************************
     //* Members
@@ -40,15 +36,11 @@ abstract class BaseEnterpriseJob extends BaseJob implements EnterpriseJob
      */
     protected $serverId;
     /**
-     * @type int An OwnerTypes enum
-     */
-    protected $serverType;
-    /**
-     * @type int
+     * @type int The owner ID
      */
     protected $ownerId;
     /**
-     * @type int
+     * @type int The owner type
      */
     protected $ownerType;
 
@@ -59,12 +51,11 @@ abstract class BaseEnterpriseJob extends BaseJob implements EnterpriseJob
     /**
      * @param string|int $clusterId
      * @param string|int $serverId
-     * @param int        $serverType
      */
-    public function __construct($clusterId = null, $serverId = null, $serverType = null)
+    public function __construct($clusterId = null, $serverId = null)
     {
-        $this->clusterId = $clusterId ?: config('dfe.provisioning.default-cluster-id');
-        $this->serverId = $serverId ?: config('dfe.provisioning.default-db-server-id');
+        $this->setClusterId($clusterId ?: config('dfe.provisioning.default-cluster-id'));
+        $this->setServerId($serverId ?: config('dfe.provisioning.default-db-server-id'));
     }
 
     /**
@@ -82,7 +73,7 @@ abstract class BaseEnterpriseJob extends BaseJob implements EnterpriseJob
      */
     public function setClusterId($clusterId)
     {
-        $_cluster = static::_lookupCluster($clusterId);
+        $_cluster = $this->_findCluster($clusterId);
         $this->clusterId = $_cluster->cluster_id_text;
 
         return $this;
@@ -103,83 +94,52 @@ abstract class BaseEnterpriseJob extends BaseJob implements EnterpriseJob
      */
     public function setServerId($serverId)
     {
-        $_server = static::_lookupServer($serverId);
+        $_server = $this->_findServer($serverId);
         $this->serverId = $_server->server_id_text;
 
         return $this;
     }
 
     /**
-     * @return mixed
-     */
-    public function getServerType()
-    {
-        return $this->serverType;
-    }
-
-    /**
-     * @param mixed $serverType Defaults to "WEB"
-     *
-     * @return $this
-     */
-    public function setServerType($serverType = ServerTypes::WEB)
-    {
-        $this->serverType = ServerTypes::contains($serverType, true) ?: ServerTypes::WEB;
-    }
-
-    /**
-     * @return int
-     */
-    public function getOwnerId()
-    {
-        return $this->ownerId;
-    }
-
-    /**
      * @param int $ownerId
-     *
-     * @return $this
-     */
-    public function setOwnerId($ownerId)
-    {
-        $this->ownerId = $ownerId;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getOwnerType()
-    {
-        return $this->ownerType;
-    }
-
-    /**
      * @param int $ownerType
      *
      * @return $this
      */
-    public function setOwnerType($ownerType = OwnerTypes::USER)
+    public function setOwner($ownerId, $ownerType)
     {
-        $this->ownerType =
-            (is_numeric($ownerType) && OwnerTypes::contains($ownerType))
-                ? $ownerType
-                : OwnerTypes::defines($ownerType, true);
+        $_owner = $this->_locateOwner($ownerId, $ownerType);
+
+        $this->ownerId = $_owner->id;
+        $this->ownerType = $_owner->owner_type_nbr;
 
         return $this;
+    }
+
+    /**
+     * Retrieve the owner row
+     *
+     * @return \DreamFactory\Enterprise\Database\Models\Cluster|\DreamFactory\Enterprise\Database\Models\Instance|\DreamFactory\Enterprise\Database\Models\Server|\DreamFactory\Enterprise\Database\Models\User|null
+     */
+    public function getOwner()
+    {
+        if ($this->ownerId) {
+            return $this->_locateOwner($this->ownerId, $this->ownerType);
+        }
+
+        return null;
     }
 
     /** @inheritdoc */
     public function getCluster($clusterId = null)
     {
-        return static::_lookupCluster($clusterId ?: $this->clusterId);
+        return $this->_findCluster($clusterId ?: $this->clusterId);
     }
 
     /** @inheritdoc */
     public function getServer($serverId = null)
     {
-        return static::_lookupServer($serverId ?: $this->serverId);
+        return $this->_findServer($serverId ?: $this->serverId);
     }
 
 }

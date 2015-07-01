@@ -2,8 +2,9 @@
 
 /**
  * A trait that manages the growth of collections
+ * @implements \DreamFactory\Enterprise\Common\Contracts\Curated
  */
-trait Curator /* @implements \DreamFactory\Enterprise\Common\Contracts\Curated */
+trait Curator
 {
     //******************************************************************************
     //* Methods
@@ -16,6 +17,7 @@ trait Curator /* @implements \DreamFactory\Enterprise\Common\Contracts\Curated *
      */
     public function reset()
     {
+        /** @noinspection PhpUndefinedFieldInspection */
         $this->items = [];
 
         return $this;

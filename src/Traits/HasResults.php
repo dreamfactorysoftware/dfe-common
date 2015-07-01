@@ -13,7 +13,7 @@ trait HasResults
     /**
      * @type mixed
      */
-    protected $_result = null;
+    protected $processResult = null;
 
     //******************************************************************************
     //* Methods
@@ -24,7 +24,7 @@ trait HasResults
      */
     public function getResult()
     {
-        return $this->_result;
+        return $this->processResult;
     }
 
     /**
@@ -34,7 +34,7 @@ trait HasResults
      */
     public function setResult($result)
     {
-        $this->_result = $result;
+        $this->processResult = $result;
 
         return $this;
     }

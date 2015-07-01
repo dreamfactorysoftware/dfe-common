@@ -1,7 +1,6 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Traits;
+<?php namespace DreamFactory\Enterprise\Common\Traits;
 
-use DreamFactory\Enterprise\Database\Enums\ServerTypes;
+use DreamFactory\Enterprise\Common\Enums\ServerTypes;
 use DreamFactory\Enterprise\Database\Models\AppKey;
 use DreamFactory\Enterprise\Database\Models\Cluster;
 use DreamFactory\Enterprise\Database\Models\Instance;

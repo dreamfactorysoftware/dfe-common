@@ -45,7 +45,6 @@
     "dreamfactory/dfe-database":   "dev-develop as dev-master",
     "barryvdh/laravel-ide-helper": "~2.0",
     "doctrine/dbal":               "~2.3",
-    "phpspec/phpspec":             "~2.1",
     "way/generators":              "~3.0",
     "laravel/framework":           "5.1.*",
     "phpspec/phpspec":             "~2.1"

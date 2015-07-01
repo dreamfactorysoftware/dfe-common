@@ -1,5 +1,7 @@
 <?php namespace DreamFactory\Enterprise\Common\Contracts;
 
+use DreamFactory\Enterprise\Common\Provisioners\ProvisioningRequest;
+
 /**
  * Something that looks like it can provision resources
  */
@@ -17,16 +19,16 @@ interface ResourceProvisioner
     public function getProvisionerId();
 
     /**
-     * @param \DreamFactory\Enterprise\Services\Provisioners\ProvisioningRequest|mixed $request
-     * @param array                                                                    $options
+     * @param ProvisioningRequest|mixed $request
+     * @param array                     $options
      *
      * @return mixed
      */
     public function provision($request, $options = []);
 
     /**
-     * @param \DreamFactory\Enterprise\Services\Provisioners\ProvisioningRequest|mixed $request
-     * @param array                                                                    $options
+     * @param ProvisioningRequest|mixed $request
+     * @param array                     $options
      *
      * @return mixed
      */

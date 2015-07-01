@@ -1,12 +1,11 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Contracts;
+<?php namespace DreamFactory\Enterprise\Common\Contracts;
 
 use DreamFactory\Enterprise\Database\Models\Instance;
 
 /**
- * Defines an object that acts as a container for an instance
+ * Something that is aware of an instance
  */
-interface InstanceContainer
+interface InstanceAware
 {
     //******************************************************************************
     //* Methods

@@ -12,7 +12,7 @@ trait ElapsedTimer
     /**
      * @type array The timers I manage
      */
-    protected $_timers = [];
+    protected $elapsedTimers = [];
 
     //******************************************************************************
     //* Methods
@@ -38,7 +38,8 @@ trait ElapsedTimer
      */
     public function startTimer($id = null)
     {
-        $_timers[$this->_etScrubTimerId($id)] = ['start' => microtime(true), 'end' => null, 'elapsed' => null];
+        $elapsedTimers[$this->scrubElapsedTimerId($id)] =
+            ['start' => microtime(true), 'end' => null, 'elapsed' => null];
     }
 
     /**
@@ -52,9 +53,10 @@ trait ElapsedTimer
             return false;
         }
 
-        $this->_timers[$id]['end'] = microtime(true);
+        $this->elapsedTimers[$id]['end'] = microtime(true);
 
-        return $this->_timers[$id]['elapsed'] = $this->_timers[$id]['end'] - $this->_timers[$id]['start'];
+        return $this->elapsedTimers[$id]['elapsed'] =
+            $this->elapsedTimers[$id]['end'] - $this->elapsedTimers[$id]['start'];
     }
 
     /**
@@ -64,8 +66,8 @@ trait ElapsedTimer
      */
     public function getTimer($id = null)
     {
-        if (array_key_exists($_id = $this->_etScrubTimerId($id), $this->_timers)) {
-            return $this->_timers[$_id];
+        if (array_key_exists($_id = $this->scrubElapsedTimerId($id), $this->elapsedTimers)) {
+            return $this->elapsedTimers[$_id];
         }
 
         return false;
@@ -92,7 +94,7 @@ trait ElapsedTimer
      *
      * @return string
      */
-    protected function _etScrubTimerId($id)
+    protected function scrubElapsedTimerId($id)
     {
         return $id = $id ?: spl_object_hash($this);
     }
