@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Jobs;
+<?php namespace DreamFactory\Enterprise\Common\Jobs;
 
 /**
  * A base class for all DFE portability requests
@@ -14,6 +13,10 @@ abstract class PortabilityJob extends BaseInstanceJob
      * @type mixed The job target
      */
     protected $target;
+    /**
+     * @type mixed Where to send the output
+     */
+    protected $outputFile;
 
     //******************************************************************************
     //* Methods
@@ -22,15 +25,17 @@ abstract class PortabilityJob extends BaseInstanceJob
     /**
      * Create a new command instance.
      *
-     * @param string $instanceId The instance to provision
-     * @param mixed  $target     The target
-     * @param array  $options    Provisioning options
+     * @param string     $instanceId The instance to provision
+     * @param mixed|null $target     The target
+     * @param mixed|null $outputFile Where output goes
+     * @param array      $options    Provisioning options
      */
-    public function __construct($instanceId, $target = null, $options = [])
+    public function __construct($instanceId, $target = null, $outputFile = null, $options = [])
     {
         parent::__construct($instanceId, $options);
 
-        $this->target = $target;
+        $target && $this->target = $target;
+        $outputFile && $this->outputFile = $outputFile;
     }
 
     /**
@@ -53,4 +58,23 @@ abstract class PortabilityJob extends BaseInstanceJob
         return $this->target;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getOutputFile()
+    {
+        return $this->outputFile;
+    }
+
+    /**
+     * @param mixed $outputFile
+     *
+     * @return $this
+     */
+    public function setOutputFile($outputFile)
+    {
+        $this->outputFile = $outputFile;
+
+        return $this;
+    }
 }

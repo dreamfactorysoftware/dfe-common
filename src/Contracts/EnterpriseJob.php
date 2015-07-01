@@ -26,11 +26,6 @@ interface EnterpriseJob
     public function getServer($serverId = null);
 
     /**
-     * @return string Return the absolute path of the output file
-     */
-    public function getOutputFile();
-
-    /**
      * @return EnterpriseModel The owner model
      */
     public function getOwner();
