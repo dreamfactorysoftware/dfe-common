@@ -5,7 +5,7 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\ZipArchive\ZipArchiveAdapter;
 
 /**
- * A trait that aids with archiving
+ * A trait chocked full of static methods to help with archiving
  */
 trait Archivist
 {
@@ -22,19 +22,23 @@ trait Archivist
      *
      * @return bool
      */
-    protected function writeStream($filesystem, $source, $destination)
+    protected static function writeStream($filesystem, $source, $destination)
     {
-        if (false !== ($_fd = fopen($source, 'r'))) {
+        $_resource = false;
+
+        is_resource($source) && $_resource = $source;
+
+        if ($_resource || false !== ($_resource = fopen($source, 'r'))) {
             //  Fallback gracefully if no stream support
             if (method_exists($filesystem, 'writeStream')) {
-                $_result = $filesystem->writeStream($destination, $_fd, []);
+                $_result = $filesystem->writeStream($destination, $_resource, []);
             } elseif (method_exists($filesystem->getAdapter(), 'writeStream')) {
-                $_result = $filesystem->getAdapter()->writeStream($destination, $_fd, $filesystem->getConfig());
+                $_result = $filesystem->getAdapter()->writeStream($destination, $_resource, $filesystem->getConfig());
             } else {
                 $_result = $filesystem->put($destination, file_get_contents($source));
             }
 
-            fclose($_fd);
+            fclose($_resource);
 
             return $_result;
         }
@@ -48,10 +52,10 @@ trait Archivist
      *
      * @return bool|string If successful, the actual file name (without a path) is return. False otherwise
      */
-    protected function archiveTree(Filesystem $source, $archiveFile)
+    protected static function archiveTree(Filesystem $source, $archiveFile)
     {
         //  Add file extension if missing
-        $archiveFile = $this->ensureFileSuffix('.zip', $archiveFile);
+        $archiveFile = static::ensureFileSuffix('.zip', $archiveFile);
 
         //  Create our zip container
         $_archive = new Filesystem(new ZipArchiveAdapter($archiveFile));
@@ -63,7 +67,7 @@ trait Archivist
                 } elseif ('link' == $_file['type']) {
                     $_archive->put($_file['path'], $_file['target']);
                 } elseif ('file' == $_file['type']) {
-                    file_exists($_file['path']) && $this->writeStream($_archive, $_file['path'], $_file['path']);
+                    file_exists($_file['path']) && static::writeStream($_archive, $_file['path'], $_file['path']);
                 }
             }
         } catch (\Exception $_ex) {
@@ -73,9 +77,7 @@ trait Archivist
         }
 
         //  Force-close the zip
-        /** @noinspection PhpUndefinedMethodInspection */
-        $_archive->getAdapter()->getArchive()->close();
-        $_archive = null;
+        static::flushZipArchive($_archive);
 
         return basename($archiveFile);
     }
@@ -87,9 +89,9 @@ trait Archivist
      * @param string                                                 $workFile
      * @param bool                                                   $delete If true, file is deleted from work space after being moved
      */
-    protected function moveWorkFile($archive, $workFile, $delete = true)
+    protected static function moveWorkFile($archive, $workFile, $delete = true)
     {
-        if ($this->writeStream($archive, $workFile, basename($workFile))) {
+        if (static::writeStream($archive, $workFile, basename($workFile))) {
             $delete && unlink($workFile);
         }
     }
@@ -100,7 +102,7 @@ trait Archivist
      *
      * @return \League\Flysystem\Filesystem|string
      */
-    protected function getWorkPath($tag, $pathOnly = false)
+    protected static function getWorkPath($tag, $pathOnly = false)
     {
         $_root = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'dfe' . DIRECTORY_SEPARATOR . $tag;
 
@@ -123,7 +125,7 @@ trait Archivist
      *
      * @return bool
      */
-    protected function deleteWorkPath($tag)
+    protected static function deleteWorkPath($tag)
     {
         $_root = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'dfe' . DIRECTORY_SEPARATOR . $tag;
 
@@ -142,7 +144,7 @@ trait Archivist
      *
      * @return string
      */
-    protected function ensureFileSuffix($suffix, $file)
+    protected static function ensureFileSuffix($suffix, $file)
     {
         if ($suffix !== strtolower(substr($file, -(strlen($suffix))))) {
             $file .= $suffix;
@@ -156,9 +158,10 @@ trait Archivist
      *
      * @param \League\Flysystem\Filesystem $filesystem
      */
-    protected function flushZipArchive(Filesystem $filesystem)
+    protected static function flushZipArchive(Filesystem $filesystem)
     {
         if (($_adapter = $filesystem->getAdapter()) instanceof ZipArchiveAdapter) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $_adapter->getArchive()->close();
         }
     }
