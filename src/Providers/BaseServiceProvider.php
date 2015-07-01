@@ -1,5 +1,6 @@
 <?php namespace DreamFactory\Enterprise\Common\Providers;
 
+use DreamFactory\Enterprise\Common\Traits\Lumberjack;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -24,6 +25,12 @@ abstract class BaseServiceProvider extends ServiceProvider
      */
     const MANAGER_IOC_NAME = false;
 
+    //******************************************************************************
+    //* Traits
+    //******************************************************************************
+
+    use Lumberjack;
+
     //********************************************************************************
     //* Public Methods
     //********************************************************************************
@@ -40,6 +47,8 @@ abstract class BaseServiceProvider extends ServiceProvider
     {
         //  Register object into instance container
         $this->app->singleton($abstract ?: static::IOC_NAME, $concrete);
+
+        $this->debug(static::IOC_NAME . ' service registered');
     }
 
     /**
@@ -55,6 +64,8 @@ abstract class BaseServiceProvider extends ServiceProvider
     {
         //  Register object into instance container
         $this->app->bind($abstract ?: static::IOC_NAME, $concrete, $shared);
+
+        $this->debug(static::IOC_NAME . ' service bound');
     }
 
     /**
