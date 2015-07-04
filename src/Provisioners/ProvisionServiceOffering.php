@@ -7,7 +7,7 @@ use Illuminate\Contracts\Support\Jsonable;
 /**
  * A provisioner's offering
  */
-class ProvisionerOffering implements Offering, Jsonable, Arrayable
+class ProvisionServiceOffering implements Offering, Jsonable, Arrayable
 {
     //******************************************************************************
     //* Members
@@ -73,7 +73,7 @@ class ProvisionerOffering implements Offering, Jsonable, Arrayable
     /**
      * @param array $config
      *
-     * @return ProvisionerOffering
+     * @return ProvisionServiceOffering
      */
     public function setConfig($config)
     {
@@ -93,7 +93,7 @@ class ProvisionerOffering implements Offering, Jsonable, Arrayable
     /**
      * @param string $id
      *
-     * @return ProvisionerOffering
+     * @return ProvisionServiceOffering
      */
     public function setId($id)
     {
@@ -113,7 +113,7 @@ class ProvisionerOffering implements Offering, Jsonable, Arrayable
     /**
      * @param string $name
      *
-     * @return ProvisionerOffering
+     * @return ProvisionServiceOffering
      */
     public function setName($name)
     {
@@ -133,7 +133,7 @@ class ProvisionerOffering implements Offering, Jsonable, Arrayable
     /**
      * @param string $description
      *
-     * @return ProvisionerOffering
+     * @return ProvisionServiceOffering
      */
     public function setDescription($description)
     {
@@ -153,7 +153,7 @@ class ProvisionerOffering implements Offering, Jsonable, Arrayable
     /**
      * @param array $items
      *
-     * @return ProvisionerOffering
+     * @return ProvisionServiceOffering
      */
     public function setItems($items)
     {
@@ -177,7 +177,7 @@ class ProvisionerOffering implements Offering, Jsonable, Arrayable
     /**
      * @param string $suggested
      *
-     * @return ProvisionerOffering
+     * @return ProvisionServiceOffering
      */
     public function setSuggested($suggested)
     {

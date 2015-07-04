@@ -1,6 +1,6 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
-use DreamFactory\Enterprise\Common\Provisioners\ProvisionerOffering;
+use DreamFactory\Enterprise\Common\Provisioners\ProvisionServiceOffering;
 
 /**
  * A trait that adds offerings capabilities to provisioners
@@ -40,7 +40,7 @@ trait HasOfferings
             if (is_array($_list) && !empty($_list)) {
                 foreach ($_list as $_key => $_value) {
                     if (!empty($_key)) {
-                        $_offer = new ProvisionerOffering($_key, $_value);
+                        $_offer = new ProvisionServiceOffering($_key, $_value);
                         $this->offerings[$_key] = $_offer->toArray();
                     }
                 }

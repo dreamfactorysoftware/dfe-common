@@ -1,12 +1,12 @@
 <?php namespace DreamFactory\Enterprise\Common\Contracts;
 
-use DreamFactory\Enterprise\Common\Provisioners\ProvisionServiceRequest;
 use DreamFactory\Enterprise\Common\Provisioners\ProvisionServiceResponse;
+use DreamFactory\Enterprise\Common\Provisioners\ProvisionServiceRequest;
 
 /**
- * Something that looks like it can provision resources
+ * A service that provides virtual provisioning capabilities
  */
-interface ResourceProvisioner
+interface VirtualProvisioner
 {
     //*************************************************************************
     //* Methods
