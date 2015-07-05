@@ -96,4 +96,8 @@ class EnterpriseDefaults extends FactoryEnum
      * @type string The default required private paths
      */
     const DEFAULT_REQUIRED_OWNER_PRIVATE_PATHS = 'snapshots';
+    /**
+     * @type int The default number of items to display on a listing of data
+     */
+    const DEFAULT_ITEMS_PER_PAGE = 25;
 }
