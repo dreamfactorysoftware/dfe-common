@@ -54,8 +54,8 @@ abstract class BaseEnterpriseJob extends BaseJob implements EnterpriseJob
      */
     public function __construct($clusterId = null, $serverId = null)
     {
-        $this->setClusterId($clusterId ?: config('dfe.provisioning.default-cluster-id'));
-        $this->setServerId($serverId ?: config('dfe.provisioning.default-db-server-id'));
+        $this->setClusterId($clusterId ?: config('provisioning.default-cluster-id'));
+        $this->setServerId($serverId ?: config('provisioning.default-db-server-id'));
     }
 
     /**

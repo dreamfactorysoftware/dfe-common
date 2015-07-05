@@ -28,7 +28,7 @@ class InstanceStorageService extends BaseService
     public function boot()
     {
         $this->privatePathName =
-            $this->cleanPath(config('dfe.provisioning.private-path-name', EnterpriseDefaults::PRIVATE_PATH_NAME),
+            $this->cleanPath(config('provisioning.private-path-name', EnterpriseDefaults::PRIVATE_PATH_NAME),
                 false,
                 true);
     }
@@ -87,7 +87,7 @@ class InstanceStorageService extends BaseService
     {
         return
             $this->getOwnerPrivatePath($instance) .
-            $this->cleanPath(config('dfe.provisioning.snapshot-path-name', EnterpriseDefaults::SNAPSHOT_PATH_NAME));
+            $this->cleanPath(config('provisioning.snapshot-path-name', EnterpriseDefaults::SNAPSHOT_PATH_NAME));
     }
 
     /**

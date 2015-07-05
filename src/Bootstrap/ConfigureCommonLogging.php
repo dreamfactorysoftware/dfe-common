@@ -5,7 +5,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\ConfigureLogging;
 use Illuminate\Log\Writer;
 
-class ConfigureCommonLogging extends ConfigureLogging
+class ConfigureEnterpriseLogging extends ConfigureLogging
 {
     //******************************************************************************
     //* Members

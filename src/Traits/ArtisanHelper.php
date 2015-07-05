@@ -35,11 +35,11 @@ trait ArtisanHelper
     {
         /** @noinspection PhpUndefinedFieldInspection */
         $this->output->writeln(
-            $this->context(config('dfe.commands.display-name'), 'info') .
-            ' (' . $this->context(config('dfe.commands.display-version', 'Alpha'), 'comment') . ')'
+            $this->context(config('commands.display-name'), 'info') .
+            ' (' . $this->context(config('commands.display-version', 'Alpha'), 'comment') . ')'
         );
 
-        if (null !== ($_copyright = config('dfe.commands.display-copyright'))) {
+        if (null !== ($_copyright = config('commands.display-copyright'))) {
             /** @noinspection PhpUndefinedFieldInspection */
             $this->output->writeln($this->context($_copyright, 'info') . ($newline ? PHP_EOL : null));
         }
@@ -198,7 +198,7 @@ trait ArtisanHelper
     protected function getCommandConfig($command = null)
     {
         /** @noinspection PhpUndefinedFieldInspection */
-        return config('dfe.commands.' . $command ?: str_replace('dfe:', null, $this->name), []);
+        return config('commands.' . $command ?: str_replace('dfe:', null, $this->name), []);
     }
 
     /**

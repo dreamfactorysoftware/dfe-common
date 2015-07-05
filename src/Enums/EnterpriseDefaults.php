@@ -84,4 +84,16 @@ class EnterpriseDefaults extends FactoryEnum
      * @type string The type of compression to use when making exports
      */
     const DEFAULT_DATA_COMPRESSOR = 'zip';
+    /**
+     * @type string The default required storage paths
+     */
+    const DEFAULT_REQUIRED_STORAGE_PATHS = 'applications|.private';
+    /**
+     * @type string The default required private paths
+     */
+    const DEFAULT_REQUIRED_PRIVATE_PATHS = '.cache|config|scripts|scripts.user|log';
+    /**
+     * @type string The default required private paths
+     */
+    const DEFAULT_REQUIRED_OWNER_PRIVATE_PATHS = 'snapshots';
 }
