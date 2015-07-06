@@ -17,15 +17,15 @@ trait VerifiesSignatures
     /**
      * @type string
      */
-    protected $_vsSignature = null;
+    protected $vsSignature = null;
     /**
      * @type string
      */
-    protected $_vsClientId = null;
+    protected $vsClientId = null;
     /**
      * @type string
      */
-    protected $_vsClientSecret = null;
+    protected $vsClientSecret = null;
 
     //******************************************************************************
     //* Methods
@@ -48,9 +48,9 @@ trait VerifiesSignatures
         }
 
         //  Looks good
-        $this->_vsClientId = $_key->client_id;
-        $this->_vsClientSecret = $_key->client_secret;
-        $this->_vsSignature = $this->_generateSignature();
+        $this->vsClientId = $_key->client_id;
+        $this->vsClientSecret = $_key->client_secret;
+        $this->vsSignature = $this->generateSignature();
 
         return $this;
     }
@@ -62,21 +62,19 @@ trait VerifiesSignatures
      *
      * @return bool
      */
-    protected function _verifySignature($token, $clientId, $clientSecret)
+    protected function verifySignature($token, $clientId, $clientSecret)
     {
-        return $token === $this->_vsSignature;
+        return $token === ($this->vsSignature ?: $this->setSigningCredentials($clientId, $clientSecret)->vsSignature);
     }
 
     /**
      * @return string
      */
-    private function _generateSignature()
+    private function generateSignature()
     {
-        return hash_hmac(
-            config('dfe.signature-method', EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD),
-            $this->_vsClientId,
-            $this->_vsClientSecret
-        );
+        return hash_hmac(config('dfe.signature-method', EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD),
+            $this->vsClientId,
+            $this->vsClientSecret);
     }
 
     /**
@@ -84,14 +82,12 @@ trait VerifiesSignatures
      *
      * @return array
      */
-    protected function _signRequest(array $payload)
+    protected function signRequest(array $payload)
     {
-        return array_merge(
-            [
-                'client-id'    => $this->_vsClientId,
-                'access-token' => $this->_vsSignature,
-            ],
-            $payload ?: []
-        );
+        return array_merge([
+            'client-id'    => $this->vsClientId,
+            'access-token' => $this->vsSignature,
+        ],
+            $payload ?: []);
     }
 }

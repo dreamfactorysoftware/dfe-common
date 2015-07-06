@@ -29,6 +29,14 @@ abstract class BaseServiceProvider extends ServiceProvider
     //********************************************************************************
 
     /**
+     * Called after construction
+     */
+    public function boot()
+    {
+        //  Does nothing but encourages calling the parent method
+    }
+
+    /**
      * Register a shared binding in the container.
      *
      * @param  string               $abstract
