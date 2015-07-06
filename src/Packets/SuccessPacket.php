@@ -1,7 +1,7 @@
 <?php
 namespace DreamFactory\Enterprise\Common\Packets;
 
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Response;
 
 class SuccessPacket extends BasePacket
 {
@@ -10,14 +10,16 @@ class SuccessPacket extends BasePacket
     //******************************************************************************
 
     /**
-     * @param int   $statusCode
-     * @param mixed $contents
+     * Creates a success packet
      *
-     * @return array The packetized contents
+     * @param mixed|null     $contents
+     * @param int|mixed|null $httpCode
+     *
+     * @return array
      */
-    public static function make($contents = null, $statusCode = Response::HTTP_OK)
+    public static function create($contents = null, $httpCode = Response::HTTP_OK)
     {
-        return static::_create(true, $contents, $statusCode);
+        return parent::create(true, $contents, $httpCode);
     }
 
 }

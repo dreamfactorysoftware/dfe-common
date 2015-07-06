@@ -187,7 +187,7 @@ class ClusterManifest implements Arrayable, Jsonable
      */
     public function get($key, $default = null)
     {
-        return IfSet::get($this->_contents, $key, $default);
+        return array_get($this->_contents, $key, $default);
     }
 
     /**

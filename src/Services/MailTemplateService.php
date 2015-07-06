@@ -39,9 +39,9 @@ class MailTemplateService extends BaseService
         }
 
         $_settings = config('services.smtp-mail', []);
-        $_service = IfSet::get($_settings, 'smtp-service', 'localhost');
+        $_service = array_get($_settings, 'smtp-service', 'localhost');
 
-        if (null === ($_mailTemplate = IfSet::getDeep($_settings, 'templates', $template))) {
+        if (null === ($_mailTemplate = array_getDeep($_settings, 'templates', $template))) {
             throw new \InvalidArgumentException('There was no associated template for type #' . $template);
         }
 
@@ -53,7 +53,7 @@ class MailTemplateService extends BaseService
 
         //	Use template subject first, then local
         if (!isset($data['subject'])) {
-            $data['subject'] = IfSet::get($_mailTemplate, 'subject');
+            $data['subject'] = array_get($_mailTemplate, 'subject');
         }
 
         $_templateFile = base_path() . '/config/templates/' . $_mailTemplate['template'];
@@ -73,7 +73,7 @@ class MailTemplateService extends BaseService
                     break;
 
                 default:
-                    if (null === ($_settings = IfSet::getDeep($_settings, 'services', $_service))) {
+                    if (null === ($_settings = array_getDeep($_settings, 'services', $_service))) {
                         throw new \RuntimeException('Service "' . $_service . '" is not properly configured.');
                     }
 
@@ -119,12 +119,12 @@ class MailTemplateService extends BaseService
     protected function _createMessage($template, &$data)
     {
         //	Pull out all the message data
-        $_to = IfSet::get($data, 'to', null, true);
-        $_from = IfSet::get($data, 'from', null, true);
-        $_replyTo = IfSet::get($data, 'reply_to', null, true);
-        $_cc = IfSet::get($data, 'cc', null, true);
-        $_bcc = IfSet::get($data, 'bcc', null, true);
-        $_subject = IfSet::get($data, 'subject', null, true);
+        $_to = array_get($data, 'to', null, true);
+        $_from = array_get($data, 'from', null, true);
+        $_replyTo = array_get($data, 'reply_to', null, true);
+        $_cc = array_get($data, 'cc', null, true);
+        $_bcc = array_get($data, 'bcc', null, true);
+        $_subject = array_get($data, 'subject', null, true);
 
         //	Get body template...
         if (false === ($_html = @file_get_contents($template))) {
@@ -181,7 +181,7 @@ class MailTemplateService extends BaseService
     protected function replaceMacros($replacements, $source, $prefix = 'private_', $delimiter = '%%')
     {
         $_data = [];
-        $_settings = IfSet::get($replacements, '__smtp-mail.settings__', []);
+        $_settings = array_get($replacements, '__smtp-mail.settings__', []);
 
         //	Replace private macros...
         if (false !== stripos($source, $delimiter . $prefix)) {

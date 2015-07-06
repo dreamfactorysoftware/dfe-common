@@ -149,18 +149,18 @@ MYSQL
 
         //  Set the single id for quick lookups
         foreach ($_servers as $_type => $_group) {
-            if (null !== IfSet::get($_group, '.id')) {
+            if (null !== array_get($_group, '.id')) {
                 continue;
             }
 
-            if (null !== ($_list = IfSet::get($_group, '.ids'))) {
+            if (null !== ($_list = array_get($_group, '.ids'))) {
                 if (!empty($_list) && is_array($_list)) {
                     $_servers[$_type]['.id'] = $_list[0];
                     continue;
                 }
             }
 
-            if (null !== ($_list = IfSet::get($_group, 'data'))) {
+            if (null !== ($_list = array_get($_group, 'data'))) {
                 if (!empty($_list) && is_array($_list)) {
                     foreach ($_list as $_item) {
                         if (isset($_item['id'])) {

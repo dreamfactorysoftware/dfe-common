@@ -64,13 +64,17 @@ trait VerifiesSignatures
      */
     protected function verifySignature($token, $clientId, $clientSecret)
     {
-        return $token === ($this->vsSignature ?: $this->setSigningCredentials($clientId, $clientSecret)->vsSignature);
+        if (empty($this->vsSignature)) {
+            $this->vsSignature = $this->setSigningCredentials( $clientId, $clientSecret )->generateSignature();
+        }
+
+        return $token === $this->vsSignature;
     }
 
     /**
      * @return string
      */
-    private function generateSignature()
+    protected function generateSignature()
     {
         return hash_hmac(config('dfe.signature-method', EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD),
             $this->vsClientId,

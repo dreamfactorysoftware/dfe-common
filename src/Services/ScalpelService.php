@@ -48,7 +48,7 @@ class ScalpelService extends BaseService
         $_view = StringView::make(
             [
                 'template'   => $_workTemplate,
-                'cache_key'  => md5(IfSet::get($data, 'cache_key', microtime(true)) . sha1($_workTemplate)),
+                'cache_key'  => md5(array_get($data, 'cache_key', microtime(true)) . sha1($_workTemplate)),
                 'updated_at' => time(),
             ],
             $data,

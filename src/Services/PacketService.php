@@ -8,14 +8,6 @@ use Symfony\Component\HttpFoundation\Response;
 class PacketService extends BaseService
 {
     //******************************************************************************
-    //* Constants
-    //******************************************************************************
-    /**
-     * @type string The version of this packet
-     */
-    const PACKET_VERSION = '2.0';
-
-    //******************************************************************************
     //* Members
     //******************************************************************************
 
@@ -39,25 +31,25 @@ class PacketService extends BaseService
     }
 
     /**
-     * @param int   $code
-     * @param mixed $contents
+     * @param mixed|null $contents
+     * @param int        $code
      *
      * @return array
      */
     public function success($contents = null, $code = Response::HTTP_OK)
     {
-        return SuccessPacket::make($contents, $code);
+        return SuccessPacket::create($contents, $code);
     }
 
     /**
+     * @param mixed|null        $contents
      * @param int               $code
      * @param string|\Exception $message
-     * @param mixed             $contents
      *
      * @return array
      */
     public function failure($contents = null, $code = Response::HTTP_NOT_FOUND, $message = null)
     {
-        return ErrorPacket::make($contents, $code, $message);
+        return ErrorPacket::create($contents, $code, $message);
     }
 }
