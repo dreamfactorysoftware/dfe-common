@@ -19,7 +19,7 @@ class SuccessPacket extends BasePacket
      */
     public static function create($contents = null, $httpCode = Response::HTTP_OK)
     {
-        return parent::create(true, $contents, $httpCode);
+        return parent::make(true, $contents, $httpCode);
     }
 
 }

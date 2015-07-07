@@ -30,7 +30,7 @@ class BasePacket
      *
      * @return array
      */
-    public static function create($success = true, $contents = null, $httpCode = Response::HTTP_OK, $errorMessage = null)
+    public static function make($success = true, $contents = null, $httpCode = Response::HTTP_OK, $errorMessage = null)
     {
         //  All packets have this
         return static::makePacket($success, $httpCode, $contents, $errorMessage);

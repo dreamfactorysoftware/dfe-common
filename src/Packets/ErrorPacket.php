@@ -12,6 +12,6 @@ class ErrorPacket extends BasePacket
     /** @inheritdoc */
     public static function create($contents = null, $statusCode = Response::HTTP_NOT_FOUND, $errorMessage = null)
     {
-        return parent::create(false, $contents, $statusCode, $errorMessage);
+        return parent::make(false, $contents, $statusCode, $errorMessage);
     }
 }
