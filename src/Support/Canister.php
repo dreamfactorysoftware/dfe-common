@@ -49,7 +49,7 @@ class Canister implements Arrayable, Jsonable, \JsonSerializable
     {
         empty($dataToMerge) && ($dataToMerge = []);
 
-        $this->contents = $this->contents->merge($dataToMerge);
+        $this->contents = $this->contents->merge($this->removeDisallowedKeys($dataToMerge));
 
         return $this;
     }
@@ -69,31 +69,13 @@ class Canister implements Arrayable, Jsonable, \JsonSerializable
         (empty($existing) || !is_array($existing)) && ($existing = []);
         empty($contents) && ($contents = $template ?: []);
 
-        //  Let the collection deal with the inbound contents checking...
-        $_hasKeys = !empty($this->allowedKeys);
-
-        $_collection = collect($contents)
-            ->map(function ($key) {
-                return trim(strtolower($key));
-            })
-            ->reject(function ($key) use ($_hasKeys) {
-                return !$_hasKeys || array_key_exists($key, $this->allowedKeys);
-            });
-
-        //  Remove any existing keys that aren't allowed
-        if (!empty($this->allowedKeys)) {
-            foreach ($existing as $_key => $_value) {
-                if (!array_key_exists($_key, $this->allowedKeys)) {
-                    unset($existing[$_key]);
-                }
-            }
-        }
-
-        //  Add existing values to the collection
-        !empty($existing) && ($_collection = $_collection->merge($existing));
-
         //  i like to move it move it
-        $this->contents = $_collection;
+        $this->contents = new Collection(
+            array_merge(
+                $this->removeDisallowedKeys($existing),
+                $this->removeDisallowedKeys($contents)
+            )
+        );
 
         return $this;
     }
@@ -262,5 +244,29 @@ class Canister implements Arrayable, Jsonable, \JsonSerializable
         }
 
         return str_ireplace(array_keys($_values), array_values($_values), $string);
+    }
+
+    /**
+     * Removes any disallowed keys from the $values
+     *
+     * @param array $values
+     *
+     * @return array The scrubbed data
+     */
+    protected function removeDisallowedKeys(array $values = [])
+    {
+        if (empty($this->allowedKeys)) {
+            return $values;
+        }
+
+        $_allowed = [];
+
+        foreach ($this->allowedKeys as $_key) {
+            if (array_key_exists($_key, $values)) {
+                $_allowed[$_key] = $values[$_key];
+            }
+        }
+
+        return $_allowed;
     }
 }
