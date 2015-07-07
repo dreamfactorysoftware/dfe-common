@@ -118,7 +118,6 @@ class FileCanister extends Canister implements Custodial
             $this->reset($contents, $this->read(false) ?: []);
         } catch (\Exception $_ex) {
             //  Ignored but noted
-            \Log::notice('error reading json file "' . $this->filename . '"');
         }
     }
 
@@ -267,7 +266,7 @@ class FileCanister extends Canister implements Custodial
 
         //  Copy the file...
         if (!$this->filesystem->copy($this->filename, $this->filename . date('YmdHiS') . '.save')) {
-            \Log::notice('Unable to make backup copy of "' . $this->filename . '"');
+            \Log::error('Unable to make backup copy of "' . $this->filename . '"');
 
             return false;
         }
