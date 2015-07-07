@@ -33,7 +33,7 @@ class BasePacket
     public static function make($success = true, $contents = null, $httpCode = Response::HTTP_OK, $errorMessage = null)
     {
         //  All packets have this
-        return static::makePacket($success, $httpCode, $contents, $errorMessage);
+        return static::makePacket($success, $contents, $httpCode, $errorMessage);
     }
 
     /**
@@ -112,6 +112,10 @@ class BasePacket
                 'message'   => $message,
                 'exception' => $_ex ? Json::encode($_ex) : false,
             ];
+        } else {
+            array_forget($_packet, 'error');
         }
+
+        return $_packet;
     }
 }
