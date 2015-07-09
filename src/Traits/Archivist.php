@@ -1,5 +1,6 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
+use DreamFactory\Enterprise\Common\Utility\Disk;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use League\Flysystem\ZipArchive\ZipArchiveAdapter;
@@ -130,7 +131,7 @@ trait Archivist
         $_root = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'dfe' . DIRECTORY_SEPARATOR . $tag;
 
         if (is_dir($_root)) {
-            return \DreamFactory\Library\Utility\FileSystem::rmdir($_root);
+            return Disk::rmdir($_root, true);
         }
 
         return true;
