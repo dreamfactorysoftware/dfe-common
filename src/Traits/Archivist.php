@@ -92,6 +92,10 @@ trait Archivist
      */
     protected static function moveWorkFile($archive, $workFile, $delete = true)
     {
+        if (!is_file($workFile)) {
+            throw new \InvalidArgumentException('"' . $workFile . '" is not a file.');
+        }
+
         if (static::writeStream($archive, $workFile, basename($workFile))) {
             $delete && unlink($workFile);
         }
@@ -105,18 +109,11 @@ trait Archivist
      */
     protected static function getWorkPath($tag, $pathOnly = false)
     {
-        $_root = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'dfe' . DIRECTORY_SEPARATOR . $tag;
-
-        if (!\DreamFactory\Library\Utility\FileSystem::ensurePath($_root)) {
+        if (false === ($_root = Disk::path([sys_get_temp_dir(), 'dfe', $tag], true))) {
             throw new \RuntimeException('Unable to create working directory "' . $_root . '". Aborting.');
         }
 
-        if ($pathOnly) {
-            return $_root;
-        }
-
-        //  Set our temp base
-        return new Filesystem(new Local($_root));
+        return $pathOnly ? $_root : new Filesystem(new Local($_root));
     }
 
     /**
@@ -128,13 +125,9 @@ trait Archivist
      */
     protected static function deleteWorkPath($tag)
     {
-        $_root = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'dfe' . DIRECTORY_SEPARATOR . $tag;
+        $_root = Disk::path([sys_get_temp_dir(), 'dfe', $tag]);
 
-        if (is_dir($_root)) {
-            return Disk::rmdir($_root, true);
-        }
-
-        return true;
+        return is_dir($_root) ? Disk::rmdir($_root, true) : true;
     }
 
     /**
