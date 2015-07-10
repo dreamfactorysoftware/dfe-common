@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getPrivatePathName()
  * @method static string getPrivatePath(Instance $instance)
  * @method static string getOwnerPrivatePath(Instance $instance)
+ * @method static string getWorkPath(Instance $instance, string $append = null)
+ * @method static string deleteWorkPath(string $workPath)
  * @method static FilesystemAdapter getRootStorageMount(Instance $instance, string $path = null, string $tag = 'root-storage-mount')
  * @method static FilesystemAdapter getStorageMount(Instance $instance, string $tag = 'root-storage-mount')
  * @method static FilesystemAdapter getSnapshotMount(Instance $instance, string $tag = 'snapshot-mount')

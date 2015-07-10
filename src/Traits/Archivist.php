@@ -1,5 +1,6 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
+use DreamFactory\Enterprise\Common\Utility\Disk;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use League\Flysystem\ZipArchive\ZipArchiveAdapter;
@@ -105,9 +106,28 @@ trait Archivist
      */
     protected static function moveWorkFile($archive, $workFile, $delete = true)
     {
+        if (!is_file($workFile)) {
+            throw new \InvalidArgumentException('"' . $workFile . '" is not a file.');
+        }
+
         if (static::writeStream($archive, $workFile, basename($workFile))) {
             $delete && unlink($workFile);
         }
+    }
+
+    /**
+     * @param string $tag      Unique identifier for temp space
+     * @param bool   $pathOnly If true, only the path is returned.
+     *
+     * @return \League\Flysystem\Filesystem|string
+     */
+    protected static function getWorkPath($tag, $pathOnly = false)
+    {
+        if (false === ($_root = Disk::path([sys_get_temp_dir(), 'dfe', $tag], true))) {
+            throw new \RuntimeException('Unable to create working directory "' . $_root . '". Aborting.');
+        }
+
+        return $pathOnly ? $_root : new Filesystem(new Local($_root));
     }
 
     /**
@@ -119,13 +139,9 @@ trait Archivist
      */
     protected static function deleteWorkPath($tag)
     {
-        $_root = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'dfe' . DIRECTORY_SEPARATOR . $tag;
+        $_root = Disk::path([sys_get_temp_dir(), 'dfe', $tag]);
 
-        if (is_dir($_root)) {
-            return \DreamFactory\Library\Utility\FileSystem::rmdir($_root);
-        }
-
-        return true;
+        return is_dir($_root) ? Disk::rmdir($_root, true) : true;
     }
 
     /**

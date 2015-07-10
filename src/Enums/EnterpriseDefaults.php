@@ -91,7 +91,7 @@ class EnterpriseDefaults extends FactoryEnum
     /**
      * @type string The default required private paths
      */
-    const DEFAULT_REQUIRED_PRIVATE_PATHS = '.cache|config|scripts|scripts.user|log';
+    const DEFAULT_REQUIRED_PRIVATE_PATHS = '.cache|config|scripts|scripts.user|logs';
     /**
      * @type string The default required private paths
      */
