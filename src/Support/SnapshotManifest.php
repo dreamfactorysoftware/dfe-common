@@ -1,9 +1,10 @@
 <?php namespace DreamFactory\Enterprise\Common\Support;
 
 use DreamFactory\Enterprise\Common\Enums\ManifestTypes;
+use DreamFactory\Enterprise\Services\Console\Commands\Export;
 use League\Flysystem\Filesystem;
 
-class SnapshotManifest extends Manifest
+class SnapshotManifest extends ExportManifest
 {
     //******************************************************************************
     //* Members
