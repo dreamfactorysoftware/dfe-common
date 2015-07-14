@@ -1,6 +1,8 @@
 <?php namespace DreamFactory\Enterprise\Common\Services;
 
 use DreamFactory\Enterprise\Common\Enums\EnterpriseDefaults;
+use DreamFactory\Enterprise\Common\Exceptions\DiskException;
+use DreamFactory\Enterprise\Common\Utility\Disk;
 use DreamFactory\Enterprise\Database\Models\Instance;
 use League\Flysystem\Filesystem;
 
@@ -27,10 +29,11 @@ class InstanceStorageService extends BaseService
      */
     public function boot()
     {
-        $this->privatePathName =
-            $this->cleanPath(config('provisioning.private-path-name', EnterpriseDefaults::PRIVATE_PATH_NAME),
-                false,
-                true);
+        $this->privatePathName = $this->cleanPath(
+            config('provisioning.private-path-name', EnterpriseDefaults::PRIVATE_PATH_NAME),
+            false,
+            true
+        );
     }
 
     /**
@@ -46,48 +49,64 @@ class InstanceStorageService extends BaseService
 
     /**
      * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
+     * @param string|null                                       $append Optional path to append
      *
      * @return string
      */
-    public function getStoragePath(Instance $instance)
+    public function getStoragePath(Instance $instance, $append = null)
     {
-        return $this->getRootStoragePath($instance, $instance->instance_id_text);
+        return $this->getRootStoragePath($instance, $instance->instance_id_text) . ($append
+            ? DIRECTORY_SEPARATOR . $append : $append);
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrivatePathName()
+    {
+        return $this->privatePathName;
     }
 
     /**
      * We want the private path of the instance to point to the user's area. Instances have no "private path" per se.
      *
      * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
+     * @param string|null                                       $append Optional path to append
      *
      * @return mixed
      */
-    public function getPrivatePath(Instance $instance)
+    public function getPrivatePath(Instance $instance, $append = null)
     {
-        return $this->getStoragePath($instance) . DIRECTORY_SEPARATOR . $this->privatePathName;
+        return $this->getStoragePath($instance) . DIRECTORY_SEPARATOR . $this->getPrivatePathName() . ($append
+            ? DIRECTORY_SEPARATOR . $append : $append);
     }
 
     /**
      * We want the private path of the instance to point to the user's area. Instances have no "private path" per se.
      *
      * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
+     * @param string|null                                       $append Optional path to append
      *
      * @return mixed
      */
-    public function getOwnerPrivatePath(Instance $instance)
+    public function getOwnerPrivatePath(Instance $instance, $append = null)
     {
-        return $this->getRootStoragePath($instance, $this->privatePathName);
+        return $this->getRootStoragePath($instance, $this->getPrivatePathName()) . ($append
+            ? DIRECTORY_SEPARATOR . $append : $append);
     }
 
     /**
      * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
+     * @param string|null                                       $append Optional path to append
      *
      * @return string
      */
-    public function getSnapshotPath(Instance $instance)
+    public function getSnapshotPath(Instance $instance, $append = null)
     {
         return
             $this->getOwnerPrivatePath($instance) .
-            $this->cleanPath(config('provisioning.snapshot-path-name', EnterpriseDefaults::SNAPSHOT_PATH_NAME));
+            $this->cleanPath(config('provisioning.snapshot-path-name',
+                EnterpriseDefaults::SNAPSHOT_PATH_NAME)) . ($append ? DIRECTORY_SEPARATOR . $append : $append);
     }
 
     /**
@@ -185,6 +204,36 @@ class InstanceStorageService extends BaseService
     }
 
     /**
+     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
+     * @param string|null                                       $append Optional appendage to path
+     *
+     * @return string
+     * @throws \DreamFactory\Enterprise\Common\Exceptions\DiskException
+     */
+    public function getWorkPath(Instance $instance, $append = null)
+    {
+        if (false === ($_workPath = Disk::path([$instance->getPrivatePath(), 'tmp', $append], true))) {
+            $_workPath = Disk::path([sys_get_temp_dir(), 'dfe', $instance->instance_id_text, $append], true);
+
+            if (!$_workPath) {
+                throw new DiskException('Unable to locate a suitable temporary directory.');
+            }
+        }
+
+        return $_workPath;
+    }
+
+    /**
+     * @param string $workPath
+     *
+     * @return bool
+     */
+    public function deleteWorkPath($workPath)
+    {
+        return is_dir($workPath) && Disk::rmdir($workPath, true);
+    }
+
+    /**
      * @param string $path
      * @param bool   $addSlash     If true (default), a leading slash is added
      * @param bool   $trimTrailing If true, any trailing slashes are removed
@@ -196,14 +245,6 @@ class InstanceStorageService extends BaseService
         $path = $path ? ($addSlash ? DIRECTORY_SEPARATOR : null) . ltrim($path, ' ' . DIRECTORY_SEPARATOR) : $path;
 
         return $trimTrailing ? rtrim($path, DIRECTORY_SEPARATOR) : $path;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPrivatePathName()
-    {
-        return $this->privatePathName;
     }
 
 }

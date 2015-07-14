@@ -1,41 +1,130 @@
 <?php namespace DreamFactory\Enterprise\Common\Support;
 
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Jsonable;
+use DreamFactory\Enterprise\Common\Enums\EnterpriseDefaults;
+use DreamFactory\Enterprise\Common\Facades\RouteHashing;
+use DreamFactory\Enterprise\Common\Utility\Disk;
 use Illuminate\Support\Collection;
+use League\Flysystem\Filesystem;
+use League\Flysystem\ZipArchive\ZipArchiveAdapter;
 
 /**
- * Container for an array of data to be written out to disk, database or used in memory
+ * A container for archives
  */
-class Canister implements Arrayable, Jsonable, \JsonSerializable
+class ArchiveCanister extends Canister
 {
     //******************************************************************************
     //* Members
     //******************************************************************************
 
     /**
-     * @type Collection The contents of the canister
+     * @type string
      */
-    protected $contents;
+    protected $workPath;
     /**
-     * @type array Optional array of allowed keys for this canister
+     * @type Filesystem
      */
-    protected $allowedKeys = [];
+    protected $filesystem;
+    /**
+     * @type SnapshotManifest
+     */
+    protected $manifest;
 
     //******************************************************************************
     //* Methods
     //******************************************************************************
 
     /**
-     * @param mixed $contents The contents to write to the file if being created
+     * @param string $id
+     * @param string $name
+     * @param mixed  $contents The contents to write to the file if being created
      */
-    public function __construct($contents = [])
+    public function __construct($id, $name, $contents = [])
     {
-        if (!empty($contents)) {
-            $this->reset($contents);
-        } else {
-            $this->contents = new Collection();
-        }
+        parent::__construct(array_merge($contents, ['id' => $id, 'name' => $name]));
+
+        $this->createWorkPath();
+        $this->createDownloadHash($name, $this->get('keep-days', EnterpriseDefaults::SNAPSHOT_DAYS_TO_KEEP));
+
+        $this->filesystem = new Filesystem(new ZipArchiveAdapter($this->workPath . $name));
+    }
+
+    /**
+     * @param string $filename
+     * @param int    $keepDays
+     *
+     * @return array
+     */
+    protected function createDownloadHash($filename, $keepDays = EnterpriseDefaults::SNAPSHOT_DAYS_TO_KEEP)
+    {
+        //  Get a route hash...
+        $this->set('route-hash', $_hash = RouteHashing::create($filename, $keepDays));
+
+        $_link = config('snapshot.hash-link-protocol', 'https') . '://' .
+            str_replace(['http://', 'https://', '//'],
+                null,
+                rtrim(config('snapshot.hash-link-base'), ' /')) . '/' . $_hash;
+
+        $this->set('route-link', $_link);
+
+        return [$_hash, $_link];
+    }
+
+    /**
+     * Creates a working directory for this canister
+     *
+     * @param string|null $append
+     *
+     * @throws \DreamFactory\Enterprise\Common\Exceptions\DiskException
+     */
+    protected function createWorkPath($append = null)
+    {
+        $this->workPath = Disk::path([config('provisioning.storage-root'), $append]) . DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * @param string $id
+     * @param string $name
+     * @param array  $manifest
+     * @param int    $keepDays
+     *
+     * @return array
+     */
+    public static function create($id, $name, array $manifest = [], $keepDays = EnterpriseDefaults::SNAPSHOT_DAYS_TO_KEEP)
+    {
+        $_archive = new static($id, $name, $manifest);
+
+        //  Create our manifest
+        $this->manifest = new SnapshotManifest(
+            array_merge(
+                $manifest,
+                [
+                    'id'   => $id,
+                    'name' => $name,
+                    'hash' => $_archive->get('route-hash'),
+                    'link' => $_archive->get('route-link'),
+                ]
+            ),
+            config('snapshot.metadata-file-name'),
+            $_archive->getFilesystem()
+        );
+
+        return $_archive;
+    }
+
+    /**
+     * @param string $exportId
+     * @param string $filename
+     * @param array  $manifest
+     * @param int    $keepDays
+     *
+     * @return array
+     */
+    protected function createExportArchive($exportId, $exportName, array $manifest = [], $keepDays = EnterpriseDefaults::SNAPSHOT_DAYS_TO_KEEP)
+    {
+    }
+
+    public function addFiles(array $files)
+    {
     }
 
     /**
@@ -269,4 +358,21 @@ class Canister implements Arrayable, Jsonable, \JsonSerializable
 
         return $_allowed;
     }
+
+    /**
+     * @return string
+     */
+    public function getWorkPath()
+    {
+        return $this->workPath;
+    }
+
+    /**
+     * @return Filesystem
+     */
+    public function getFilesystem()
+    {
+        return $this->filesystem;
+    }
+
 }

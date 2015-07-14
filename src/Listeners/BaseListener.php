@@ -10,6 +10,15 @@ use Psr\Log\LoggerInterface;
 class BaseListener
 {
     //******************************************************************************
+    //* Constants
+    //******************************************************************************
+
+    /**
+     * @type string The log prefix to use for this handler
+     */
+    const LOG_PREFIX = null;
+
+    //******************************************************************************
     //* Traits
     //******************************************************************************
 
@@ -25,5 +34,6 @@ class BaseListener
     public function __construct(LoggerInterface $logger = null)
     {
         $this->initializeLumberjack($logger ?: \Log::getMonolog());
+        static::LOG_PREFIX && $this->setLumberjackPrefix(static::LOG_PREFIX);
     }
 }
