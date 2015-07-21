@@ -15,7 +15,7 @@ class Metadata extends Manifest
     /**
      * @type array Basic metadata template
      */
-    protected $allowedKeys = ['db', 'env', 'paths', 'storage-map', 'audit', self::CUSTODY_LOG_KEY];
+    protected $allowedKeys = ['db', 'env', 'paths', 'storage-map', 'audit', 'limits', self::CUSTODY_LOG_KEY];
 
     //******************************************************************************
     //* Methods
