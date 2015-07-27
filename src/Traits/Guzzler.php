@@ -1,6 +1,5 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
-use DreamFactory\Library\Utility\Json;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Request;
@@ -146,7 +145,10 @@ trait Guzzler
             return $_response->json(['object' => $object]);
         } catch (RequestException $_ex) {
             if ($_ex->hasResponse()) {
-                return Json::decode($_ex->getResponse(), !$object);
+                $_response = $_ex->getResponse();
+                if (false !== ($_data = json_decode($_response)) && JSON_ERROR_NONE == json_last_error()) {
+                    return $_data;
+                }
             }
         }
 
