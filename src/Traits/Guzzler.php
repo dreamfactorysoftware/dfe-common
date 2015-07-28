@@ -144,15 +144,10 @@ trait Guzzler
 
             return $_response->json(['object' => $object]);
         } catch (RequestException $_ex) {
-            if ($_ex->hasResponse()) {
-                $_response = $_ex->getResponse();
-                if (false !== ($_data = json_decode($_response)) && JSON_ERROR_NONE == json_last_error()) {
-                    return $_data;
-                }
-            }
-        }
+            $_response = $_ex->hasResponse() ? $_ex->getResponse() : null;
 
-        return false;
+            return $_response;
+        }
     }
 
     /**

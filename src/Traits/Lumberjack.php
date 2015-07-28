@@ -230,7 +230,7 @@ trait Lumberjack
                 $this->indent--;
             }
 
-            $_messages[] = $_prefix . str_pad('', ($this->indent * $this->indentSize), ' ') .
+            $_messages[] = $_prefix . str_pad(' ', ($this->indent * $this->indentSize) - 1) .
                 trim(str_replace([$this->indentStartMarker, $this->indentStopMarker], null, $_message));
 
             //  Indent after so the first line doesn't get indented
