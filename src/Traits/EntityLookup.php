@@ -103,27 +103,23 @@ trait EntityLookup
     protected function _clusterServers($clusterId)
     {
         $_cluster = $this->_findCluster($clusterId);
-
-        $_rows = ClusterServer::join('server_t', 'id', '=', 'server_id')->where('cluster_id', '=', $_cluster->id)->get([
-                    'server_t.id',
-                    'server_t.server_id_text',
-                    'server_t.server_type_id',
-                    'cluster_server_asgn_t.cluster_id',
-                ]);
+        $_rows = $_cluster->assignedServers();
 
         //  Organize by type
-        $_servers = [
+        $_response = [
             ServerTypes::APP => [],
             ServerTypes::DB  => [],
             ServerTypes::WEB => [],
         ];
 
         /** @type Server $_server */
-        foreach ($_rows as $_server) {
-            $_servers[$_server->server_type_id][$_server->server_id_text] = $_server;
+        foreach ($_rows as $_assignment) {
+            if (null !== ($_server = $_assignment->server)) {
+                $_response[$_server->server_type_id][$_server->server_id_text] = $_server;
+            }
         }
 
-        return $_servers;
+        return $_response;
     }
 
     /**
