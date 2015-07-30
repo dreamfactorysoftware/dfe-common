@@ -102,16 +102,14 @@ trait EntityLookup
      */
     protected function _clusterServers($clusterId)
     {
-        $_rows = ClusterServer::join('server_t', 'id', '=', 'server_id')
-            ->where('cluster_id', '=', $clusterId)
-            ->get(
-                [
+        $_cluster = $this->_findCluster($clusterId);
+
+        $_rows = ClusterServer::join('server_t', 'id', '=', 'server_id')->where('cluster_id', '=', $_cluster->id)->get([
                     'server_t.id',
                     'server_t.server_id_text',
                     'server_t.server_type_id',
                     'cluster_server_asgn_t.cluster_id',
-                ]
-            );
+                ]);
 
         //  Organize by type
         $_servers = [
@@ -137,8 +135,7 @@ trait EntityLookup
      */
     protected function _serverClusters($serverId)
     {
-        return ClusterServer::where('server_id', '=', $serverId)
-            ->get();
+        return ClusterServer::where('server_id', '=', $serverId)->get();
     }
 
     /**
