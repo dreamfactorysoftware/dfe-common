@@ -1,5 +1,7 @@
 <?php namespace DreamFactory\Enterprise\Common\Jobs;
 
+use DreamFactory\Enterprise\Common\Provisioners\PortableServiceRequest;
+
 /**
  * A base class for all DFE portability requests
  */
@@ -23,19 +25,16 @@ abstract class PortabilityJob extends BaseInstanceJob
     //******************************************************************************
 
     /**
-     * Create a new command instance.
+     * Create a new portability job
      *
-     * @param string     $instanceId The instance to provision
-     * @param mixed|null $target     The target
-     * @param mixed|null $outputFile Where output goes
-     * @param array      $options    Provisioning options
+     * @param string|PortableServiceRequest $request The request
      */
-    public function __construct($instanceId, $target = null, $outputFile = null, $options = [])
+    public function __construct($request)
     {
-        parent::__construct($instanceId, $options);
+        $this->target = $request->getTarget();
+        $this->outputFile = $request->get('output-file');
 
-        $target && $this->target = $target;
-        $outputFile && $this->outputFile = $outputFile;
+        parent::__construct($request->getInstanceId(), $request->toArray());
     }
 
     /**

@@ -61,6 +61,12 @@ abstract class BaseInstanceJob extends BaseEnterpriseJob implements InstanceAwar
      */
     public function getInstance()
     {
-        return $this->instanceId ? $this->_findInstance($this->instanceId) : null;
+        static $_instance;
+
+        if (!$_instance && $this->instanceId) {
+            $_instance = $this->_findInstance($this->instanceId);
+        }
+
+        return $_instance;
     }
 }

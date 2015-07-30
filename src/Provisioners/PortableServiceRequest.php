@@ -25,31 +25,31 @@ class PortableServiceRequest extends BaseRequest
     }
 
     /**
-     * @param Instance    $instance
-     * @param string      $from
-     * @param string|null $workPath
+     * @param Instance|string|int $instance
+     * @param string              $from
+     * @param array               $items Additional items to put in the request
      *
      * @return static
      */
-    public static function makeImport($instance, $from, $workPath = null)
+    public static function makeImport($instance, $from, $items = [])
     {
-        $_request = new static($instance, ['work-path' => $workPath]);
+        !($instance instanceof Instance) && $instance = static::_locateInstance($instance);
 
-        return $_request->setTarget($from);
+        return new static($instance, array_merge($items, ['target' => $from,]));
     }
 
     /**
-     * @param Instance        $instance
-     * @param Filesystem|null $to
-     * @param string|null     $workPath
+     * @param Instance|string|int $instance
+     * @param Filesystem|null     $to
+     * @param array               $items Additional items to put in the request
      *
      * @return static
      */
-    public static function makeExport($instance, $to = null, $workPath = null)
+    public static function makeExport($instance, $to = null, $items = [])
     {
-        $_request = new static($instance, ['work-path' => $workPath]);
+        !($instance instanceof Instance) && $instance = static::_locateInstance($instance);
 
-        return $_request->setTarget($to);
+        return new static($instance, array_merge($items, ['target' => $to,]));
     }
 
     /**
