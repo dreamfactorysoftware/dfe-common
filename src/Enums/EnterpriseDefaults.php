@@ -104,4 +104,6 @@ class EnterpriseDefaults extends FactoryEnum
      * @type string The default protocol for building urls (http or https)
      */
     const DEFAULT_DOMAIN_PROTOCOL = 'https';
+    /** @type string X Header for the console to use to authenticate with a 2.0 instance */
+    const CONSOLE_X_HEADER = 'X-DreamFactory-Console-Key';
 }
