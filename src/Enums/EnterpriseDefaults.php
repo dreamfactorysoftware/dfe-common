@@ -100,4 +100,8 @@ class EnterpriseDefaults extends FactoryEnum
      * @type int The default number of items to display on a listing of data
      */
     const DEFAULT_ITEMS_PER_PAGE = 25;
+    /**
+     * @type string The default protocol for building urls (http or https)
+     */
+    const DEFAULT_DOMAIN_PROTOCOL = 'https';
 }

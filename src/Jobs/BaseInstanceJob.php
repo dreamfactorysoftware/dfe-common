@@ -3,6 +3,7 @@ namespace DreamFactory\Enterprise\Common\Jobs;
 
 use DreamFactory\Enterprise\Common\Contracts\InstanceAware;
 use DreamFactory\Enterprise\Database\Models\Instance;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * A base class for all DFE instance-related "job" commands (non-console)
@@ -64,7 +65,11 @@ abstract class BaseInstanceJob extends BaseEnterpriseJob implements InstanceAwar
         static $_instance;
 
         if (!$_instance && $this->instanceId) {
-            $_instance = $this->_findInstance($this->instanceId);
+            try {
+                $_instance = $this->_findInstance($this->instanceId);
+            } catch (ModelNotFoundException $_ex) {
+                //  ignored
+            }
         }
 
         return $_instance;
