@@ -100,4 +100,6 @@ class EnterpriseDefaults extends FactoryEnum
      * @type int The default number of items to display on a listing of data
      */
     const DEFAULT_ITEMS_PER_PAGE = 25;
+    /** @type string X Header for the console to use to authenticate with a 2.0 instance */
+    const CONSOLE_X_HEADER = 'X-DreamFactory-Console-Key';
 }
