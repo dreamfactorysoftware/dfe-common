@@ -100,4 +100,3 @@ class PortableServiceRequest extends BaseRequest
         return $this->get('instance');
     }
 }
-}
