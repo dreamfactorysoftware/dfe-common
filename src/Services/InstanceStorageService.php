@@ -29,11 +29,10 @@ class InstanceStorageService extends BaseService
      */
     public function boot()
     {
-        $this->privatePathName = $this->cleanPath(
-            config('provisioning.private-path-name', EnterpriseDefaults::PRIVATE_PATH_NAME),
-            false,
-            true
-        );
+        $this->privatePathName =
+            $this->cleanPath(config('provisioning.private-path-name', EnterpriseDefaults::PRIVATE_PATH_NAME),
+                false,
+                true);
     }
 
     /**
@@ -55,8 +54,7 @@ class InstanceStorageService extends BaseService
      */
     public function getStoragePath(Instance $instance, $append = null)
     {
-        return $this->getRootStoragePath($instance, $instance->instance_id_text) . ($append
-            ? DIRECTORY_SEPARATOR . $append : $append);
+        return $this->getRootStoragePath($instance, $instance->instance_id_text) . Disk::segment($append);
     }
 
     /**
@@ -77,8 +75,7 @@ class InstanceStorageService extends BaseService
      */
     public function getPrivatePath(Instance $instance, $append = null)
     {
-        return $this->getStoragePath($instance) . DIRECTORY_SEPARATOR . $this->getPrivatePathName() . ($append
-            ? DIRECTORY_SEPARATOR . $append : $append);
+        return $this->getStoragePath($instance) . DIRECTORY_SEPARATOR . $this->getPrivatePathName() . Disk::segment($append);
     }
 
     /**
@@ -91,8 +88,7 @@ class InstanceStorageService extends BaseService
      */
     public function getOwnerPrivatePath(Instance $instance, $append = null)
     {
-        return $this->getRootStoragePath($instance, $this->getPrivatePathName()) . ($append
-            ? DIRECTORY_SEPARATOR . $append : $append);
+        return $this->getRootStoragePath($instance, $this->getPrivatePathName()) . Disk::segment($append);
     }
 
     /**
@@ -103,10 +99,10 @@ class InstanceStorageService extends BaseService
      */
     public function getSnapshotPath(Instance $instance, $append = null)
     {
-        return
-            $this->getOwnerPrivatePath($instance) .
-            $this->cleanPath(config('provisioning.snapshot-path-name',
-                EnterpriseDefaults::SNAPSHOT_PATH_NAME)) . ($append ? DIRECTORY_SEPARATOR . $append : $append);
+        return $this->getOwnerPrivatePath($instance) . Disk::segment([
+            config('provisioning.snapshot-path-name', EnterpriseDefaults::SNAPSHOT_PATH_NAME),
+            $append,
+        ]);
     }
 
     /**
@@ -126,9 +122,7 @@ class InstanceStorageService extends BaseService
         $_mount = $instance->webServer->mount;
 
         if (!$_mount) {
-            throw new \RuntimeException('The web server "' .
-                $instance->webServer->server_id_text .
-                '" does not have a mount defined.');
+            throw new \RuntimeException('The web server "' . $instance->webServer->server_id_text . '" does not have a mount defined.');
         }
 
         return $_mount->getFilesystem($path, $tag, $options);
@@ -212,6 +206,7 @@ class InstanceStorageService extends BaseService
      */
     public function getWorkPath(Instance $instance, $append = null)
     {
+        //  Try private temp path or default to system temp
         if (false === ($_workPath = Disk::path([$instance->getPrivatePath(), 'tmp', $append], true))) {
             $_workPath = Disk::path([sys_get_temp_dir(), 'dfe', $instance->instance_id_text, $append], true);
 
@@ -246,5 +241,4 @@ class InstanceStorageService extends BaseService
 
         return $trimTrailing ? rtrim($path, DIRECTORY_SEPARATOR) : $path;
     }
-
 }

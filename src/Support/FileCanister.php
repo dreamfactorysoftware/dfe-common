@@ -107,6 +107,26 @@ class FileCanister extends Canister implements Custodial
     }
 
     /**
+     * @param string                            $filename The file name, abolute or relative to $filesystem
+     * @param \League\Flysystem\Filesystem|null $filesystem
+     *
+     * @return $this
+     */
+    public static function createFromFile($filename, Filesystem $filesystem = null)
+    {
+        //  What are we dealing with?
+        if (null === $filesystem) {
+            if (!file_exists($filename) || !is_readable($filename)) {
+                throw new \InvalidArgumentException('The filename "' . $filename . '" is invalid or not found.');
+            }
+        } else if (!$filesystem->has($filename)) {
+            throw new \InvalidArgumentException('The filename "' . $filename . '" was not found on $filesystem.');
+        }
+
+        return static::create([], $filename, $filesystem);
+    }
+
+    /**
      * Loads the existing canister and resets the collection with the contents and existing data merged
      *
      * @param array $contents The contents with which to initialize. Merged with existing data
@@ -134,10 +154,7 @@ class FileCanister extends Canister implements Custodial
         $_contents = $this->doRead(true);
 
         if ($reset && !empty($_contents)) {
-            $this
-                ->reset($_contents)
-                ->addActivity('read')
-                ->addCustodyLogs(static::CUSTODY_LOG_KEY);
+            $this->reset($_contents)->addActivity('read')->addCustodyLogs(static::CUSTODY_LOG_KEY);
         }
 
         return $_contents;
@@ -189,9 +206,7 @@ class FileCanister extends Canister implements Custodial
         }
 
         if (!$overwrite && $this->filesystem->has($this->filename)) {
-            throw new FileException('The file "' .
-                $this->filename .
-                '" already exists, and $overwrite is set to "FALSE".');
+            throw new FileException('The file "' . $this->filename . '" already exists, and $overwrite is set to "FALSE".');
         }
 
         $this->addActivity('write')->addCustodyLogs(static::CUSTODY_LOG_KEY, true);
@@ -236,11 +251,7 @@ class FileCanister extends Canister implements Custodial
                 if ($this->filesystem->put($this->filename, Json::encode($_contents, $options, $depth))) {
                     break;
                 }
-                throw new FileException('Unable to write data to file "' .
-                    $this->filename .
-                    '" after ' .
-                    $retries .
-                    ' attempt(s).');
+                throw new FileException('Unable to write data to file "' . $this->filename . '" after ' . $retries . ' attempt(s).');
             } catch (FileException $_ex) {
                 if ($_attempts) {
                     usleep($retryDelay);

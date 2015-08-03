@@ -13,29 +13,33 @@ class PortableServiceRequest extends BaseRequest
     //******************************************************************************
 
     /**
-     * @param Instance $instance
-     * @param array    $items
+     * @param Instance|string|null $instance
+     * @param array                $items
      */
-    public function __construct(Instance $instance, $items = [])
+    public function __construct($instance = null, $items = [])
     {
-        parent::__construct($items);
+        if (!empty($instance)) {
+            is_string($instance) && $items['instance-id'] = $instance;
+            !empty($instance) && $instance instanceof Instance && $items['instance'] = $instance;
+        }
 
-        $this->put('instance', $instance);
-        $this->put('instance-id', $instance->id);
+        parent::__construct($items);
     }
 
     /**
-     * @param Instance|string|int $instance
-     * @param string              $from
-     * @param array               $items Additional items to put in the request
+     * @param string $instanceId
+     * @param string $from
+     * @param array  $items Additional items to put in the request
      *
      * @return static
      */
-    public static function makeImport($instance, $from, $items = [])
+    public static function makeImport($instanceId, $from, $items = [])
     {
-        !($instance instanceof Instance) && $instance = static::_locateInstance($instance);
+        if (empty($instanceId)) {
+            throw new \InvalidArgumentException('Instance "' . $instanceId . '"  is invalid.');
+        }
 
-        return new static($instance, array_merge($items, ['target' => $from,]));
+        return new static($instanceId, array_merge($items, ['target' => $from,]));
     }
 
     /**
@@ -47,6 +51,10 @@ class PortableServiceRequest extends BaseRequest
      */
     public static function makeExport($instance, $to = null, $items = [])
     {
+        if (empty($instance)) {
+            throw new \InvalidArgumentException('Instance "' . $instance . '"  is invalid.');
+        }
+
         !($instance instanceof Instance) && $instance = static::_locateInstance($instance);
 
         return new static($instance, array_merge($items, ['target' => $to,]));
@@ -91,4 +99,5 @@ class PortableServiceRequest extends BaseRequest
     {
         return $this->get('instance');
     }
+}
 }

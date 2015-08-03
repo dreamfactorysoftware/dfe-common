@@ -60,7 +60,7 @@ trait EntityLookup
      *
      * @return Instance|null
      */
-    protected function _locateInstance($instanceId)
+    protected static function _locateInstance($instanceId)
     {
         if (null !== ($_instance = Instance::with(['user', 'guest'])->byNameOrId($instanceId)->first())) {
             return $_instance;

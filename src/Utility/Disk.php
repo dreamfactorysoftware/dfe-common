@@ -20,34 +20,57 @@ class Disk
      *
      *      The result is "/path/to/my/stuff"
      *
-     * @param array $parts  The segments of the path to build
-     * @param bool  $create If true, and result path doesn't exist, it will be created
-     * @param int   $mode   The octal mode for creating new directories
-     * @param bool  $recursive
+     * @param array $parts     The segments of the path to build
+     * @param bool  $create    If true, and result path doesn't exist, it will be created
+     * @param int   $mode      mkdir: octal mode for creating new directories
+     * @param bool  $recursive mkdir: recursively create directory
      *
      * @return string Returns the path
      * @throws \DreamFactory\Enterprise\Common\Exceptions\DiskException
      */
     public static function path(array $parts = [], $create = false, $mode = 0777, $recursive = true)
     {
-        $_path = null;
-        $_segments = [];
+        $_path = static::segment($parts, true);
 
-        foreach ($parts as $_part) {
-            !empty($_part) && $_segments[] = ltrim($_part, ' ' . DIRECTORY_SEPARATOR);
+        if (empty($_path)) {
+            if ($create) {
+                throw new DiskException('Empty paths cannot be created.');
+            }
+
+            return null;
         }
-
-        if (empty($_segments)) {
-            return false;
-        }
-
-        $_path = implode(DIRECTORY_SEPARATOR, $_segments);
 
         if ($create && !static::ensurePath($_path, $mode, $recursive)) {
             throw new DiskException('Unable to create directory "' . $_path . '".');
         }
 
         return $_path;
+    }
+
+    /**
+     * Returns suitable appendage based on segment.
+     *
+     * @param array|string|null $segment path segment
+     * @param bool              $leading If true, leading DIRECTORY_SEPARATOR ensured
+     *
+     * @return null|string
+     */
+    public static function segment($segment = null, $leading = true)
+    {
+        $_result = null;
+
+        if (!empty($segment)) {
+            !is_array($segment) && $segment = [$segment];
+
+            foreach ($segment as $_portion) {
+                $_result .= empty($_portion) ? null : DIRECTORY_SEPARATOR . ltrim($_portion, DIRECTORY_SEPARATOR);
+            }
+
+            //  Ensure leading slash
+            $leading && 0 !== strpos($_result, DIRECTORY_SEPARATOR, 0) && $_result = DIRECTORY_SEPARATOR . $_result;
+        }
+
+        return $_result;
     }
 
     /**
@@ -69,10 +92,8 @@ class Disk
     {
         $pattern = static::normalizePath($pattern);
 
-        $_split = explode(
-            DIRECTORY_SEPARATOR,
-            str_replace('\\', DIRECTORY_SEPARATOR, ltrim($pattern, DIRECTORY_SEPARATOR))
-        );
+        $_split = explode(DIRECTORY_SEPARATOR,
+            str_replace('\\', DIRECTORY_SEPARATOR, ltrim($pattern, DIRECTORY_SEPARATOR)));
 
         $_mask = array_pop($_split);
         $_leading = (DIRECTORY_SEPARATOR == $pattern[0]);
@@ -88,20 +109,15 @@ class Disk
 
                 //	Recurse directories
                 if (is_dir($_fullPath) && ($flags & GlobFlags::GLOB_RECURSE) && in_array($_file, ['.', '..'])) {
-                    $_glob = array_merge(
-                        $_glob,
-                        Scalar::array_prepend(
-                            static::glob($_fullPath . DIRECTORY_SEPARATOR . $_mask, $flags),
-                            ($flags & GlobFlags::GLOB_PATH ? null : $_file . DIRECTORY_SEPARATOR)
-                        )
-                    );
+                    $_glob = array_merge($_glob,
+                        Scalar::array_prepend(static::glob($_fullPath . DIRECTORY_SEPARATOR . $_mask, $flags),
+                            ($flags & GlobFlags::GLOB_PATH ? null : $_file . DIRECTORY_SEPARATOR)));
                 }
 
                 // Match file mask
                 if (fnmatch($_mask, $_file)) {
-                    if (((!($flags & GLOB_ONLYDIR)) || is_dir($_fullPath)) &&
-                        ((!($flags & GlobFlags::GLOB_NODIR)) || (!is_dir($_fullPath))) &&
-                        ((!($flags & GlobFlags::GLOB_NODOTS)) || (!in_array($_file, ['.', '..'])))
+                    if (((!($flags & GLOB_ONLYDIR)) || is_dir($_fullPath)) && ((!($flags & GlobFlags::GLOB_NODIR)) || (!is_dir($_fullPath))) && ((!($flags & GlobFlags::GLOB_NODOTS)) || (!in_array($_file,
+                                ['.', '..'])))
                     ) {
                         $_glob[] =
                             ($flags & GlobFlags::GLOB_PATH ? $_path . '/' : null) . $_file . ($flags & GLOB_MARK ? '/'
