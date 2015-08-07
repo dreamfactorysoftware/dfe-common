@@ -56,6 +56,18 @@ trait HasTimer
     }
 
     /**
+     * @param float $elapsedTime
+     *
+     * @return $this
+     */
+    public function setElapsedTime($elapsedTime)
+    {
+        $this->elapsedTime = $elapsedTime;
+
+        return $this;
+    }
+
+    /**
      * @return float
      */
     public function getElapsedTime()

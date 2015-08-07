@@ -21,14 +21,13 @@ class ProvisionServiceRequest extends BaseRequest
      */
     public function __construct(Instance $instance, Filesystem $storage = null, $deprovision = false, $force = false, array $options = [])
     {
-        $_contents = array_merge(
-            [
-                'instance'    => $instance,
-                'instance-id' => $instance->instance_id_text,
-                'storage'     => $storage,
-                'deprovision' => !!$deprovision,
-                'force'       => !!$force,
-            ],
+        $_contents = array_merge([
+            'instance'    => $instance,
+            'instance-id' => $instance->instance_id_text,
+            'storage'     => $storage,
+            'deprovision' => !!$deprovision,
+            'force'       => !!$force,
+        ],
             $options);
 
         parent::__construct($_contents);
@@ -206,5 +205,4 @@ class ProvisionServiceRequest extends BaseRequest
 
         return $this;
     }
-
 }
