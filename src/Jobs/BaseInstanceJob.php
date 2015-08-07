@@ -38,7 +38,9 @@ abstract class BaseInstanceJob extends BaseEnterpriseJob implements InstanceAwar
         $this->instanceId = $instanceId;
         $this->options = $options;
 
-        parent::__construct(array_get($options, 'cluster-id'), array_get($options, 'server-id'));
+        parent::__construct(array_get($options, 'cluster-id'),
+            array_get($options, 'server-id'),
+            array_get($options, 'tag'));
     }
 
     /**

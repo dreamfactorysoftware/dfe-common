@@ -1,6 +1,7 @@
 <?php namespace DreamFactory\Enterprise\Common\Provisioners;
 
 use DreamFactory\Enterprise\Common\Traits\HasResults;
+use DreamFactory\Enterprise\Common\Traits\HasTimer;
 use Illuminate\Http\Response;
 
 class BaseResponse extends Response
@@ -9,7 +10,7 @@ class BaseResponse extends Response
     //* Traits
     //******************************************************************************
 
-    use HasResults;
+    use HasResults, HasTimer;
 
     //******************************************************************************
     //* Members
@@ -33,47 +34,57 @@ class BaseResponse extends Response
     //******************************************************************************
 
     /**
-     * Success response factory
+     * @param bool                    $success
+     * @param array                   $content
+     * @param ProvisionServiceRequest $request
+     * @param mixed|null              $result
+     * @param mixed|null              $output
+     * @param int|null                $httpCode
+     * @param array                   $headers
      *
-     * @param BaseRequest $request  The request triggering this response
-     * @param mixed|null  $result   Result of the operation
-     * @param mixed|null  $output   Any output from the operation
-     * @param int|null    $httpCode The code to return
-     * @param array       $headers  Any headers to include with the response
-     *
-     * @return static
+     * @return \DreamFactory\Enterprise\Common\Provisioners\ProvisionServiceResponse
      */
-    public static function makeSuccess($request, $result = null, $output = null, $httpCode = null, $headers = [])
+    public static function make($success, $request, $result = null, $content = [], $output = null, $httpCode = Response::HTTP_OK, $headers = [])
     {
-        $_response = new static($request, $httpCode ?: Response::HTTP_OK, $headers);
+        $_response = new static($content, $httpCode, $headers);
+
         /** @noinspection PhpUndefinedMethodInspection */
-        $_response
-            ->setResult($result)
-            ->setSuccess(true)
-            ->setOutput($output)
-            ->setRequest($request);
+
+        return $_response->setRequest($request)->setResult($result)->setOutput($output)->setSuccess($success);
     }
 
     /**
-     * Failure response factory
+     * Create a generic success response
      *
-     * @param BaseRequest $request  The request triggering this response
-     * @param mixed|null  $result   Result of the operation
-     * @param mixed|null  $output   Any output from the operation
-     * @param int|null    $httpCode The code to return
-     * @param array       $headers  Any headers to include with the response
+     * @param ProvisionServiceRequest $request
+     * @param mixed|null              $result
+     * @param mixed|null              $content
+     * @param mixed|null              $output
+     * @param int|null                $httpCode
+     * @param array                   $headers
      *
-     * @return static
+     * @return $this
      */
-    public static function makeFailure($request, $result = null, $output = null, $httpCode = null, $headers = [])
+    public static function makeSuccess($request, $result = null, $content = null, $output = null, $httpCode = null, $headers = [])
     {
-        $_response = new static($request, $httpCode ?: Response::HTTP_OK, $headers);
-        /** @noinspection PhpUndefinedMethodInspection */
-        $_response
-            ->setResult($result)
-            ->setSuccess(false)
-            ->setOutput($output)
-            ->setRequest($request);
+        return static::make(true, $content, $request, $result, $output, $httpCode, $headers);
+    }
+
+    /**
+     * Create a generic failure response
+     *
+     * @param ProvisionServiceRequest $request
+     * @param mixed|null              $result
+     * @param mixed|null              $content
+     * @param mixed|null              $output
+     * @param int|null                $httpCode
+     * @param array                   $headers
+     *
+     * @return $this
+     */
+    public static function makeFailure($request, $result = null, $content = null, $output = null, $httpCode = Response::HTTP_INTERNAL_SERVER_ERROR, $headers = [])
+    {
+        return static::make(false, $content, $request, $result, $output, $httpCode, $headers);
     }
 
     /**
@@ -123,7 +134,7 @@ class BaseResponse extends Response
     /**
      * @param mixed|null $output
      *
-     * @return $this
+     * @return BaseResponse|$this
      */
     public function setOutput($output)
     {
@@ -143,5 +154,4 @@ class BaseResponse extends Response
 
         return $this;
     }
-
 }

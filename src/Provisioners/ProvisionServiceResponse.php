@@ -1,38 +1,39 @@
 <?php namespace DreamFactory\Enterprise\Common\Provisioners;
 
+use DreamFactory\Enterprise\Database\Models\Instance;
+
 class ProvisionServiceResponse extends BaseResponse
 {
+    //******************************************************************************
+    //* Members
+    //******************************************************************************
+
+    /**
+     * @type Instance
+     */
+    protected $instance;
+
     //******************************************************************************
     //* Methods
     //******************************************************************************
 
     /**
-     * Create a generic success response
-     *
-     * @param ProvisionServiceRequest $request
-     * @param mixed|null              $result
-     *
-     * @return $this
+     * @return Instance
      */
-    public static function makeSuccess($request, $result = null)
+    public function getInstance()
     {
-        $_response = new static();
-
-        return $_response->setRequest($request)->setSuccess(false)->setResult($result);
+        return $this->instance;
     }
 
     /**
-     * Create a generic failure response
+     * @param Instance $instance
      *
-     * @param ProvisionServiceRequest $request
-     * @param mixed|null              $result
-     *
-     * @return $this
+     * @return ProvisionServiceResponse
      */
-    public static function makeFailure($request, $result = null)
+    public function setInstance($instance)
     {
-        $_response = new static();
+        $this->instance = $instance;
 
-        return $_response->setRequest($request)->setSuccess(false)->setResult($result);
+        return $this;
     }
 }

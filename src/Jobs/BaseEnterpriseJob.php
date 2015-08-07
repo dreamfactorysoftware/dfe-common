@@ -49,11 +49,14 @@ abstract class BaseEnterpriseJob extends BaseJob implements EnterpriseJob
     //******************************************************************************
 
     /**
-     * @param string|int $clusterId
-     * @param string|int $serverId
+     * @param string|int|null $clusterId
+     * @param string|int|null $serverId
+     * @param string|null     $tag Optional string to have added to the job id
      */
-    public function __construct($clusterId = null, $serverId = null)
+    public function __construct($clusterId = null, $serverId = null, $tag = null)
     {
+        parent::__construct($tag);
+
         $this->setClusterId($clusterId ?: config('provisioning.default-cluster-id'));
         $this->setServerId($serverId ?: config('provisioning.default-db-server-id'));
     }

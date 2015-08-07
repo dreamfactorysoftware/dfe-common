@@ -1,40 +1,39 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Traits;
+<?php namespace DreamFactory\Enterprise\Common\Traits;
 
 /**
- * A trait for things that have results
+ * A trait for things that have portable data
  */
-trait HasResults
+trait HasPortableData
 {
     //******************************************************************************
     //* Members
     //******************************************************************************
 
     /**
-     * @type mixed
+     * @type array
      */
-    protected $processResult = null;
+    protected $portableData;
 
     //******************************************************************************
     //* Methods
     //******************************************************************************
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function getResult()
+    public function getPortableData()
     {
-        return $this->processResult;
+        return $this->portableData;
     }
 
     /**
-     * @param mixed $result
+     * @param array $portableData
      *
-     * @return mixed
+     * @return HasResults
      */
-    public function setResult($result)
+    public function setPortableData($portableData)
     {
-        $this->processResult = $result;
+        $this->portableData = $portableData;
 
         return $this;
     }
