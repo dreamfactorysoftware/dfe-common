@@ -27,9 +27,9 @@ abstract class PortabilityJob extends BaseInstanceJob
     /**
      * Create a new portability job
      *
-     * @param string|PortableServiceRequest $request The request
+     * @param PortableServiceRequest $request The request
      */
-    public function __construct($request)
+    public function __construct(PortableServiceRequest $request)
     {
         $this->target = $request->getTarget();
         $this->outputFile = $request->get('output-file');

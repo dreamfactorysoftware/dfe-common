@@ -90,7 +90,7 @@ trait EntityLookup
      */
     protected function _findSnapshot($snapshotId)
     {
-        return Snapshot::with(['user'])->where('snapshot_id_text', $snapshotId)->firstOrFail();
+        return Snapshot::with(['user', 'routeHash'])->where('snapshot_id_text', $snapshotId)->firstOrFail();
     }
 
     /**
