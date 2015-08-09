@@ -1,13 +1,15 @@
 <?php namespace DreamFactory\Enterprise\Common\Listeners;
 
+use DreamFactory\Enterprise\Common\Jobs\BaseJob;
 use DreamFactory\Enterprise\Common\Traits\EntityLookup;
+use DreamFactory\Enterprise\Common\Traits\HasTimer;
 use DreamFactory\Enterprise\Common\Traits\Lumberjack;
 use Psr\Log\LoggerInterface;
 
 /**
  * A base class for listeners. Includes entity lookup and logging
  */
-class BaseListener
+abstract class BaseListener
 {
     //******************************************************************************
     //* Constants
@@ -22,7 +24,7 @@ class BaseListener
     //* Traits
     //******************************************************************************
 
-    use EntityLookup, Lumberjack;
+    use EntityLookup, Lumberjack, HasTimer;
 
     //******************************************************************************
     //* Methods
@@ -35,5 +37,19 @@ class BaseListener
     {
         $this->initializeLumberjack($logger ?: \Log::getMonolog());
         static::LOG_PREFIX && $this->setLumberjackPrefix(static::LOG_PREFIX);
+    }
+
+    /**
+     * Register's a handler's "handle" method for logging and whatnot
+     *
+     * @param \DreamFactory\Enterprise\Common\Jobs\BaseJob $job
+     *
+     * @return $this
+     */
+    protected function registerHandler(BaseJob $job)
+    {
+        $this->setLumberjackPrefix(static::LOG_PREFIX ?: str_slug(get_class($this)) . ':' . $job->getJobId());
+
+        return $this;
     }
 }

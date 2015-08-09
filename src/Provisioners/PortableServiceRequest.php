@@ -43,21 +43,19 @@ class PortableServiceRequest extends BaseRequest
     }
 
     /**
-     * @param Instance|string|int $instance
-     * @param Filesystem|null     $to
-     * @param array               $items Additional items to put in the request
+     * @param string|int      $instanceId The id of the instance to export
+     * @param Filesystem|null $to         The destination of the export, otherwise to "snapshots"
+     * @param array           $items      Additional items to put in the request
      *
      * @return static
      */
-    public static function makeExport($instance, $to = null, $items = [])
+    public static function makeExport($instanceId, $to = null, $items = [])
     {
-        if (empty($instance)) {
-            throw new \InvalidArgumentException('Instance "' . $instance . '"  is invalid.');
+        if (empty($instanceId)) {
+            throw new \InvalidArgumentException('Instance "' . $instanceId . '"  is invalid.');
         }
 
-        !($instance instanceof Instance) && $instance = static::_locateInstance($instance);
-
-        return new static($instance, array_merge($items, ['target' => $to,]));
+        return new static($instanceId, array_merge($items, ['target' => $to,]));
     }
 
     /**
@@ -98,5 +96,15 @@ class PortableServiceRequest extends BaseRequest
     public function getInstance()
     {
         return $this->get('instance');
+    }
+
+    /**
+     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
+     *
+     * @return $this
+     */
+    public function setInstance(Instance $instance)
+    {
+        return $this->put('instance', $instance);
     }
 }

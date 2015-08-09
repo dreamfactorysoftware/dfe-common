@@ -33,6 +33,27 @@ trait HasTimer
     }
 
     /**
+     * Times a closure. Any arguments passed after the closure become arguments to the closure.
+     * Elapsed time stored in $this->elapsedTime.
+     *
+     * @param \Closure $closure The closure to profile
+     * @param [mixed]  $option1 Optional closure parameter
+     * @param [mixed]  $option2 Optional closure parameter
+     *
+     * @return mixed the return value of the closure
+     */
+    public function profile(\Closure $closure)
+    {
+        array_shift($_arguments = func_get_args());
+
+        $this->startTimer();
+        $_result = call_user_func_array($closure, empty($_arguments) ? [] : $_arguments);
+        $this->stopTimer();
+
+        return $_result;
+    }
+
+    /**
      * Stops time and sets elapsedTime
      *
      * @param bool $returnElapsed If true, the elapsed time is returned.

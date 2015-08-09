@@ -28,7 +28,7 @@ abstract class BaseJob implements ShouldQueue, InputAwareInterface
     /**
      * @type string A unique string identifying the job
      */
-    private $jobId;
+    protected $jobId;
 
     //******************************************************************************
     //* Traits
@@ -65,10 +65,13 @@ abstract class BaseJob implements ShouldQueue, InputAwareInterface
     {
         return implode('.',
             [
+                '[' . microtime(true) . ']',
                 config('dfe.cluster-id'),
                 config('dfe.security.console-api-client-id'),
-                $jobId ?: studly_case(get_class($this)),
-                time(),
+                $jobId
+                    ?: str_slug(trim(str_replace(['\\', 'DreamFactory', 'Enterprise',],
+                    [' ', null, null,],
+                    get_class($this)))),
             ]);
     }
 }

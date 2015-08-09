@@ -1,8 +1,10 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Services;
+<?php namespace DreamFactory\Enterprise\Common\Services;
 
+use Carbon\Carbon;
 use DreamFactory\Enterprise\Common\Contracts\RouteHasher;
+use DreamFactory\Enterprise\Common\Enums\EnterpriseDefaults;
 use DreamFactory\Enterprise\Database\Models\RouteHash;
+use DreamFactory\Library\Utility\Enums\DateTimeIntervals;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use League\Flysystem\Filesystem;
@@ -22,17 +24,18 @@ class RouteHashingService extends BaseService implements RouteHasher
      *
      * @return string The hash/token representing the unique owner-path pair.
      */
-    public function create($pathToHash, $keepDays = 30)
+    public function create($pathToHash, $keepDays = EnterpriseDefaults::SNAPSHOT_DAYS_TO_KEEP)
     {
         $_hash = sha1(md5($pathToHash) . microtime(true) . getmypid());
+        if (empty($keepDays) || $keepDays < 0 || $keepDays > 365) {
+            $keepDays = EnterpriseDefaults::SNAPSHOT_DAYS_TO_KEEP;
+        }
 
-        $_model = RouteHash::create(
-            [
-                'hash_text'        => $_hash,
-                'actual_path_text' => $pathToHash,
-                'expire_date'      => $keepDays ? date('c', time() + ($keepDays * 86400)) : null,
-            ]
-        );
+        $_model = RouteHash::create([
+            'hash_text'        => $_hash,
+            'actual_path_text' => $pathToHash,
+            'expire_date'      => Carbon::createFromTimestamp(time() + ($keepDays * DateTimeIntervals::SECONDS_PER_DAY)),
+        ]);
 
         return $_model->hash_text;
     }
@@ -74,5 +77,4 @@ class RouteHashingService extends BaseService implements RouteHasher
 
         return $_count;
     }
-
 }
