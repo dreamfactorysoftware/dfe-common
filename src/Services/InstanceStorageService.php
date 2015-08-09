@@ -4,6 +4,7 @@ use DreamFactory\Enterprise\Common\Enums\EnterpriseDefaults;
 use DreamFactory\Enterprise\Common\Exceptions\DiskException;
 use DreamFactory\Enterprise\Common\Utility\Disk;
 use DreamFactory\Enterprise\Database\Models\Instance;
+use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 
 /**
@@ -55,6 +56,30 @@ class InstanceStorageService extends BaseService
     public function getStoragePath(Instance $instance, $append = null)
     {
         return $this->getRootStoragePath($instance, $instance->instance_id_text) . Disk::segment($append);
+    }
+
+    /**
+     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
+     * @param string|null                                       $append
+     * @param bool                                              $create If true, create when non-existant
+     *
+     * @return string
+     */
+    public function getTrashPath(Instance $instance, $append = null, $create = true)
+    {
+        return $instance->getTrashPath($append, $create);
+    }
+
+    /**
+     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
+     * @param string|null                                       $append
+     * @param bool                                              $create If true, create when non-existant
+     *
+     * @return string
+     */
+    public function getTrashMount(Instance $instance, $append = null, $create = true)
+    {
+        return new Filesystem(new Local($this->getTrashPath($instance, $append, $create)));
     }
 
     /**

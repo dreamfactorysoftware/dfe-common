@@ -3,10 +3,11 @@
 use Carbon\Carbon;
 use DreamFactory\Enterprise\Common\Contracts\RouteHasher;
 use DreamFactory\Enterprise\Common\Enums\EnterpriseDefaults;
+use DreamFactory\Enterprise\Common\Traits\EntityLookup;
 use DreamFactory\Enterprise\Database\Models\RouteHash;
+use DreamFactory\Enterprise\Services\Facades\Snapshot;
 use DreamFactory\Library\Utility\Enums\DateTimeIntervals;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 use League\Flysystem\Filesystem;
 
 /**
@@ -14,6 +15,12 @@ use League\Flysystem\Filesystem;
  */
 class RouteHashingService extends BaseService implements RouteHasher
 {
+    //******************************************************************************
+    //* Traits
+    //******************************************************************************
+
+    use EntityLookup;
+
     //*************************************************************************
     //* Methods
     //*************************************************************************
@@ -54,27 +61,81 @@ class RouteHashingService extends BaseService implements RouteHasher
     /**
      * @param Filesystem $fsToCheck The file system to check
      *
-     * @return int Returns the number of files that were spoiled.
+     * @return int Returns the number of files that were trashed.
+     * @throws \Exception
      */
-    public static function expireFiles($fsToCheck)
+    public function expireFiles($fsToCheck)
     {
-        /** @type Collection $_hashes */
-        $_hashes = RouteHash::where('expire_date', '<', DB::raw('CURRENT_DATE'))->get();
         $_count = 0;
 
-        if (!empty($_hashes)) {
-            foreach ($_hashes as $_hash) {
-                if ($fsToCheck->has($_hash->actual_path_text)) {
-                    $fsToCheck->delete($_hash->actual_path_text);
+        try {
+            /** @type Collection $_hashes */
+            $_hashes = RouteHash::where('expire_date',
+                '<',
+                Carbon::createFromTimestamp(time() - config('snapshot.days-to-keep') * DateTimeIntervals::SECONDS_PER_DAY))
+                ->get();
+
+            if (!empty($_hashes)) {
+                foreach ($_hashes as $_hash) {
+                    if ($fsToCheck->has($_hash->actual_path_text)) {
+                        if ($this->moveToTrash($fsToCheck, $_hash->actual_path_text)) {
+                            //  ONLY delete route_hash row if file was MOVED/DELETED
+                            $_hash->delete();
+                        }
+                    }
+
+                    unset($_hash);
                 }
 
-                $_hash->delete();
-                unset($_hash);
+                unset($_hashes);
             }
+        } catch (\Exception $_ex) {
+            $this->error($_ex->getMessage());
 
-            unset($_hashes);
+            throw $_ex;
         }
 
         return $_count;
+    }
+
+    /**
+     * Moves a file from somewhere to the expired trash heap
+     *
+     * @param Filesystem $filesystem
+     * @param string     $filename
+     * @param array      $config An optional configuration array
+     *
+     * @return bool
+     */
+    protected function moveToTrash(Filesystem $filesystem, $filename, array $config = [])
+    {
+        if (config('snapshot.soft-delete', EnterpriseDefaults::SNAPSHOT_SOFT_DELETE)) {
+            $_trash = Snapshot::getRootTrashMount('expired');
+
+            if ($_trash->writeStream($filename, $filesystem->readStream($filename), $config)) {
+                return $filesystem->delete($filename);
+            }
+
+            //  Try and remove any partial file created before failure
+            try {
+                $_trash->delete($filename);
+            } catch (\Exception $_ex) {
+                //  Ignored, this is a cleanup in case of failure...
+            }
+        } else {
+            try {
+                if ($filesystem->has($filename)) {
+                    return $filesystem->delete($filename);
+                }
+
+                //  It's gone
+                return true;
+            } catch (\Exception $_ex) {
+                //  Can't delete? not good
+                return false;
+            }
+        }
+
+        return false;
     }
 }
