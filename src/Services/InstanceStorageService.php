@@ -55,7 +55,7 @@ class InstanceStorageService extends BaseService
      */
     public function getStoragePath(Instance $instance, $append = null)
     {
-        return $this->getRootStoragePath($instance, $instance->instance_id_text) . Disk::segment($append);
+        return $this->getRootStoragePath($instance, $instance->instance_id_text) . Disk::segment($append, true);
     }
 
     /**
@@ -100,7 +100,7 @@ class InstanceStorageService extends BaseService
      */
     public function getPrivatePath(Instance $instance, $append = null)
     {
-        return $this->getStoragePath($instance) . DIRECTORY_SEPARATOR . $this->getPrivatePathName() . Disk::segment($append);
+        return $this->getStoragePath($instance) . DIRECTORY_SEPARATOR . $this->getPrivatePathName() . Disk::segment($append, true);
     }
 
     /**
@@ -113,7 +113,7 @@ class InstanceStorageService extends BaseService
      */
     public function getOwnerPrivatePath(Instance $instance, $append = null)
     {
-        return $this->getRootStoragePath($instance, $this->getPrivatePathName()) . Disk::segment($append);
+        return $this->getRootStoragePath($instance, $this->getPrivatePathName()) . Disk::segment($append, true);
     }
 
     /**
@@ -127,7 +127,7 @@ class InstanceStorageService extends BaseService
         return $this->getOwnerPrivatePath($instance) . Disk::segment([
             config('provisioning.snapshot-path-name', EnterpriseDefaults::SNAPSHOT_PATH_NAME),
             $append,
-        ]);
+        ], true);
     }
 
     /**
