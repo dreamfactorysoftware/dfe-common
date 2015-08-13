@@ -100,7 +100,8 @@ class InstanceStorageService extends BaseService
      */
     public function getPrivatePath(Instance $instance, $append = null)
     {
-        return $this->getStoragePath($instance) . DIRECTORY_SEPARATOR . $this->getPrivatePathName() . Disk::segment($append, true);
+        return $this->getStoragePath($instance) . DIRECTORY_SEPARATOR . $this->getPrivatePathName() . Disk::segment($append,
+            true);
     }
 
     /**
@@ -127,7 +128,8 @@ class InstanceStorageService extends BaseService
         return $this->getOwnerPrivatePath($instance) . Disk::segment([
             config('provisioning.snapshot-path-name', EnterpriseDefaults::SNAPSHOT_PATH_NAME),
             $append,
-        ], true);
+        ],
+            true);
     }
 
     /**
