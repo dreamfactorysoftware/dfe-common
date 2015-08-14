@@ -50,28 +50,29 @@ class Disk
     /**
      * Returns suitable appendage based on segment.
      *
-     * @param array|string|null $segment path segment
-     * @param bool              $leading If true, leading DIRECTORY_SEPARATOR ensured, otherwise stripped
+     * @param array|string|null $segment   path segment
+     * @param bool              $leading   If true, leading $separator ensured, otherwise stripped
+     * @param string            $separator The directory separator to use
      *
      * @return null|string
      */
-    public static function segment($segment = null, $leading = false)
+    public static function segment($segment = null, $leading = false, $separator = DIRECTORY_SEPARATOR)
     {
         $_result = null;
 
         if (!empty($segment)) {
             foreach (!is_array($segment) ? [$segment] : $segment as $_portion) {
-                //  Remove all slashes from front and back
-                $_portion = trim($_portion, DIRECTORY_SEPARATOR . ' ');
+                //  Remove all spaces & slashes from front and back
+                $_portion = trim($_portion, $separator . ' ');
 
-                if (!empty($_portion) && DIRECTORY_SEPARATOR != $_portion) {
-                    $_result .= DIRECTORY_SEPARATOR . $_portion;
+                if (!empty($_portion) && $separator != $_portion) {
+                    $_result .= $separator . $_portion;
                 }
             }
         }
 
         //  Ensure leading slash if wanted
-        return ($leading ? DIRECTORY_SEPARATOR : null) . ltrim($_result, DIRECTORY_SEPARATOR);
+        return ($leading ? $separator : null) . ltrim($_result, $separator);
     }
 
     /**

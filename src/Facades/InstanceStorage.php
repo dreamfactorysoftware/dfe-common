@@ -6,7 +6,10 @@ use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static string getStoragePath(Instance $instance)
+ * @method static string getStorageRoot()
+ * @method static string getBaseStoragePath(string $append = null)
+ * @method static string getUserStoragePath(Instance $instance, string $append = null)
+ * @method static string getStoragePath(Instance $instance, string $append = null)
  * @method static string getTrashPath(Instance $instance, string $append = null, bool $create = true)
  * @method static string getSnapshotPath(Instance $instance)
  * @method static string getPrivatePathName()

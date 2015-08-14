@@ -3,6 +3,7 @@
 use DreamFactory\Enterprise\Common\Enums\EnterpriseDefaults;
 use DreamFactory\Enterprise\Common\Exceptions\DiskException;
 use DreamFactory\Enterprise\Common\Utility\Disk;
+use DreamFactory\Enterprise\Database\Enums\GuestLocations;
 use DreamFactory\Enterprise\Database\Models\Instance;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
@@ -20,6 +21,10 @@ class InstanceStorageService extends BaseService
      * @type string
      */
     protected $privatePathName = EnterpriseDefaults::PRIVATE_PATH_NAME;
+    /**
+     * @type string The current storage root
+     */
+    protected $storageRoot = EnterpriseDefaults::STORAGE_ROOT;
 
     //******************************************************************************
     //* Methods
@@ -30,24 +35,28 @@ class InstanceStorageService extends BaseService
      */
     public function boot()
     {
-        $this->privatePathName =
-            $this->cleanPath(config('provisioning.private-path-name', EnterpriseDefaults::PRIVATE_PATH_NAME),
-                false,
-                true);
+        //  Set our master stuff
+        $this->privatePathName = trim(config('provisioning.private-path-name', EnterpriseDefaults::PRIVATE_PATH_NAME),
+            DIRECTORY_SEPARATOR . ' ');
+
+        $this->storageRoot =
+            trim(config('provisioning.storage-root', EnterpriseDefaults::STORAGE_ROOT), DIRECTORY_SEPARATOR . ' ');
     }
 
     /**
-     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
-     * @param string                                            $append
+     * Returns the "storage-root" as defined in config/provisioning.php. No existence checks are performed
      *
      * @return string
+     * @throws \DreamFactory\Enterprise\Common\Exceptions\DiskException
      */
-    public function getRootStoragePath(Instance $instance, $append = null)
+    public function getStorageRoot()
     {
-        return $instance->getRootStoragePath($append);
+        return $this->storageRoot;
     }
 
     /**
+     * Returns the absolute path to an instance's /storage root
+     *
      * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
      * @param string|null                                       $append Optional path to append
      *
@@ -55,31 +64,34 @@ class InstanceStorageService extends BaseService
      */
     public function getStoragePath(Instance $instance, $append = null)
     {
-        return $this->getRootStoragePath($instance, $instance->instance_id_text) . Disk::segment($append, true);
+        static $_path;
+
+        return $_path
+            ?: $_path = Disk::path([$this->getUserStoragePath($instance), $instance->instance_id_text, $append], true);
     }
 
     /**
-     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
-     * @param string|null                                       $append
-     * @param bool                                              $create If true, create when non-existant
+     * @param string|null $append
+     * @param bool        $create If true, create when non-existent
      *
      * @return string
      */
-    public function getTrashPath(Instance $instance, $append = null, $create = true)
+    public function getTrashPath($append = null, $create = true)
     {
-        return $instance->getTrashPath($append, $create);
+        static $_path;
+
+        return $_path ?: $_path = Disk::path([config('snapshot.trash-path'), $append], $create);
     }
 
     /**
-     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
-     * @param string|null                                       $append
-     * @param bool                                              $create If true, create when non-existant
+     * @param string|null $append
+     * @param bool        $create If true, create when non-existent
      *
      * @return string
      */
-    public function getTrashMount(Instance $instance, $append = null, $create = true)
+    public function getTrashMount($append = null, $create = true)
     {
-        return new Filesystem(new Local($this->getTrashPath($instance, $append, $create)));
+        return new Filesystem(new Local($this->getTrashPath($append), $create));
     }
 
     /**
@@ -100,32 +112,35 @@ class InstanceStorageService extends BaseService
      */
     public function getPrivatePath(Instance $instance, $append = null)
     {
-        return $this->getStoragePath($instance) . DIRECTORY_SEPARATOR . $this->getPrivatePathName() . Disk::segment($append,
-            true);
+        static $_path;
+
+        return $_path
+            ?: $_path = Disk::path([$this->getStoragePath($instance), $this->getPrivatePathName(), $append], true);
     }
 
     /**
      * We want the private path of the instance to point to the user's area. Instances have no "private path" per se.
      *
-     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
-     * @param string|null                                       $append Optional path to append
+     * @param string|null $append Optional path to append
      *
      * @return mixed
      */
-    public function getOwnerPrivatePath(Instance $instance, $append = null)
+    public function getOwnerPrivatePath($append = null)
     {
-        return $this->getRootStoragePath($instance, $this->getPrivatePathName()) . Disk::segment($append, true);
+        static $_path;
+
+        return $_path ?: $_path = Disk::path([$this->getStorageRoot(), $this->getPrivatePathName(), $append], true);
     }
 
     /**
-     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
-     * @param string|null                                       $append Optional path to append
+     * @param string|null $append Optional path to append
      *
      * @return string
      */
-    public function getSnapshotPath(Instance $instance, $append = null)
+    public function getSnapshotPath($append = null)
     {
-        return $this->getOwnerPrivatePath($instance) . Disk::segment([
+        return Disk::path([
+            $this->getOwnerPrivatePath(),
             config('provisioning.snapshot-path-name', EnterpriseDefaults::SNAPSHOT_PATH_NAME),
             $append,
         ],
@@ -153,21 +168,6 @@ class InstanceStorageService extends BaseService
         }
 
         return $_mount->getFilesystem($path, $tag, $options);
-    }
-
-    /**
-     * Returns the relative root directory of this instance's storage
-     *
-     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
-     * @param string                                            $tag
-     *
-     * @return \Illuminate\Contracts\Filesystem\Filesystem
-     */
-    public function getRootStorageMount(Instance $instance, $tag = null)
-    {
-        return $this->mount($instance,
-            $this->getRootStoragePath($instance),
-            $tag ?: 'storage-root:' . $instance->instance_id_text);
     }
 
     /**
@@ -220,7 +220,7 @@ class InstanceStorageService extends BaseService
     public function getOwnerPrivateStorageMount(Instance $instance, $tag = null)
     {
         return $this->mount($instance,
-            $this->getOwnerPrivatePath($instance),
+            $this->getOwnerPrivatePath(),
             $tag ?: 'owner-private-storage:' . $instance->instance_id_text);
     }
 
@@ -257,7 +257,7 @@ class InstanceStorageService extends BaseService
 
     /**
      * @param string $path
-     * @param bool   $addSlash     If true (default), a leading slash is added
+     * @param bool   $addSlash If true (default), a leading slash is added
      * @param bool   $trimTrailing If true, any trailing slashes are removed
      *
      * @return string
@@ -267,5 +267,44 @@ class InstanceStorageService extends BaseService
         $path = $path ? ($addSlash ? DIRECTORY_SEPARATOR : null) . ltrim($path, ' ' . DIRECTORY_SEPARATOR) : $path;
 
         return $trimTrailing ? rtrim($path, DIRECTORY_SEPARATOR) : $path;
+    }
+
+    /**
+     * Returns the ROOT storage path for a user. Under which is all instances and private areas
+     *
+     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
+     * @param string                                            $append
+     *
+     * @return mixed|string
+     * @throws \DreamFactory\Enterprise\Common\Exceptions\DiskException
+     */
+    public function getUserStoragePath(Instance $instance, $append = null)
+    {
+        static $_cache = [];
+
+        $_ck = hash(EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD,
+            'rsp.' . $instance->instance_id_text . Disk::segment($append, true));
+
+        if (!is_numeric($instance->guest_location_nbr)) {
+            $instance->guest_location_nbr = GuestLocations::resolve($instance->guest_location_nbr, true);
+        }
+
+        if (null === ($_path = array_get($_cache, $_ck))) {
+            switch ($instance->guest_location_nbr) {
+                case GuestLocations::DFE_CLUSTER:
+                    $_path = Disk::path([$this->getStorageRoot(), $instance->getSubRootHash(), $append]);
+                    break;
+
+                default:
+                    $_path = storage_path($append);
+                    break;
+            }
+
+            $_cache[$_ck] = $_path;
+        }
+
+        \Log::debug('storage path: ' . $_path);
+
+        return $_path;
     }
 }
