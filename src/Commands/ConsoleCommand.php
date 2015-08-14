@@ -52,7 +52,7 @@ abstract class ConsoleCommand extends Command
     public function fire()
     {
         if (null === $this->getOutputPrefix()) {
-            $this->setOutputPrefix(str_replace('dfe:', null, $this->name));
+            $this->setOutputPrefix($this->name);
         }
 
         $this->writeHeader();
