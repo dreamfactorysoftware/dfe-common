@@ -39,18 +39,17 @@ class DebugHelper
 
                 //  Clean up some values first...
                 ('{closure}' == substr($_function, -9)) && $_function = '{closure}';
-
-                $_entry = [
-                    'args'   => json_encode($_args, JSON_UNESCAPED_SLASHES),
-                    'object' => json_encode($_object, JSON_UNESCAPED_SLASHES),
-                ];
+                !empty($_line) && $_line = '@' . $_line;
 
                 //  Object method invoked?
                 if ($_class && $_type && $_function) {
-                    $_entry['call'] = $_class . $_type . $_function . '@' . $_line;
+                    $_entry = ['call' => $_class . $_type . $_function . $_line];
                 } else {
-                    $_entry['call'] = $_file . '::' . $_function . '@' . $_line;
+                    $_entry = ['call' => $_file . '::' . $_function . $_line];
                 }
+
+                $_entry['args'] = json_encode($_args, JSON_UNESCAPED_SLASHES);
+                $_entry['object'] = json_encode($_object ?: new \stdClass(), JSON_UNESCAPED_SLASHES);
 
                 $_cleanTrace[] = $_entry;
             }
