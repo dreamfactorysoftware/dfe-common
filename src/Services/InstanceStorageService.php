@@ -129,8 +129,6 @@ class InstanceStorageService extends BaseService
             $_cache[$_ck] = $_path;
         }
 
-        \Log::debug('storage path: ' . $_path);
-
         return $_path;
     }
 
