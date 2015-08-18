@@ -2,6 +2,7 @@
 
 use DreamFactory\Enterprise\Common\Contracts\PrivatePathAware;
 use DreamFactory\Enterprise\Common\Contracts\ResourceProvisioner;
+use DreamFactory\Enterprise\Common\Facades\InstanceStorage;
 use DreamFactory\Enterprise\Database\Models\Instance;
 use DreamFactory\Enterprise\Services\Facades\Provision;
 use League\Flysystem\Filesystem;
@@ -72,7 +73,9 @@ class ProvisionServiceRequest extends BaseRequest
     {
         //  Use requested file system if one...
         if (null === ($_storage = $this->get('storage')) && $createIfNull) {
-            $this->setStorage($_storage = $this->getInstance()->getRootStorageMount());
+            $_storage = InstanceStorage::getUserStorageMount($this->getInstance());
+
+            $this->setStorage($_storage);
         }
 
         return $_storage;

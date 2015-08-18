@@ -217,6 +217,17 @@ trait StaticEntityLookup
      */
     protected static function findOwner($id, $type = OwnerTypes::USER)
     {
-        return OwnerTypes::getOwner($id, $type);
+        try {
+            $_owner = OwnerTypes::getOwner($id, $type);
+        } catch (\Exception $_ex) {
+            is_string($id) && $_owner = User::byEmail($id)->first();
+        }
+        finally {
+            if (empty($_owner)) {
+                throw new ModelNotFoundException('The owner-id "' . $id . '" could not be found.');
+            }
+        }
+
+        return $_owner;
     }
 }

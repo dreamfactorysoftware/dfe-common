@@ -35,13 +35,14 @@ class InstanceStorageService extends BaseService
      */
     public function boot()
     {
+        parent::boot();
+
         //  Set our master stuff
         $this->privatePathName =
             trim(config('provisioning.private-path-name', EnterpriseDefaults::PRIVATE_PATH_NAME),
                 DIRECTORY_SEPARATOR . ' ');
 
-        $this->storageRoot =
-            trim(config('provisioning.storage-root', EnterpriseDefaults::STORAGE_ROOT), DIRECTORY_SEPARATOR . ' ');
+        $this->storageRoot = trim(config('provisioning.storage-root', EnterpriseDefaults::STORAGE_ROOT));
     }
 
     /**
@@ -55,11 +56,43 @@ class InstanceStorageService extends BaseService
     }
 
     /**
+     * Returns the instance's storage area as a filesystem
+     *
+     * @param string|null $append
+     * @param boolean     $create
+     *
+     * @return \League\Flysystem\Filesystem
+     */
+    public function getStorageRootMount($append = null, $create = true)
+    {
+        static $_mount;
+
+        return $_mount ?: $_mount = new Filesystem(new Local(Disk::path([$this->getStorageRoot(), $append], $create)));
+    }
+
+    /**
+     * Returns the users's storage area as a filesystem
+     *
+     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
+     * @param string|null                                       $append
+     *
+     * @return \League\Flysystem\Filesystem
+     */
+    public function getUserStorageMount(Instance $instance, $append = null)
+    {
+        static $_mount;
+
+        return $_mount ?: $_mount = new Filesystem(new Local($this->getUserStoragePath($instance, $append, true)));
+    }
+
+    /**
      * Returns the ROOT storage path for a user. Under which is all instances and private areas
      *
      * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
      * @param string                                            $append
      * @param bool                                              $create
+     *
+     * @todo This methodology will need to change in the future to allow for user root storage areas to be created with cluster/server dependence rather than instance-dependence
      *
      * @return mixed|string
      */
@@ -71,12 +104,13 @@ class InstanceStorageService extends BaseService
             hash(EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD,
                 'rsp.' . $instance->instance_id_text . Disk::segment($append, true));
 
-        if (!is_numeric($instance->guest_location_nbr)) {
-            $instance->guest_location_nbr = GuestLocations::resolve($instance->guest_location_nbr, true);
-        }
-
+        //  Get our cluster's guest location...
         if (null === ($_path = array_get($_cache, $_ck))) {
-            switch ($instance->guest_location_nbr) {
+            if (!is_numeric($_guestLocation = $instance->guest_location_nbr)) {
+                $_guestLocation = GuestLocations::resolve($instance->guest_location_nbr, true);
+            }
+
+            switch ($_guestLocation) {
                 case GuestLocations::DFE_CLUSTER:
                     $_path = Disk::path([$this->getStorageRoot(), $instance->getSubRootHash(), $append], $create);
                     break;
@@ -133,7 +167,9 @@ class InstanceStorageService extends BaseService
      */
     public function getTrashMount($append = null, $create = true)
     {
-        return new Filesystem(new Local($this->getTrashPath($append, $create)));
+        static $_mount;
+
+        return $_mount ?: $_mount = new Filesystem(new Local($this->getTrashPath($append, $create)));
     }
 
     /**
@@ -188,7 +224,8 @@ class InstanceStorageService extends BaseService
             $this->getOwnerPrivatePath(),
             config('provisioning.snapshot-path-name', EnterpriseDefaults::SNAPSHOT_PATH_NAME),
             $append,
-        ], $create);
+        ],
+            $create);
     }
 
     /**
@@ -226,11 +263,12 @@ class InstanceStorageService extends BaseService
      * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
      * @param string                                            $tag
      *
-     * @return \Illuminate\Contracts\Filesystem\Filesystem
+     * @return \League\Flysystem\Filesystem
      */
     public function getStorageMount(Instance $instance, $tag = null)
     {
-        return $this->mount($instance, $this->getStoragePath($instance),
+        return $this->mount($instance,
+            $this->getStoragePath($instance),
             $tag ?: 'storage:' . $instance->instance_id_text);
     }
 
@@ -240,11 +278,12 @@ class InstanceStorageService extends BaseService
      * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
      * @param string                                            $tag
      *
-     * @return \Illuminate\Contracts\Filesystem\Filesystem
+     * @return \League\Flysystem\Filesystem
      */
     public function getSnapshotMount(Instance $instance, $tag = null)
     {
-        return $this->mount($instance, $this->getSnapshotPath($instance),
+        return $this->mount($instance,
+            $this->getSnapshotPath($instance),
             $tag ?: 'snapshots:' . $instance->instance_id_text);
     }
 
@@ -252,11 +291,12 @@ class InstanceStorageService extends BaseService
      * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
      * @param string                                            $tag
      *
-     * @return \Illuminate\Contracts\Filesystem\Filesystem
+     * @return \League\Flysystem\Filesystem
      */
     public function getPrivateStorageMount(Instance $instance, $tag = null)
     {
-        return $this->mount($instance, $this->getPrivatePath($instance),
+        return $this->mount($instance,
+            $this->getPrivatePath($instance),
             $tag ?: 'private-storage:' . $instance->instance_id_text);
     }
 
@@ -264,11 +304,12 @@ class InstanceStorageService extends BaseService
      * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
      * @param string                                            $tag
      *
-     * @return \Illuminate\Contracts\Filesystem\Filesystem
+     * @return \League\Flysystem\Filesystem
      */
     public function getOwnerPrivateStorageMount(Instance $instance, $tag = null)
     {
-        return $this->mount($instance, $this->getOwnerPrivatePath(),
+        return $this->mount($instance,
+            $this->getOwnerPrivatePath(),
             $tag ?: 'owner-private-storage:' . $instance->instance_id_text);
     }
 
@@ -278,7 +319,7 @@ class InstanceStorageService extends BaseService
      * @param string                                            $tag
      * @param array                                             $options
      *
-     * @return Filesystem
+     * @return \League\Flysystem\Filesystem
      */
     protected function mount($instance, $path, $tag = null, $options = [])
     {
