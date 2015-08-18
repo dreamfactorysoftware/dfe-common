@@ -82,7 +82,13 @@ class InstanceStorageService extends BaseService
     {
         static $_mount;
 
-        return $_mount ?: $_mount = new Filesystem(new Local($this->getUserStoragePath($instance, $append, true)));
+        if (null === $_mount) {
+            $_path = $this->getUserStoragePath($instance, $append, true);
+            logger('[ISS::getUserStorageMount] ' . $instance->instance_id_text . ' @ ' . $_path);
+            $_mount = new Filesystem(new Local($_path));
+        }
+
+        return $_mount;
     }
 
     /**
@@ -92,7 +98,7 @@ class InstanceStorageService extends BaseService
      * @param string                                            $append
      * @param bool                                              $create
      *
-     * @todo This methodology will need to change in the future to allow for user root storage areas to be created with cluster/server dependence rather than instance-dependence
+     * @todo This methodology will need to change in the future to allow for user root storage areas to be created with cluster/server dependence rather than instance-dependence. There's a lot of similar code in the Instance model of dfe-database. I want to abstract this out even further. A trait may be the way to go.
      *
      * @return mixed|string
      */
@@ -102,15 +108,15 @@ class InstanceStorageService extends BaseService
 
         $_ck =
             hash(EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD,
-                'rsp.' . $instance->instance_id_text . Disk::segment($append, true));
+                implode('.', ['user-storage-path', $instance->instance_id_text, $append]));
 
         //  Get our cluster's guest location...
         if (null === ($_path = array_get($_cache, $_ck))) {
-            if (!is_numeric($_guestLocation = $instance->guest_location_nbr)) {
-                $_guestLocation = GuestLocations::resolve($instance->guest_location_nbr, true);
+            if (!is_numeric($instance->guest_location_nbr)) {
+                $instance->guest_location_nbr = GuestLocations::resolve($instance->guest_location_nbr, true);
             }
 
-            switch ($_guestLocation) {
+            switch ($instance->guest_location_nbr) {
                 case GuestLocations::DFE_CLUSTER:
                     $_path = Disk::path([$this->getStorageRoot(), $instance->getSubRootHash(), $append], $create);
                     break;
