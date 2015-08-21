@@ -4,6 +4,7 @@ use DreamFactory\Enterprise\Common\Traits\ArtisanHelper;
 use DreamFactory\Enterprise\Common\Traits\ArtisanOptionHelper;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Composer;
 
 /**
@@ -15,7 +16,7 @@ abstract class ConsoleCommand extends Command
     //* Traits
     //******************************************************************************
 
-    use ArtisanHelper, ArtisanOptionHelper;
+    use DispatchesJobs, ArtisanHelper, ArtisanOptionHelper;
 
     //******************************************************************************
     //* Members

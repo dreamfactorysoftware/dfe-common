@@ -1,6 +1,6 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
-use DreamFactory\Enterprise\Common\Utility\Disk;
+use DreamFactory\Library\Utility\Disk;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use League\Flysystem\ZipArchive\ZipArchiveAdapter;

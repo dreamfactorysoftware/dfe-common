@@ -73,7 +73,10 @@ class ProvisionServiceRequest extends BaseRequest
     {
         //  Use requested file system if one...
         if (null === ($_storage = $this->get('storage')) && $createIfNull) {
-            $_storage = InstanceStorage::getUserStorageMount($this->getInstance());
+            $_instance = $this->getInstance();
+            InstanceStorage::buildStorageMap($_instance->user->storage_id_text);
+
+            $_storage = $_instance->getStorageRootMount();
 
             $this->setStorage($_storage);
         }

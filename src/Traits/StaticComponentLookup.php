@@ -10,7 +10,6 @@ use DreamFactory\Enterprise\Database\Models\Server;
 use DreamFactory\Enterprise\Database\Models\ServiceUser;
 use DreamFactory\Enterprise\Database\Models\User;
 use DreamFactory\Enterprise\Database\Models\UserRole;
-use DreamFactory\Library\Utility\IfSet;
 use Illuminate\Support\Collection;
 
 /**
@@ -97,13 +96,13 @@ trait StaticComponentLookup
     /**
      * Returns all servers registered on $clusterId
      *
-     * @param int $clusterId
+     * @param Cluster|int $clusterId
      *
      * @return array
      */
     protected static function _lookupClusterServers($clusterId)
     {
-        $_cluster = static::_lookupCluster($clusterId);
+        $_cluster = ($clusterId instanceof Cluster) ? $clusterId : static::_lookupCluster($clusterId);
 
         $_rows = \DB::select(
             <<<MYSQL
@@ -124,7 +123,7 @@ MYSQL
         );
 
         //  Organize by type
-        $_servers = [];
+        $_servers = ['cluster' => $_cluster];
 
         foreach (ServerTypes::getDefinedConstants() as $_name => $_value) {
             $_servers[$_value] = [

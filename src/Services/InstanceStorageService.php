@@ -9,7 +9,10 @@ use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 
 /**
- * Core instance storage services
+ * Core instance storage service
+ *
+ * This service maps guest location storage mounts to user/instance-specific paths resulting in absolute paths
+ * (path methods) or Flysystems (mount methods). Absolute paths are NEVER returned from this service.
  */
 class InstanceStorageService extends BaseService
 {
@@ -18,17 +21,42 @@ class InstanceStorageService extends BaseService
     //******************************************************************************
 
     /**
+     * @type int The location of this storage service
+     */
+    protected $guestLocation;
+    /**
+     * @type string The base value used to hash and partition storage. If null, stand-alone instance is assumed.
+     */
+    protected $hashBase;
+    /**
+     * @type Instance The current instance
+     */
+    protected $instance;
+    /**
+     * @type array The calculated storage map
+     */
+    protected $map;
+    /**
      * @type string
      */
-    protected $privatePathName = EnterpriseDefaults::PRIVATE_PATH_NAME;
-    /**
-     * @type string The current storage root
-     */
-    protected $storageRoot = EnterpriseDefaults::STORAGE_ROOT;
+    protected $privatePathName;
 
     //******************************************************************************
     //* Methods
     //******************************************************************************
+
+    /**
+     * @param \Illuminate\Contracts\Foundation\Application|null $app           The app
+     * @param int                                               $guestLocation The guest location to service
+     * @param string|null                                       $hashBase      Value used for partition hash (instance|user->storage_id_text)
+     */
+    public function __construct($app = null, $guestLocation = GuestLocations::DFE_CLUSTER, $hashBase = null)
+    {
+        parent::__construct($app);
+
+        null !== $guestLocation && $this->setGuestLocation($guestLocation);
+        null !== $hashBase && $this->hashBase = $hashBase;
+    }
 
     /**
      * Init
@@ -37,122 +65,20 @@ class InstanceStorageService extends BaseService
     {
         parent::boot();
 
-        //  Set our master stuff
-        $this->privatePathName =
-            trim(config('provisioning.private-path-name', EnterpriseDefaults::PRIVATE_PATH_NAME),
-                DIRECTORY_SEPARATOR . ' ');
+        //  Ensure guest location
+        null === $this->guestLocation && $this->setGuestLocation(GuestLocations::DFE_CLUSTER);
 
-        $this->storageRoot = trim(config('provisioning.storage-root', EnterpriseDefaults::STORAGE_ROOT));
+        //  and private path name
+        null === $this->privatePathName &&
+        $this->privatePathName = trim(config('provisioning.private-path-name', EnterpriseDefaults::PRIVATE_PATH_NAME),
+            DIRECTORY_SEPARATOR . ' ');
     }
 
     /**
-     * Returns the "storage-root" as defined in config/provisioning.php. No existence checks are performed
+     * Returns the absolute path to the trash
      *
-     * @return string
-     */
-    public function getStorageRoot()
-    {
-        return $this->storageRoot;
-    }
-
-    /**
-     * Returns the instance's storage area as a filesystem
-     *
-     * @param string|null $append
-     * @param boolean     $create
-     *
-     * @return \League\Flysystem\Filesystem
-     */
-    public function getStorageRootMount($append = null, $create = true)
-    {
-        static $_mount;
-
-        return $_mount ?: $_mount = new Filesystem(new Local(Disk::path([$this->getStorageRoot(), $append], $create)));
-    }
-
-    /**
-     * Returns the users's storage area as a filesystem
-     *
-     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
-     * @param string|null                                       $append
-     *
-     * @return \League\Flysystem\Filesystem
-     */
-    public function getUserStorageMount(Instance $instance, $append = null)
-    {
-        static $_mount;
-
-        if (null === $_mount) {
-            $_path = $this->getUserStoragePath($instance, $append, true);
-            logger('[ISS::getUserStorageMount] ' . $instance->instance_id_text . ' @ ' . $_path);
-            $_mount = new Filesystem(new Local($_path));
-        }
-
-        return $_mount;
-    }
-
-    /**
-     * Returns the ROOT storage path for a user. Under which is all instances and private areas
-     *
-     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
-     * @param string                                            $append
-     * @param bool                                              $create
-     *
-     * @todo This methodology will need to change in the future to allow for user root storage areas to be created with cluster/server dependence rather than instance-dependence. There's a lot of similar code in the Instance model of dfe-database. I want to abstract this out even further. A trait may be the way to go.
-     *
-     * @return mixed|string
-     */
-    public function getUserStoragePath(Instance $instance, $append = null, $create = false)
-    {
-        static $_cache = [];
-
-        $_ck =
-            hash(EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD,
-                implode('.', ['user-storage-path', $instance->instance_id_text, $append]));
-
-        //  Get our cluster's guest location...
-        if (null === ($_path = array_get($_cache, $_ck))) {
-            if (!is_numeric($instance->guest_location_nbr)) {
-                $instance->guest_location_nbr = GuestLocations::resolve($instance->guest_location_nbr, true);
-            }
-
-            switch ($instance->guest_location_nbr) {
-                case GuestLocations::DFE_CLUSTER:
-                    $_path = Disk::path([$this->getStorageRoot(), $instance->getSubRootHash(), $append], $create);
-                    break;
-
-                default:
-                    $_path = storage_path($append);
-                    break;
-            }
-
-            $_cache[$_ck] = $_path;
-        }
-
-        return $_path;
-    }
-
-    /**
-     * Returns the absolute path to an instance's /storage root
-     *
-     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
-     * @param string|null                                       $append Optional path to append
-     * @param bool                                              $create
-     *
-     * @return string
-     */
-    public function getStoragePath(Instance $instance, $append = null, $create = false)
-    {
-        static $_path;
-
-        return $_path
-            ?:
-            $_path = Disk::path([$this->getUserStoragePath($instance), $instance->instance_id_text, $append], $create);
-    }
-
-    /**
-     * @param string|null $append
-     * @param bool        $create If true, create when non-existent
+     * @param string|array|null $append
+     * @param bool              $create If true, create when non-existent
      *
      * @return string
      */
@@ -164,24 +90,54 @@ class InstanceStorageService extends BaseService
     }
 
     /**
-     * @param string|null $append
-     * @param bool        $create If true, create when non-existent
+     * Returns the *RELATIVE* TOP/ROOT/MOUNT (top/user level) storage path for current $hashBase.
+     * If no $hashBase is set, the result of storage_path() method is returned.
+     *
+     * NOTE: MAKE SURE TO SET $this->hashBase BEFORE YOU CALL THIS METHOD!
+     *
+     * @param string|array|null $append
      *
      * @return string
      */
-    public function getTrashMount($append = null, $create = true)
+    public function getStorageRootPath($append = null)
     {
-        static $_mount;
+        static $_cache = [];
 
-        return $_mount ?: $_mount = new Filesystem(new Local($this->getTrashPath($append, $create)));
+        $_ck = hash(EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD,
+            implode('.', ['user-storage-path', $this->hashBase, $append]));
+
+        //  Map out the path
+        if (null === ($_path = array_get($_cache, $_ck))) {
+            if (empty($this->hashBase) || false === $this->buildStorageMap()) {
+                $_path = storage_path($append);
+            } else {
+                $_path = Disk::segment([$this->resolvePathFromMap(), $append], true);
+            }
+
+            $_cache[$_ck] = $_path;
+        }
+
+        return $_path;
     }
 
+    /*------------------------------------------------------------------------------*/
+    /* Standard Paths                                                               */
+    /*------------------------------------------------------------------------------*/
+
     /**
+     * Given an instance, return an absolute path to "/storage"
+     *
+     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance The instance in question
+     * @param string|null                                       $append   Optional path to append
+     * @param bool                                              $create   If true, directory will be created
+     *
      * @return string
      */
-    public function getPrivatePathName()
+    public function getStoragePath(Instance $instance, $append = null, $create = false)
     {
-        return $this->privatePathName;
+        $this->buildStorageMap($instance->user->storage_id_text);
+
+        return Disk::path([$this->getStorageRootPath(), $instance->instance_id_text, $append], $create);
     }
 
     /**
@@ -195,37 +151,38 @@ class InstanceStorageService extends BaseService
      */
     public function getPrivatePath(Instance $instance, $append = null, $create = false)
     {
-        static $_path;
+        $this->buildStorageMap($instance->user->storage_id_text);
 
-        return $_path
-            ?: $_path = Disk::path([$this->getStoragePath($instance), $this->getPrivatePathName(), $append], $create);
+        return Disk::path([$this->getStoragePath($instance), $this->privatePathName, $append], $create);
     }
 
     /**
      * We want the private path of the instance to point to the user's area. Instances have no "private path" per se.
      *
-     * @param string|null $append Optional path to append
-     * @param bool        $create
+     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
+     * @param string|null                                       $append Optional path to append
+     * @param bool                                              $create
      *
      * @return mixed
      */
-    public function getOwnerPrivatePath($append = null, $create = false)
+    public function getOwnerPrivatePath(Instance $instance, $append = null, $create = false)
     {
-        static $_path;
+        $this->buildStorageMap($instance->user->storage_id_text);
 
-        return $_path ?: $_path = Disk::path([$this->getStorageRoot(), $this->getPrivatePathName(), $append], $create);
+        return Disk::path([$this->getStorageRootPath(), $this->privatePathName, $append], $create);
     }
 
     /**
-     * @param string|null $append Optional path to append
-     * @param bool        $create
+     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
+     * @param string|null                                       $append Optional path to append
+     * @param bool                                              $create
      *
      * @return string
      */
-    public function getSnapshotPath($append = null, $create = false)
+    public function getSnapshotPath(Instance $instance, $append = null, $create = false)
     {
         return Disk::path([
-            $this->getOwnerPrivatePath(),
+            $this->getOwnerPrivatePath($instance),
             config('provisioning.snapshot-path-name', EnterpriseDefaults::SNAPSHOT_PATH_NAME),
             $append,
         ],
@@ -233,6 +190,8 @@ class InstanceStorageService extends BaseService
     }
 
     /**
+     * Returns a path where you can write instance-specific temporary data
+     *
      * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
      * @param string|null                                       $append Optional appendage to path
      *
@@ -241,6 +200,8 @@ class InstanceStorageService extends BaseService
      */
     public function getWorkPath(Instance $instance, $append = null)
     {
+        $this->buildStorageMap($instance->user->storage_id_text);
+
         //  Try private temp path or default to system temp
         if (false === ($_workPath = Disk::path([$instance->getPrivatePath(), 'tmp', $append], true))) {
             $_workPath = Disk::path([sys_get_temp_dir(), 'dfe', $instance->instance_id_text, $append], true);
@@ -261,6 +222,38 @@ class InstanceStorageService extends BaseService
     public function deleteWorkPath($workPath)
     {
         return is_dir($workPath) && Disk::rmdir($workPath, true);
+    }
+
+    /*------------------------------------------------------------------------------*/
+    /* Mounts                                                                       */
+    /*------------------------------------------------------------------------------*/
+
+    /**
+     * @param string|array|null $append
+     * @param bool              $create If true, create when non-existent
+     *
+     * @return string
+     */
+    public function getTrashMount($append = null, $create = true)
+    {
+        static $_mount;
+
+        return $_mount ?: $_mount = new Filesystem(new Local($this->getTrashPath($append, $create)));
+    }
+
+    /**
+     * Returns the instance's storage area as a filesystem
+     *
+     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
+     * @param string|null                                       $tag
+     *
+     * @return \League\Flysystem\Filesystem
+     */
+    public function getStorageRootMount(Instance $instance, $tag = null)
+    {
+        return $this->mount($instance,
+            $this->getStorageRootPath(),
+            $tag ?: 'storage-root:' . $instance->instance_id_text);
     }
 
     /**
@@ -313,11 +306,54 @@ class InstanceStorageService extends BaseService
     public function getOwnerPrivateStorageMount(Instance $instance, $tag = null)
     {
         return $this->mount($instance,
-            $this->getOwnerPrivatePath(),
+            $this->getOwnerPrivatePath($instance),
             $tag ?: 'owner-private-storage:' . $instance->instance_id_text);
     }
 
+    /*------------------------------------------------------------------------------*/
+    /* Service methods                                                               */
+    /*------------------------------------------------------------------------------*/
+
     /**
+     * Returns the proper storage zone for this location
+     *
+     * @return string
+     */
+    protected function getStorageZone()
+    {
+        static $_zone;
+
+        if (empty($_zone)) {
+            switch (config('provisioning.storage-zone-type')) {
+                case 'dynamic':
+                    switch ($this->guestLocation) {
+                        case GuestLocations::AMAZON_EC2:
+                        case GuestLocations::DFE_CLUSTER:
+                            if (file_exists('/usr/bin/ec2metadata')) {
+                                $_zone = str_replace('availability-zone: ',
+                                    null,
+                                    `/usr/bin/ec2metadata | grep zone`);
+                            }
+                            break;
+                    }
+                    break;
+
+                case 'static':
+                    $_zone = config('provisioning.static-zone-name');
+                    break;
+            }
+        }
+
+        if (empty($_zone)) {
+            throw new \RuntimeException('Storage zone or type invalid. Cannot provision storage.');
+        }
+
+        return $_zone;
+    }
+
+    /**
+     * Returns a Flysystem filesystem object mapped to the instance's path
+     *
      * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
      * @param string                                            $path
      * @param string                                            $tag
@@ -333,6 +369,8 @@ class InstanceStorageService extends BaseService
 
         $_mount = $instance->webServer->mount;
 
+        empty($this->hashBase) && $this->buildStorageMap($instance->user->storage_id_text);
+
         if (!$_mount) {
             throw new \RuntimeException('The web server "' .
                 $instance->webServer->server_id_text .
@@ -340,5 +378,107 @@ class InstanceStorageService extends BaseService
         }
 
         return $_mount->getFilesystem($path, $tag, $options);
+    }
+
+    /**
+     * @param string|null $hashBase The $hashBase to set (via setHashBase()) and use
+     *
+     * @return array|boolean The storage map built, or false if this is a local instance
+     */
+    public function buildStorageMap($hashBase = null)
+    {
+        static $_mapCache = [];
+
+        $_hashBase = $hashBase ?: $this->hashBase;
+
+        if (empty($_hashBase) || GuestLocations::LOCAL == $this->guestLocation) {
+            logger('No hash-base set in storage service. Stand-alone instance implied.');
+            $this->map = [
+                'zone'      => null,
+                'partition' => null,
+                'root-hash' => null,
+            ];
+
+            return false;
+        }
+
+        if (null === ($_map = array_get($_mapCache, $_hashBase))) {
+            empty($this->hashBase) && $this->hashBase = $_hashBase;
+            $_rootHash = hash(config('dfe.signature-method', EnterpriseDefaults::SIGNATURE_METHOD), $_hashBase);
+
+            $_map = [
+                'zone'      => $this->getStorageZone(),
+                'partition' => substr($_rootHash, 0, 2),
+                'root-hash' => $_rootHash,
+            ];
+
+            $_mapCache[$_hashBase] = $_map;
+        }
+
+        return $this->map = $_map;
+    }
+
+    /**
+     * @param bool   $leading   If true, a leading $separator is pre-pended to result
+     * @param string $separator The separator between map parts
+     *
+     * @return array
+     */
+    protected function resolvePathFromMap($leading = true, $separator = DIRECTORY_SEPARATOR)
+    {
+        return Disk::segment(array_only($this->map, ['zone', 'partition', 'root-hash']), $leading, $separator);
+    }
+
+    /*------------------------------------------------------------------------------*/
+    /* Properties                                                                   */
+    /*------------------------------------------------------------------------------*/
+
+    /**
+     * @param int $guestLocation
+     *
+     * @return InstanceStorageService
+     */
+    public function setGuestLocation($guestLocation)
+    {
+        if (!is_numeric($guestLocation)) {
+            $guestLocation = GuestLocations::resolve($guestLocation, true);
+        }
+
+        $this->guestLocation = $guestLocation;
+
+        return $this;
+    }
+
+    /**
+     * @param string $hashBase
+     *
+     * @return InstanceStorageService
+     */
+    public function setHashBase($hashBase)
+    {
+        $this->hashBase = $hashBase;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrivatePathName()
+    {
+        return $this->privatePathName;
+    }
+
+    /**
+     * @param \DreamFactory\Enterprise\Database\Models\Instance $instance
+     *
+     * @return $this
+     */
+    public function setInstance(Instance $instance)
+    {
+        $this->instance = $instance;
+        $this->buildStorageMap($instance->user->storage_id_text);
+
+        return $this;
     }
 }
