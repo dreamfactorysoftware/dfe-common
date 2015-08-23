@@ -35,6 +35,30 @@ trait Guzzler
     /**
      * Initialize and set up the guzzle client
      *
+     * @param string $baseUri The optional base url to use
+     * @param array  $config  Optional guzzle configuration options
+     *
+     * @return $this
+     */
+    public function createClient($baseUri = null, $config = [])
+    {
+        //  Check the endpoint...
+        if ($baseUri && false === parse_url($baseUri)) {
+            throw new \InvalidArgumentException('The specified url "' . $baseUri . '" is not valid.');
+        }
+
+        $_options = ['debug' => env('APP_DEBUG', false)];
+        $baseUri && $_options['base_uri'] = $baseUri;
+
+        $this->guzzleConfig = array_merge($config, $_options);
+        $this->guzzleClient = new Client($this->guzzleConfig);
+
+        return $this;
+    }
+
+    /**
+     * Initialize and set up the guzzle client with signing credentials
+     *
      * @param string $url         The url of the app server to use
      * @param array  $credentials Any credentials needed for the request [:client-id, :client-secret]
      * @param array  $config      Optional guzzle configuration options
@@ -43,15 +67,7 @@ trait Guzzler
      */
     public function createRequest($url, $credentials = [], $config = [])
     {
-        $_endpoint = trim($url, '/ ') . '/';
-
-        //  Check the endpoint...
-        if (false === parse_url($_endpoint)) {
-            throw new \InvalidArgumentException('The specified url "' . $url . '" is not valid.');
-        }
-
-        $this->guzzleConfig = array_merge($config, ['base_url' => $_endpoint]);
-        $this->guzzleClient = new Client($this->guzzleConfig);
+        $this->createClient($url, $config);
 
         //  Set credentials if provided
         if (isset($credentials, $credentials['client-id'], $credentials['client-secret'])) {
@@ -136,17 +152,19 @@ trait Guzzler
     public function guzzleAny($url, $payload = [], $options = [], $method = Request::METHOD_POST, $object = true)
     {
         try {
-            $_request = $this->getGuzzleClient()->createRequest($method,
-                $url,
-                array_merge($options, ['json' => $this->signRequest($payload)]));
+            if (!empty($payload) && !is_scalar($payload)) {
+                array_merge($options, ['json' => json_encode($payload)]);
+            }
 
-            $_response = $this->guzzleClient->send($_request);
+            $_response = call_user_func_array([$this->getGuzzleClient(), $method], [$url, $options,]);
 
             return $_response->json(['object' => $object]);
         } catch (RequestException $_ex) {
             $_response = $_ex->hasResponse() ? $_ex->getResponse() : null;
 
-            return $_response;
+            $_body = trim((string)$_response->getBody());
+
+            return $_body ?: $_response;
         }
     }
 
@@ -166,30 +184,6 @@ trait Guzzler
         $this->guzzleConfig = $config;
 
         return $this->guzzleClient = new Client($this->guzzleConfig);
-    }
-
-    /**
-     * @param Client $guzzleClient
-     *
-     * @return $this
-     */
-    public function setGuzzleClient($guzzleClient)
-    {
-        $this->guzzleClient = $guzzleClient;
-
-        return $this;
-    }
-
-    /**
-     * @param array $guzzleConfig
-     *
-     * @return $this
-     */
-    public function setGuzzleConfig($guzzleConfig)
-    {
-        $this->guzzleConfig = $guzzleConfig;
-
-        return $this;
     }
 
     /**
