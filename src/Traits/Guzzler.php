@@ -152,11 +152,14 @@ trait Guzzler
     public function guzzleAny($url, $payload = [], $options = [], $method = Request::METHOD_POST, $object = true)
     {
         try {
-            if (!empty($payload) && !is_scalar($payload)) {
-                array_merge($options, ['json' => json_encode($payload)]);
+            is_array($payload) && $payload = $this->signRequest($payload);
+
+            if (!empty($payload)) {
+                $options = array_merge($options, is_scalar($payload) ? ['body' => $payload,] : ['json' => $payload]);
             }
 
-            $_response = call_user_func_array([$this->getGuzzleClient(), $method], [$url, $options,]);
+            /** @type \Response $_response */
+            $_response = $this->getGuzzleClient()->{$method}($url, $options);
 
             return $_response->json(['object' => $object]);
         } catch (RequestException $_ex) {
