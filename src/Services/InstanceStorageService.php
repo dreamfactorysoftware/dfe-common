@@ -405,7 +405,7 @@ class InstanceStorageService extends BaseService
         }
 
         if (null === ($_map = array_get($_mapCache, $_hashBase))) {
-            empty($this->hashBase) && $this->hashBase = $_hashBase;
+            $_hashBase && $_hashBase != $this->hashBase && $this->hashBase = $_hashBase;
             $_rootHash = hash(config('dfe.signature-method', EnterpriseDefaults::SIGNATURE_METHOD), $_hashBase);
 
             $_map = [
