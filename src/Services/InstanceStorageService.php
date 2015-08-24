@@ -86,7 +86,9 @@ class InstanceStorageService extends BaseService
     {
         static $_path;
 
-        return $_path ?: $_path = Disk::path([config('snapshot.trash-path'), $append], $create);
+        return $_path
+            ?: $_path =
+                Disk::path([config('snapshot.trash-path', EnterpriseDefaults::DEFAULT_TRASH_PATH), $append], $create);
     }
 
     /**
