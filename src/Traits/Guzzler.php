@@ -35,20 +35,20 @@ trait Guzzler
     /**
      * Initialize and set up the guzzle client
      *
-     * @param string $baseUri The optional base url to use
+     * @param string $baseUrl The optional base url to use
      * @param array  $config  Optional guzzle configuration options
      *
      * @return $this
      */
-    public function createClient($baseUri = null, $config = [])
+    public function createClient($baseUrl = null, $config = [])
     {
         //  Check the endpoint...
-        if ($baseUri && false === parse_url($baseUri)) {
-            throw new \InvalidArgumentException('The specified url "' . $baseUri . '" is not valid.');
+        if ($baseUrl && false === parse_url($baseUrl)) {
+            throw new \InvalidArgumentException('The specified url "' . $baseUrl . '" is not valid.');
         }
 
         $_options = ['debug' => env('APP_DEBUG', false)];
-        $baseUri && $_options['base_uri'] = $baseUri;
+        $baseUrl && $_options['base_url'] = $baseUrl;
 
         $this->guzzleConfig = array_merge($config, $_options);
         $this->guzzleClient = new Client($this->guzzleConfig);
