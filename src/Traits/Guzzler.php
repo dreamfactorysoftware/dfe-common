@@ -162,9 +162,11 @@ trait Guzzler
         } catch (RequestException $_ex) {
             $_response = $_ex->hasResponse() ? $_ex->getResponse() : null;
 
-            $_body = trim((string)$_response->getBody());
+            if (is_object($_response) && method_exists($_response, 'getBody')) {
+                return trim((string)$_response->getBody());
+            }
 
-            return $_body ?: $_response;
+            return $_response;
         }
     }
 

@@ -35,7 +35,7 @@
   ],
   "minimum-stability": "dev",
   "require":           {
-    "dreamfactory/php-utils":      "dev-develop as dev-master",
+    "dreamfactory/php-utils":      "1.1.*",
     "wpb/string-blade-compiler":   "2.*@dev",
     "league/flysystem-sftp":       "*",
     "league/flysystem-ziparchive": "*"
