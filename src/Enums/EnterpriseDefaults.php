@@ -50,8 +50,8 @@ class EnterpriseDefaults extends FactoryEnum
      */
     const SNAPSHOT_DAYS_TO_KEEP = 30;
     /**
-     * @type bool If true, expired snapshots are moved to a "trash" area for removal via other means (or long-term storage). Otherwise, expired
-     *       snapshots are physically deleted. The latter being the default.
+     * @type bool If true, expired snapshots are moved to a "trash" area for removal via other means (or long-term
+     *       storage). Otherwise, expired snapshots are physically deleted. The latter being the default.
      */
     const SNAPSHOT_SOFT_DELETE = false;
     /**
@@ -106,4 +106,8 @@ class EnterpriseDefaults extends FactoryEnum
     const DEFAULT_DOMAIN_PROTOCOL = 'http';
     /** @type string X Header for the console to use to authenticate with a 2.0 instance */
     const CONSOLE_X_HEADER = 'X-DreamFactory-Console-Key';
+    /**
+     * @type int The default number of days to keep system metrics
+     */
+    const DEFAULT_METRICS_DAYS_TO_KEEP = 365;
 }

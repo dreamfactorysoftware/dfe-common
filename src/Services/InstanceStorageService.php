@@ -48,7 +48,8 @@ class InstanceStorageService extends BaseService
     /**
      * @param \Illuminate\Contracts\Foundation\Application|null $app           The app
      * @param int                                               $guestLocation The guest location to service
-     * @param string|null                                       $hashBase      Value used for partition hash (instance|user->storage_id_text)
+     * @param string|null                                       $hashBase      Value used for partition hash
+     *                                                                         (instance|user->storage_id_text)
      */
     public function __construct($app = null, $guestLocation = GuestLocations::DFE_CLUSTER, $hashBase = null)
     {
@@ -70,8 +71,9 @@ class InstanceStorageService extends BaseService
 
         //  and private path name
         null === $this->privatePathName &&
-        $this->privatePathName = trim(config('provisioning.private-path-name', EnterpriseDefaults::PRIVATE_PATH_NAME),
-            DIRECTORY_SEPARATOR . ' ');
+        $this->privatePathName =
+            trim(config('provisioning.private-path-name', EnterpriseDefaults::PRIVATE_PATH_NAME),
+                DIRECTORY_SEPARATOR . ' ');
     }
 
     /**
@@ -105,8 +107,9 @@ class InstanceStorageService extends BaseService
     {
         static $_cache = [];
 
-        $_ck = hash(EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD,
-            implode('.', ['user-storage-path', $this->hashBase, $append]));
+        $_ck =
+            hash(EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD,
+                implode('.', ['user-storage-path', $this->hashBase, $append]));
 
         //  Map out the path
         if (null === ($_path = array_get($_cache, $_ck))) {
@@ -187,8 +190,7 @@ class InstanceStorageService extends BaseService
             $this->getOwnerPrivatePath($instance),
             config('provisioning.snapshot-path-name', EnterpriseDefaults::SNAPSHOT_PATH_NAME),
             $append,
-        ],
-            $create);
+        ], $create);
     }
 
     /**
@@ -253,8 +255,7 @@ class InstanceStorageService extends BaseService
      */
     public function getStorageRootMount(Instance $instance, $tag = null)
     {
-        return $this->mount($instance,
-            $this->getStorageRootPath(),
+        return $this->mount($instance, $this->getStorageRootPath(),
             $tag ?: 'storage-root:' . $instance->instance_id_text);
     }
 
@@ -266,8 +267,7 @@ class InstanceStorageService extends BaseService
      */
     public function getStorageMount(Instance $instance, $tag = null)
     {
-        return $this->mount($instance,
-            $this->getStoragePath($instance),
+        return $this->mount($instance, $this->getStoragePath($instance),
             $tag ?: 'storage:' . $instance->instance_id_text);
     }
 
@@ -281,8 +281,7 @@ class InstanceStorageService extends BaseService
      */
     public function getSnapshotMount(Instance $instance, $tag = null)
     {
-        return $this->mount($instance,
-            $this->getSnapshotPath($instance),
+        return $this->mount($instance, $this->getSnapshotPath($instance),
             $tag ?: 'snapshots:' . $instance->instance_id_text);
     }
 
@@ -294,8 +293,7 @@ class InstanceStorageService extends BaseService
      */
     public function getPrivateStorageMount(Instance $instance, $tag = null)
     {
-        return $this->mount($instance,
-            $this->getPrivatePath($instance),
+        return $this->mount($instance, $this->getPrivatePath($instance),
             $tag ?: 'private-storage:' . $instance->instance_id_text);
     }
 
@@ -307,8 +305,7 @@ class InstanceStorageService extends BaseService
      */
     public function getOwnerPrivateStorageMount(Instance $instance, $tag = null)
     {
-        return $this->mount($instance,
-            $this->getOwnerPrivatePath($instance),
+        return $this->mount($instance, $this->getOwnerPrivatePath($instance),
             $tag ?: 'owner-private-storage:' . $instance->instance_id_text);
     }
 
@@ -332,9 +329,7 @@ class InstanceStorageService extends BaseService
                         case GuestLocations::AMAZON_EC2:
                         case GuestLocations::DFE_CLUSTER:
                             if (file_exists('/usr/bin/ec2metadata')) {
-                                $_zone = str_replace('availability-zone: ',
-                                    null,
-                                    `/usr/bin/ec2metadata | grep zone`);
+                                $_zone = str_replace('availability-zone: ', null, `/usr/bin/ec2metadata | grep zone`);
                             }
                             break;
                     }
@@ -395,11 +390,7 @@ class InstanceStorageService extends BaseService
 
         if (empty($_hashBase) || GuestLocations::LOCAL == $this->guestLocation) {
             logger('No hash-base set in storage service. Stand-alone instance implied.');
-            $this->map = [
-                'zone'      => null,
-                'partition' => null,
-                'root-hash' => null,
-            ];
+            $this->clearMap();
 
             return false;
         }
@@ -408,16 +399,12 @@ class InstanceStorageService extends BaseService
             $_hashBase && $_hashBase != $this->hashBase && $this->hashBase = $_hashBase;
             $_rootHash = hash(config('dfe.signature-method', EnterpriseDefaults::SIGNATURE_METHOD), $_hashBase);
 
-            $_map = [
-                'zone'      => $this->getStorageZone(),
-                'partition' => substr($_rootHash, 0, 2),
-                'root-hash' => $_rootHash,
-            ];
+            $this->setMap($this->getStorageZone(), substr($_rootHash, 0, 2), $_rootHash);
 
-            $_mapCache[$_hashBase] = $_map;
+            $_mapCache[$_hashBase] = $this->map;
         }
 
-        return $this->map = $_map;
+        return $this->map;
     }
 
     /**
@@ -434,6 +421,36 @@ class InstanceStorageService extends BaseService
     /*------------------------------------------------------------------------------*/
     /* Properties                                                                   */
     /*------------------------------------------------------------------------------*/
+
+    /**
+     * Clears the storage map
+     *
+     * @return $this
+     */
+    public function clearMap()
+    {
+        return $this->setMap();
+    }
+
+    /**
+     * Sets the storage map
+     *
+     * @param string|null $zone
+     * @param string|null $partition
+     * @param string|null $rootHash
+     *
+     * @return $this
+     */
+    public function setMap($zone = null, $partition = null, $rootHash = null)
+    {
+        $this->map = [
+            'zone'      => $zone,
+            'partition' => $partition,
+            'root-hash' => $rootHash,
+        ];
+
+        return $this;
+    }
 
     /**
      * @param int $guestLocation
