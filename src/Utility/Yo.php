@@ -24,14 +24,12 @@ class Yo
     {
         $id && $hidden && $context .= ' hide';
 
-        return view('app.templates.psa',
-            [
-                'alert_id' => $id,
-                'context'  => $context,
-                'title'    => $title,
-                'content'  => $content,
-            ]
-        )->render();
+        return view('app.templates.psa', [
+            'alert_id' => $id,
+            'context'  => $context,
+            'title'    => $title,
+            'content'  => $content,
+        ])->render();
     }
 
     /**
@@ -56,13 +54,13 @@ class Yo
         if (\Session::has($_false)) {
             $_data = [
                 'flash'   => \Session::get($_false),
-                'title'   => \Lang::get($_false . '.title'),
-                'context' => 'alert-danger alert-fixed',
+                'title'   => \Lang::get('failure.title'),
+                'context' => 'alert-danger' . ($errorsFixed ? ' alert-fixed' : null),
             ];
         } elseif (\Session::has($_true)) {
             $_data = [
                 'flash'   => \Session::get($_true),
-                'title'   => \Lang::get($_true . '.title'),
+                'title'   => \Lang::get('success.title'),
                 'context' => 'alert-success',
             ];
         } else {
