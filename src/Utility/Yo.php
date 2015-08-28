@@ -39,14 +39,15 @@ class Yo
      * Uses values from /resources/lang/en/dashboard.php
      *
      * @param string|null $prefix      A key prefix, if any. A dot (".") will be auto-appended
+     * @param string      $separator
      * @param bool        $errorsFixed If true, the "alert-fixed" class is added to the alert container
      *
      * @return null|string The rendered HTML or null
      */
-    public static function alert($prefix = null, $errorsFixed = true)
+    public static function alert($prefix = null, $separator = '.', $errorsFixed = true)
     {
         //  Clean up the prefix
-        $prefix = empty($prefix) ? null : rtrim($prefix, '. ');
+        $prefix = empty($prefix) ? null : rtrim($prefix, '. ' . $separator) . $separator;
 
         $_true = $prefix . 'success';
         $_false = $prefix . 'failure';
