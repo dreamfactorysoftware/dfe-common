@@ -125,7 +125,7 @@ trait StaticEntityLookup
      */
     protected static function findSnapshot($snapshotId)
     {
-        return Snapshot::with(['user', 'routeHash'])->where('snapshot_id_text', $snapshotId)->firstOrFail();
+        return Snapshot::bySnapshotId($snapshotId)->with(['user', 'routeHash'])->firstOrFail();
     }
 
     /**
