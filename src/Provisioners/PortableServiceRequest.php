@@ -61,9 +61,9 @@ class PortableServiceRequest extends BaseRequest
     /**
      * Retrieves the target of the operation
      *
-     * @param string|mixed|null $default
+     * @param string|Filesystem|null $default
      *
-     * @return mixed
+     * @return string|Filesystem
      */
     public function getTarget($default = null)
     {
@@ -71,7 +71,7 @@ class PortableServiceRequest extends BaseRequest
     }
 
     /**
-     * @param mixed $target
+     * @param string|Filesystem $target
      *
      * @return $this
      */

@@ -71,9 +71,8 @@ class InstanceStorageService extends BaseService
 
         //  and private path name
         null === $this->privatePathName &&
-        $this->privatePathName =
-            trim(config('provisioning.private-path-name', EnterpriseDefaults::PRIVATE_PATH_NAME),
-                DIRECTORY_SEPARATOR . ' ');
+        $this->privatePathName = trim(config('provisioning.private-path-name', EnterpriseDefaults::PRIVATE_PATH_NAME),
+            DIRECTORY_SEPARATOR . ' ');
     }
 
     /**
@@ -95,7 +94,7 @@ class InstanceStorageService extends BaseService
 
     /**
      * Returns the *RELATIVE* TOP/ROOT/MOUNT (top/user level) storage path for current $hashBase.
-     * If no $hashBase is set, the result of storage_path() method is returned.
+     * If no $hashBase is set, the result of storage_path() method is returned (which should be absolute).
      *
      * NOTE: MAKE SURE TO SET $this->hashBase BEFORE YOU CALL THIS METHOD!
      *
@@ -107,9 +106,8 @@ class InstanceStorageService extends BaseService
     {
         static $_cache = [];
 
-        $_ck =
-            hash(EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD,
-                implode('.', ['user-storage-path', $this->hashBase, $append]));
+        $_ck = hash(EnterpriseDefaults::DEFAULT_SIGNATURE_METHOD,
+            implode('.', ['storage-root-path', $this->hashBase, $append]));
 
         //  Map out the path
         if (null === ($_path = array_get($_cache, $_ck))) {
@@ -190,7 +188,8 @@ class InstanceStorageService extends BaseService
             $this->getOwnerPrivatePath($instance),
             config('provisioning.snapshot-path-name', EnterpriseDefaults::SNAPSHOT_PATH_NAME),
             $append,
-        ], $create);
+        ],
+            $create);
     }
 
     /**
@@ -255,7 +254,8 @@ class InstanceStorageService extends BaseService
      */
     public function getStorageRootMount(Instance $instance, $tag = null)
     {
-        return $this->mount($instance, $this->getStorageRootPath(),
+        return $this->mount($instance,
+            $this->getStorageRootPath(),
             $tag ?: 'storage-root:' . $instance->instance_id_text);
     }
 
@@ -267,7 +267,8 @@ class InstanceStorageService extends BaseService
      */
     public function getStorageMount(Instance $instance, $tag = null)
     {
-        return $this->mount($instance, $this->getStoragePath($instance),
+        return $this->mount($instance,
+            $this->getStoragePath($instance),
             $tag ?: 'storage:' . $instance->instance_id_text);
     }
 
@@ -281,7 +282,8 @@ class InstanceStorageService extends BaseService
      */
     public function getSnapshotMount(Instance $instance, $tag = null)
     {
-        return $this->mount($instance, $this->getSnapshotPath($instance),
+        return $this->mount($instance,
+            $this->getSnapshotPath($instance),
             $tag ?: 'snapshots:' . $instance->instance_id_text);
     }
 
@@ -293,7 +295,8 @@ class InstanceStorageService extends BaseService
      */
     public function getPrivateStorageMount(Instance $instance, $tag = null)
     {
-        return $this->mount($instance, $this->getPrivatePath($instance),
+        return $this->mount($instance,
+            $this->getPrivatePath($instance),
             $tag ?: 'private-storage:' . $instance->instance_id_text);
     }
 
@@ -305,7 +308,8 @@ class InstanceStorageService extends BaseService
      */
     public function getOwnerPrivateStorageMount(Instance $instance, $tag = null)
     {
-        return $this->mount($instance, $this->getOwnerPrivatePath($instance),
+        return $this->mount($instance,
+            $this->getOwnerPrivatePath($instance),
             $tag ?: 'owner-private-storage:' . $instance->instance_id_text);
     }
 

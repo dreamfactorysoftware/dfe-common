@@ -2,6 +2,7 @@
 
 use DreamFactory\Enterprise\Common\Contracts\EnterpriseJob;
 use DreamFactory\Enterprise\Common\Traits\EntityLookup;
+use DreamFactory\Enterprise\Database\Enums\OwnerTypes;
 
 /**
  * A base class for all DFE non-instance "job" type commands (non-console)
@@ -127,6 +128,10 @@ abstract class BaseEnterpriseJob extends BaseJob implements EnterpriseJob
     public function getOwner()
     {
         if ($this->ownerId) {
+            if (null === $this->ownerType) {
+                $this->ownerType = OwnerTypes::USER;
+            }
+
             return $this->_locateOwner($this->ownerId, $this->ownerType);
         }
 

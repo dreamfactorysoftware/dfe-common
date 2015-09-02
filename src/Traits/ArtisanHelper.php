@@ -4,6 +4,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * A trait that adds shortcuts for artisan commands
+ *
+ * @property OutputInterface $output
  */
 trait ArtisanHelper
 {
@@ -34,14 +36,17 @@ trait ArtisanHelper
     protected function writeHeader($newline = true)
     {
         /** @noinspection PhpUndefinedFieldInspection */
-        $this->output->writeln(
-            $this->context(config('commands.display-name'), 'info') .
-            ' (' . $this->context(config('commands.display-version', 'Alpha'), 'comment') . ')'
-        );
-
-        if (null !== ($_copyright = config('commands.display-copyright'))) {
+        if ($this->output) {
             /** @noinspection PhpUndefinedFieldInspection */
-            $this->output->writeln($this->context($_copyright, 'info') . ($newline ? PHP_EOL : null));
+            $this->output->writeln($this->context(config('commands.display-name'), 'info') .
+                ' (' .
+                $this->context(config('commands.display-version', 'Alpha'), 'comment') .
+                ')');
+
+            if (null !== ($_copyright = config('commands.display-copyright'))) {
+                /** @noinspection PhpUndefinedFieldInspection */
+                $this->output->writeln($this->context($_copyright, 'info') . ($newline ? PHP_EOL : null));
+            }
         }
 
         return $this;
@@ -55,7 +60,7 @@ trait ArtisanHelper
     protected function writeln($messages, $context = null, $type = OutputInterface::OUTPUT_NORMAL)
     {
         /** @noinspection PhpUndefinedFieldInspection */
-        $this->output->writeln($this->formatMessages($messages, $context), $type);
+        $this->output && $this->output->writeln($this->formatMessages($messages, $context), $type);
     }
 
     /**
@@ -67,7 +72,7 @@ trait ArtisanHelper
     protected function write($messages, $newline = false, $context = null, $type = OutputInterface::OUTPUT_NORMAL)
     {
         /** @noinspection PhpUndefinedFieldInspection */
-        $this->output->write($this->formatMessages($messages, $context), $newline, $type);
+        $this->output && $this->output->write($this->formatMessages($messages, $context), $newline, $type);
     }
 
     /**
@@ -220,5 +225,4 @@ trait ArtisanHelper
 
         return $this;
     }
-
 }

@@ -36,7 +36,14 @@ abstract class BaseInstanceJob extends BaseEnterpriseJob implements InstanceAwar
     public function __construct($instanceId, array $options = [])
     {
         $this->instanceId = $instanceId;
-        $this->options = $options;
+
+        //  Clean up the options and pull them in
+        $this->options = [];
+        foreach ($options as $_key => $_value) {
+            if (!is_numeric($_key)) {
+                $this->options[$_key] = $_value;
+            }
+        }
 
         parent::__construct(array_get($options, 'cluster-id'),
             array_get($options, 'server-id'),
@@ -52,11 +59,24 @@ abstract class BaseInstanceJob extends BaseEnterpriseJob implements InstanceAwar
     }
 
     /**
+     * @param bool $includeDefinitions If true, the definitions will be included in the result
+     *
      * @return array
      */
-    public function getOptions()
+    public function getOptions($includeDefinitions = true)
     {
-        return $this->options;
+        $_options = $this->options;
+
+        if (!$includeDefinitions) {
+            $_options = [];
+
+            //  Strip out any numerically keyed options
+            foreach ((array)$this->options as $_key => $_value) {
+                !is_numeric($_key) && $_options[$_key] = $_value;
+            }
+        }
+
+        return $_options;
     }
 
     /**

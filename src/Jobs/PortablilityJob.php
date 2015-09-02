@@ -33,6 +33,8 @@ abstract class PortabilityJob extends BaseInstanceJob
     {
         $this->target = $request->getTarget();
         $this->outputFile = $request->get('output-file');
+        $this->ownerId = $request->get('owner-id');
+        $this->ownerType = $request->get('owner-type');
 
         parent::__construct($request->getInstanceId(), $request->toArray());
     }
