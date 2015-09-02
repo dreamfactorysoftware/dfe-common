@@ -2,6 +2,7 @@
 
 use DreamFactory\Enterprise\Common\Traits\HasResults;
 use DreamFactory\Enterprise\Common\Traits\InteractsWithConsole;
+use DreamFactory\Enterprise\Common\Traits\PublishesResults;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -34,7 +35,7 @@ abstract class BaseJob implements ShouldQueue, InputAwareInterface
     //* Traits
     //******************************************************************************
 
-    use InteractsWithConsole, InteractsWithQueue, SerializesModels, HasResults;
+    use InteractsWithConsole, InteractsWithQueue, SerializesModels, HasResults, PublishesResults;
 
     //******************************************************************************
     //* Methods
@@ -46,6 +47,16 @@ abstract class BaseJob implements ShouldQueue, InputAwareInterface
     public function __construct($jobId = null)
     {
         $this->jobId = $this->createJobId($jobId);
+    }
+
+    /**
+     * Publish our results before we die
+     */
+    function __destruct()
+    {
+        if (!empty($_result = $this->getResult())) {
+            $this->publishResult($this->jobId, $_result);
+        }
     }
 
     /**
