@@ -58,4 +58,6 @@ abstract class ConsoleCommand extends Command
 
         $this->writeHeader();
     }
+
+
 }
