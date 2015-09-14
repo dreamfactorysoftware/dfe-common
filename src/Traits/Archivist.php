@@ -56,6 +56,7 @@ trait Archivist
      */
     protected static function flush(Filesystem $filesystem)
     {
+        static::flushZipArchive($filesystem);
     }
 
     /**
