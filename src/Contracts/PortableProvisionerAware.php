@@ -7,18 +7,11 @@ use DreamFactory\Enterprise\Services\Jobs\ImportJob;
 /**
  * Something that is aware of provisioners
  */
-interface PortableProvisionerAware
+interface PortableProvisionerAware extends PortabilityAware
 {
     //*************************************************************************
     //* Methods
     //*************************************************************************
-
-    /**
-     * @param string|null $name The provisioner ID
-     *
-     * @return PortableData[]|[]
-     */
-    public function getPortableServices($name = null);
 
     /**
      * Export portability data
