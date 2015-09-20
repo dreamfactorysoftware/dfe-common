@@ -42,4 +42,16 @@ class DataShaperService extends BaseService
     {
         return $this->shaper->reshape($data, $shape, $options);
     }
+
+    /**
+     * Returns the file extension, without a dot, for the shape. Returns null if unknown or no extension
+     *
+     * @param int $shape The desired shape
+     *
+     * @return string|null
+     */
+    public function getShapeExtension($shape)
+    {
+        return $this->shaper->getShapeExtension($shape);
+    }
 }

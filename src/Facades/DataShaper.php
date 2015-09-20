@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Facade;
  * DataShaper
  *
  * @method static array transform(array $data = [], $shape = DataShapes::JSON, array $options = []);
+ * @method static string|null getShapeExtension($shape = DataShapes::JSON);
  */
 class DataShaper extends Facade
 {
