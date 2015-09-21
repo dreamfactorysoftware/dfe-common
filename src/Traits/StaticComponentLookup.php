@@ -1,8 +1,10 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
 use DreamFactory\Enterprise\Common\Enums\ServerTypes;
+use DreamFactory\Enterprise\Database\Enums\OwnerTypes;
 use DreamFactory\Enterprise\Database\Models\AppKey;
 use DreamFactory\Enterprise\Database\Models\Cluster;
+use DreamFactory\Enterprise\Database\Models\EnterpriseModel;
 use DreamFactory\Enterprise\Database\Models\Instance;
 use DreamFactory\Enterprise\Database\Models\InstanceServer;
 use DreamFactory\Enterprise\Database\Models\Mount;
@@ -104,8 +106,7 @@ trait StaticComponentLookup
     {
         $_cluster = ($clusterId instanceof Cluster) ? $clusterId : static::_lookupCluster($clusterId);
 
-        $_rows = \DB::select(
-            <<<MYSQL
+        $_rows = \DB::select(<<<MYSQL
 SELECT
     s.id,
     s.server_id_text,
@@ -119,8 +120,7 @@ WHERE
     csa.cluster_id = :cluster_id
 MYSQL
             ,
-            [':cluster_id' => $_cluster->id]
-        );
+            [':cluster_id' => $_cluster->id]);
 
         //  Organize by type
         $_servers = ['cluster' => $_cluster];
@@ -202,5 +202,31 @@ MYSQL
             ->where('user_id', '=', $userId)
             ->orderBy('role_t.role_name_text')
             ->get(['role_t.*']);
+    }
+
+    /**
+     * Given an enterprise model, return the OwnerType associated with the entity
+     *
+     * @param \DreamFactory\Enterprise\Database\Models\EnterpriseModel $entity
+     *
+     * @return int|null The OwnerTypes constant value or null if not found
+     */
+    protected static function _getOwnerTypeFromEntity(EnterpriseModel $entity)
+    {
+        if ($entity instanceof User) {
+            return OwnerTypes::USER;
+        } elseif ($entity instanceof ServiceUser) {
+            return OwnerTypes::SERVICE_USER;
+        } elseif ($entity instanceof Instance) {
+            return OwnerTypes::INSTANCE;
+        } else if ($entity instanceof Server) {
+            return OwnerTypes::SERVER;
+        } else if ($entity instanceof Cluster) {
+            return OwnerTypes::CLUSTER;
+        } else if ($entity instanceof Mount) {
+            return OwnerTypes::MOUNT;
+        }
+
+        return null;
     }
 }
