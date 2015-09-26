@@ -1,6 +1,7 @@
 <?php
 namespace DreamFactory\Enterprise\Common\Services;
 
+use DreamFactory\Enterprise\Common\Packets\BasePacket;
 use DreamFactory\Enterprise\Common\Packets\ErrorPacket;
 use DreamFactory\Enterprise\Common\Packets\SuccessPacket;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,9 +13,9 @@ class PacketService extends BaseService
     //******************************************************************************
 
     /**
-     * @type string The version/type of the packet to generate
+     * @type string|null The version/type of the packet to generate
      */
-    protected $_version = self::PACKET_VERSION;
+    protected $version;
 
     //******************************************************************************
     //* Methods
@@ -23,11 +24,11 @@ class PacketService extends BaseService
     /**
      * @param string $version
      */
-    public function __construct($version = self::PACKET_VERSION)
+    public function __construct($version = null)
     {
-        $this->_version = $version;
-
         parent::__construct();
+
+        $this->version = $version ?: BasePacket::PACKET_VERSION;
     }
 
     /**
