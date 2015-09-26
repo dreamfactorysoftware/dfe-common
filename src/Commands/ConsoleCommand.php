@@ -52,9 +52,9 @@ abstract class ConsoleCommand extends Command
      */
     public function fire()
     {
-        if (null === $this->getOutputPrefix()) {
-            $this->setOutputPrefix($this->name);
-        }
+//        if (null === $this->getOutputPrefix()) {
+//            $this->setOutputPrefix($this->name);
+//        }
 
         $this->writeHeader();
     }

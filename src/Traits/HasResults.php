@@ -1,6 +1,8 @@
 <?php
 namespace DreamFactory\Enterprise\Common\Traits;
 
+use DreamFactory\Enterprise\Common\Jobs\BaseJob;
+
 /**
  * A trait for things that have results
  */
@@ -24,6 +26,12 @@ trait HasResults
      */
     public function getResult()
     {
+        if ($this instanceof BaseJob) {
+            if (false !== ($_result = $this->trackResult($this->getJobId()))) {
+                return $_result;
+            }
+        }
+
         return $this->processResult;
     }
 

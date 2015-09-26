@@ -216,10 +216,7 @@ trait Lumberjack
         //  Prepare the prefix for potential prepending!
         $addPrefix = false;
 
-        $_prefix =
-            (empty($this->lumberjackPrefix) || !$addPrefix)
-                ? null
-                : $this->lumberjackPrefix . ' ';
+        $_prefix = (empty($this->lumberjackPrefix) || !$addPrefix) ? null : $this->lumberjackPrefix . ' ';
 
         foreach ($message as $_message) {
             $_indentAfter = false;
@@ -230,7 +227,9 @@ trait Lumberjack
                 $this->indent--;
             }
 
-            $_messages[] = $_prefix . str_pad(' ', ($this->indent * $this->indentSize) - 1) .
+            $_messages[] =
+                $_prefix .
+                str_pad(' ', ($this->indent * $this->indentSize) - 1) .
                 trim(str_replace([$this->indentStartMarker, $this->indentStopMarker], null, $_message));
 
             //  Indent after so the first line doesn't get indented
@@ -257,7 +256,8 @@ trait Lumberjack
     protected function setLumberjackPrefix($lumberjackPrefix, $brackets = true)
     {
         $this->lumberjackPrefix = trim($lumberjackPrefix, '[]');
-        $brackets && $this->lumberjackPrefix = '[' . $this->lumberjackPrefix . '] ';
+        ($brackets && !empty($this->lumberjackPrefix)) &&
+        $this->lumberjackPrefix = '[' . $this->lumberjackPrefix . '] ';
 
         return $this;
     }

@@ -4,7 +4,8 @@ use DreamFactory\Enterprise\Database\Models\JobResult;
 use Illuminate\Support\Facades\Log;
 
 /**
- * A trait for things that need to publish a result
+ * A trait for things that need to publish a result. Additional functionality for use with
+ * \DreamFactory\Enterprise\Common\Traits\HasResults
  */
 trait PublishesResults
 {
@@ -48,5 +49,20 @@ trait PublishesResults
         }
 
         return $_result->update(['result_text' => $result]);
+    }
+
+    /**
+     * @param string $resultId
+     *
+     * @return bool|array|mixed
+     */
+    public function trackResult($resultId)
+    {
+        /** @var JobResult $_result */
+        if (null === ($_result = JobResult::byResultId($resultId)->first())) {
+            return false;
+        }
+
+        return $_result->result_text;
     }
 }
