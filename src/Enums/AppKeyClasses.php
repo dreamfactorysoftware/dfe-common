@@ -97,12 +97,7 @@ class AppKeyClasses extends FactoryEnum
      */
     public static function fromOwnerType($ownerType)
     {
-        return static::defines(
-            strtoupper(
-                OwnerTypes::nameOf($ownerType, !is_numeric($ownerType))
-            ),
-            true
-        );
+        return static::defines(strtoupper(OwnerTypes::nameOf($ownerType, !is_numeric($ownerType), false)), true);
     }
 
     /**
