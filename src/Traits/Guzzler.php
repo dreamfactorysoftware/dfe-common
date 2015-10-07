@@ -150,6 +150,8 @@ trait Guzzler
      */
     public function guzzleAny($url, $payload = [], $options = [], $method = Request::METHOD_POST, $object = true)
     {
+        $_response = null;
+
         try {
             is_array($payload) && $payload = $this->signRequest($payload);
 
@@ -162,8 +164,6 @@ trait Guzzler
 
             return $_response->json(['object' => $object]);
         } catch (\Exception $_ex) {
-            $_response = $_ex->hasResponse() ? $_ex->getResponse() : null;
-
             if (is_object($_response) && method_exists($_response, 'getBody')) {
                 return trim((string)$_response->getBody());
             }
