@@ -147,7 +147,7 @@ trait StaticEntityLookup
      */
     protected static function findClusterServers($clusterId)
     {
-        $_cluster = static::findCluster($clusterId);
+        $_cluster = ($clusterId instanceof Cluster) ? $clusterId : static::findCluster($clusterId);
         $_rows = $_cluster->assignedServers();
 
         //  Organize by type

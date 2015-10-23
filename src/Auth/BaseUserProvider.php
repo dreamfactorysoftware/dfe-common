@@ -43,7 +43,8 @@ abstract class BaseUserProvider extends DatabaseUserProvider
             }
         }
 
-        /** Only allow active users to login
+        /**
+         * Only allow active users to login
          *  0 = not active, 1 = active
          */
         $_condition[] = 'active_ind = :active_ind';

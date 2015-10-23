@@ -2,6 +2,7 @@
 
 use DreamFactory\Enterprise\Common\Http\Controllers\BaseController;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
 
 abstract class CommonAuthController extends BaseController
 {
@@ -9,7 +10,7 @@ abstract class CommonAuthController extends BaseController
     //* Traits
     //******************************************************************************
 
-    use AuthenticatesAndRegistersUsers;
+    use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
     //******************************************************************************
     //* Methods
@@ -32,13 +33,9 @@ abstract class CommonAuthController extends BaseController
     /** @inheritdoc */
     public function getRegister()
     {
-        return view(
-            config('auth.open-registration', false)
-                ? 'dfe-common::auth.register'
-                : 'dfe-common::auth.no-register'
-        );
+        return view(config('auth.open-registration', false) ? 'dfe-common::auth.register'
+            : 'dfe-common::auth.no-register');
     }
-
 
     /** @inheritdoc */
     abstract public function validator(array $data);
