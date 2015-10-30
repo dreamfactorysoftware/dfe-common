@@ -22,10 +22,6 @@
   "repositories":      [
     {
       "type": "vcs",
-      "url":  "https://github.com/dreamfactorysoftware/dfe-common.git"
-    },
-    {
-      "type": "vcs",
       "url":  "https://github.com/dreamfactorysoftware/dfe-database.git"
     },
     {
@@ -36,13 +32,14 @@
   "minimum-stability": "dev",
   "require":           {
     "dreamfactory/php-utils":      "1.1.*",
+    "dreamfactory/dfe-database":   "1.0.*",
     "wpb/string-blade-compiler":   "2.*@dev",
+    "ruflin/elastica":             "*",
     "league/flysystem-sftp":       "*",
     "league/flysystem-ziparchive": "*"
   },
   "require-dev":       {
     "phpunit/phpunit":             "~4.0",
-    "dreamfactory/dfe-database":   "dev-develop as dev-master",
     "barryvdh/laravel-ide-helper": "~2.0",
     "doctrine/dbal":               "~2.3",
     "way/generators":              "~3.0",
@@ -65,7 +62,7 @@
   },
   "extra":             {
     "branch-alias": {
-      "dev-develop": "0.1.x-dev"
+      "dev-develop": "1.0.x-dev"
     }
   }
 }

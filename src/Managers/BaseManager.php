@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Managers;
+<?php namespace DreamFactory\Enterprise\Common\Managers;
 
 use DreamFactory\Enterprise\Common\Contracts\ManagerContract;
 use DreamFactory\Enterprise\Common\Services\BaseService;

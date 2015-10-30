@@ -3,6 +3,8 @@
 use DreamFactory\Enterprise\Database\Models\Instance;
 use DreamFactory\Library\Utility\Json;
 use Illuminate\Mail\Message;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * A trait that aids with notifying
@@ -36,9 +38,9 @@ trait Notifier
                 $subject = $this->subjectPrefix . ' ' . trim(str_replace($this->subjectPrefix, null, $subject));
             }
 
-            $_result = \Mail::send('emails.generic',
+            $_result = Mail::send('emails.generic',
                 $data,
-                function ($message/** @var Message $message */) use ($instance, $subject){
+                function ($message/** @var Message $message */) use ($instance, $subject) {
                     $message->to($instance->user->email_addr_text,
                         $instance->user->first_name_text . ' ' . $instance->user->last_name_text)->subject($subject);
                 });
@@ -48,7 +50,7 @@ trait Notifier
 
             return $_result;
         } catch (\Exception $_ex) {
-            \Log::error('Error sending notification: ' . $_ex->getMessage());
+            Log::error('Error sending notification: ' . $_ex->getMessage());
 
             $_mailPath = storage_path('logs/unsent-mail');
 
@@ -59,6 +61,8 @@ trait Notifier
             @file_put_contents(date('YmdHis') . '-' . $instance->user->email_addr_text . '.json',
                 Json::encode(array_merge($data,
                     ['subject' => $subject, 'template' => 'emails.generic', 'instance' => $instance->toArray()])));
+
+            return false;
         }
     }
 

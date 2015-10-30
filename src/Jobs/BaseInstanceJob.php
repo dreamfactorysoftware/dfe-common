@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Jobs;
+<?php namespace DreamFactory\Enterprise\Common\Jobs;
 
 use DreamFactory\Enterprise\Common\Contracts\InstanceAware;
 use DreamFactory\Enterprise\Database\Models\Instance;

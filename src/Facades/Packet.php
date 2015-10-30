@@ -7,8 +7,8 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Packet
  *
- * @method static array success(mixed $contents = null, int $code = Response::HTTP_OK);
- * @method static array failure(mixed $contents = null, int $code = Response::HTTP_OK, mixed $message = null);
+ * @method static array success($contents = null, $code = Response::HTTP_OK);
+ * @method static array failure($contents = null, $code = Response::HTTP_OK, $message = null);
  */
 class Packet extends Facade
 {

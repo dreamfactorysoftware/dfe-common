@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Traits;
+<?php namespace DreamFactory\Enterprise\Common\Traits;
 
 use DreamFactory\Enterprise\Common\Enums\EnterpriseHeaders;
 use Illuminate\Http\Request;

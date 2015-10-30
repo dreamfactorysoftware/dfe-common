@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Packets;
+<?php namespace DreamFactory\Enterprise\Common\Packets;
 
 use Illuminate\Http\Response;
 

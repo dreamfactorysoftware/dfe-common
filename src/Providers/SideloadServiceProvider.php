@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Providers;
+<?php namespace DreamFactory\Enterprise\Common\Providers;
 
 use DreamFactory\Enterprise\Common\Services\SideloadService;
 
@@ -14,8 +13,6 @@ class SideloadServiceProvider extends BaseServiceProvider
 
     /** @inheritdoc */
     const IOC_NAME = 'sideload';
-    /** @inheritdoc */
-    const ALIAS_NAME = false;
 
     //********************************************************************************
     //* Public Methods
@@ -37,14 +34,10 @@ class SideloadServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
-        $this->_serviceClass = 'DreamFactory\\Enterprise\\Common\\Services\\SideloadService';
-
         //  Register object into instance container
-        $this->singleton(
-            static::IOC_NAME,
+        $this->singleton(static::IOC_NAME,
             function ($app) {
                 return new SideloadService($app);
-            }
-        );
+            });
     }
 }

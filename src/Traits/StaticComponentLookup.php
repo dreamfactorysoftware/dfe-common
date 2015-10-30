@@ -13,6 +13,7 @@ use DreamFactory\Enterprise\Database\Models\ServiceUser;
 use DreamFactory\Enterprise\Database\Models\User;
 use DreamFactory\Enterprise\Database\Models\UserRole;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * A trait for looking up various enterprise components statically
@@ -106,7 +107,7 @@ trait StaticComponentLookup
     {
         $_cluster = ($clusterId instanceof Cluster) ? $clusterId : static::_lookupCluster($clusterId);
 
-        $_rows = \DB::select(<<<MYSQL
+        $_rows = DB::select(<<<MYSQL
 SELECT
     s.id,
     s.server_id_text,

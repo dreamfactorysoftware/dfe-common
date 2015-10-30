@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Services;
+<?php namespace DreamFactory\Enterprise\Common\Services;
 
 /**
  * Cluster manifest manipulation service

@@ -1,7 +1,5 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Services;
+<?php namespace DreamFactory\Enterprise\Common\Services;
 
-use DreamFactory\Library\Utility\IfSet;
 use DreamFactory\Library\Utility\JsonFile;
 use Illuminate\Support\Facades\Config;
 use Wpb\StringBladeCompiler\Facades\StringView;
@@ -25,8 +23,7 @@ class ScalpelService extends BaseService
     public function make($templateKey, $data = [], $mergeData = [])
     {
         /** @noinspection PhpUndefinedMethodInspection */
-        return
-            $this->makeFromString(Config::get($templateKey), $data, $mergeData);
+        return $this->makeFromString(Config::get($templateKey), $data, $mergeData);
     }
 
     /**
@@ -45,22 +42,17 @@ class ScalpelService extends BaseService
 
         /** @type \Wpb\StringBladeCompiler\StringView $_view */
         /** @noinspection PhpUndefinedMethodInspection */
-        $_view = StringView::make(
-            [
-                'template'   => $_workTemplate,
-                'cache_key'  => md5(array_get($data, 'cache_key', microtime(true)) . sha1($_workTemplate)),
-                'updated_at' => time(),
-            ],
+        $_view = StringView::make([
+            'template'   => $_workTemplate,
+            'cache_key'  => md5(array_get($data, 'cache_key', microtime(true)) . sha1($_workTemplate)),
+            'updated_at' => time(),
+        ],
             $data,
-            $mergeData
-        );
+            $mergeData);
 
         $_workTemplate = $_view->render();
 
-        return
-            $_json
-                ? JsonFile::decode($_workTemplate, true)
-                : $_workTemplate;
+        return $_json ? JsonFile::decode($_workTemplate, true) : $_workTemplate;
     }
 
 }

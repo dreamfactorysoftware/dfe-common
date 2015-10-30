@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Providers;
+<?php namespace DreamFactory\Enterprise\Common\Providers;
 
 use DreamFactory\Enterprise\Common\Services\ElkService;
 
@@ -28,11 +27,9 @@ class ElkServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
-        $this->singleton(
-            static::IOC_NAME,
+        $this->singleton(static::IOC_NAME,
             function ($app) {
                 return new ElkService($app);
-            }
-        );
+            });
     }
 }

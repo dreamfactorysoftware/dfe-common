@@ -13,8 +13,6 @@ class DataShaperServiceProvider extends BaseServiceProvider
 
     /** @inheritdoc */
     const IOC_NAME = 'dfe.data-shaper';
-    /** @inheritdoc */
-    const ALIAS_NAME = 'DataShaper';
 
     //********************************************************************************
     //* Public Methods
@@ -29,7 +27,7 @@ class DataShaperServiceProvider extends BaseServiceProvider
     {
         //  Register object into instance container
         $this->singleton(static::IOC_NAME,
-            function ($app){
+            function ($app) {
                 return new DataShaperService($app);
             });
     }

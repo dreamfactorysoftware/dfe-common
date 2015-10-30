@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Contracts;
+<?php namespace DreamFactory\Enterprise\Common\Contracts;
 
 /**
  * Describes a contract that hashes routes

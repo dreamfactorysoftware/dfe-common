@@ -3,7 +3,6 @@
 use DreamFactory\Enterprise\Common\Enums\EnterpriseDefaults;
 use DreamFactory\Enterprise\Common\Enums\EnterprisePaths;
 use DreamFactory\Library\Utility\Exceptions\FileException;
-use DreamFactory\Library\Utility\IfSet;
 use DreamFactory\Library\Utility\JsonFile;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
@@ -142,8 +141,9 @@ class InstanceManifest implements Arrayable, Jsonable
                 $_key = str_replace(['_', ' '], ['-', null], strtolower(trim($_key)));
 
                 if (array_key_exists($_key, $_cleaned)) {
-                    $_cleaned[$_key] = !is_scalar($_value) && !is_array($_value) ? (null === $_value ? null
-                        : (array)$_value) : $_value;
+                    $_cleaned[$_key] =
+                        !is_scalar($_value) && !is_array($_value) ? (null === $_value ? null : (array)$_value)
+                            : $_value;
                 }
             }
 

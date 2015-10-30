@@ -7,10 +7,10 @@ use Elastica\ResultSet;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static ResultSet callOverTime(string $facility, string $interval = ElkIntervals::DAY, int $size = 30, int $from = 0, string $term = null)
- * @method static bool|array globalStats(int $from = 0, int $size = 1)
- * @method static array allStats(int $from = null, int $size = null)
- * @method static ResultSet termQuery(string $term, string $value, int $size = 30)
+ * @method static ResultSet callOverTime($facility, $interval = ElkIntervals::DAY, $size = 30, $from = 0, $term = null)
+ * @method static bool|array globalStats($from = 0, $size = 1)
+ * @method static array allStats($from = null, $size = null)
+ * @method static ResultSet termQuery($term, $value, $size = 30)
  * @method static Client getClient();
  */
 class Elk extends Facade

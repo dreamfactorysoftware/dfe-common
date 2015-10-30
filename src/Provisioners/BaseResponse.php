@@ -34,15 +34,15 @@ class BaseResponse extends Response
     //******************************************************************************
 
     /**
-     * @param bool                    $success
-     * @param array                   $content
-     * @param ProvisionServiceRequest $request
-     * @param mixed|null              $result
-     * @param mixed|null              $output
-     * @param int|null                $httpCode
-     * @param array                   $headers
+     * @param bool        $success
+     * @param array       $content
+     * @param BaseRequest $request
+     * @param mixed|null  $result
+     * @param mixed|null  $output
+     * @param int|null    $httpCode
+     * @param array       $headers
      *
-     * @return \DreamFactory\Enterprise\Common\Provisioners\ProvisionServiceResponse
+     * @return $this
      */
     public static function make($success, $request, $result = null, $content = [], $output = null, $httpCode = Response::HTTP_OK, $headers = [])
     {
@@ -56,12 +56,12 @@ class BaseResponse extends Response
     /**
      * Create a generic success response
      *
-     * @param ProvisionServiceRequest $request
-     * @param mixed|null              $result
-     * @param mixed|null              $content
-     * @param mixed|null              $output
-     * @param int|null                $httpCode
-     * @param array                   $headers
+     * @param BaseRequest $request
+     * @param mixed|null  $result
+     * @param mixed|null  $content
+     * @param mixed|null  $output
+     * @param int|null    $httpCode
+     * @param array       $headers
      *
      * @return $this
      */
@@ -73,12 +73,12 @@ class BaseResponse extends Response
     /**
      * Create a generic failure response
      *
-     * @param ProvisionServiceRequest $request
-     * @param mixed|null              $result
-     * @param mixed|null              $content
-     * @param mixed|null              $output
-     * @param int|null                $httpCode
-     * @param array                   $headers
+     * @param BaseRequest $request
+     * @param mixed|null  $result
+     * @param mixed|null  $content
+     * @param mixed|null  $output
+     * @param int|null    $httpCode
+     * @param array       $headers
      *
      * @return $this
      */

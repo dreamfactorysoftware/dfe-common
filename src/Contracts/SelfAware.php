@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Contracts;
+<?php namespace DreamFactory\Enterprise\Common\Contracts;
 
 /**
  * Something that is aware of its state of well-being

@@ -65,7 +65,7 @@ trait VerifiesSignatures
     protected function verifySignature($token, $clientId, $clientSecret)
     {
         if (empty($this->vsSignature)) {
-            $this->vsSignature = $this->setSigningCredentials( $clientId, $clientSecret )->generateSignature();
+            $this->vsSignature = $this->setSigningCredentials($clientId, $clientSecret)->generateSignature();
         }
 
         return $token === $this->vsSignature;

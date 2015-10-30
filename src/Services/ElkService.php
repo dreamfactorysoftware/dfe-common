@@ -10,6 +10,7 @@ use Elastica\Query;
 use Elastica\QueryBuilder\DSL\Aggregation;
 use Elastica\ResultSet;
 use Elastica\Search;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Gets data from the ELK stack
@@ -76,7 +77,7 @@ class ElkService extends BaseService
                     static::$_indices = $_indices;
                 }
             } catch (\Exception $_ex) {
-                \Log::error($_ex);
+                Log::error($_ex);
 
                 throw $_ex;
             }
@@ -102,14 +103,14 @@ class ElkService extends BaseService
 
         $_query = $this->_buildQuery($facility, $interval, $size, $from, $term);
 
-        \Log::debug(json_encode($_query));
+        Log::debug(json_encode($_query));
 
         $_results = null;
 
         try {
             $_results = $this->_doSearch($_query);
         } catch (\Exception $_ex) {
-            \Log::error('Exception retrieving logs: ' . $_ex->getMessage());
+            Log::error('Exception retrieving logs: ' . $_ex->getMessage());
 
             throw new \RuntimeException(500, $_ex->getMessage());
         }
@@ -214,7 +215,7 @@ class ElkService extends BaseService
 
             return new ResultSet($_ex->getResponse(), $_query);
         } catch (\Exception $_ex) {
-            \Log::error($_ex->getMessage());
+            Log::error($_ex->getMessage());
         }
 
         return $_results;
@@ -247,7 +248,7 @@ class ElkService extends BaseService
         try {
             $_result = $_search->search($_query)->current()->getHit();
         } catch (PartialShardFailureException $_ex) {
-            \Log::info('Partial shard failure: ' . $_ex->getMessage() . ' failed shard(s).');
+            Log::info('Partial shard failure: ' . $_ex->getMessage() . ' failed shard(s).');
             $_result = $_ex->getResponse()->getData();
 
             if (array_key_exists('hits', $_result)) {
@@ -256,7 +257,7 @@ class ElkService extends BaseService
                 }
             }
 
-            \Log::warning('No global stats found.');
+            Log::warning('No global stats found.');
 
             return false;
         }

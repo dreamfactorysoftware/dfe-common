@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Services;
+<?php namespace DreamFactory\Enterprise\Common\Services;
 
 use DreamFactory\Enterprise\Common\Enums\MailTemplates;
 use DreamFactory\Library\Utility\IfSet;
@@ -41,7 +40,7 @@ class MailTemplateService extends BaseService
         $_settings = config('services.smtp-mail', []);
         $_service = array_get($_settings, 'smtp-service', 'localhost');
 
-        if (null === ($_mailTemplate = array_getDeep($_settings, 'templates', $template))) {
+        if (null === ($_mailTemplate = IfSet::getDeep($_settings, 'templates', $template))) {
             throw new \InvalidArgumentException('There was no associated template for type #' . $template);
         }
 
@@ -73,7 +72,7 @@ class MailTemplateService extends BaseService
                     break;
 
                 default:
-                    if (null === ($_settings = array_getDeep($_settings, 'services', $_service))) {
+                    if (null === ($_settings = IfSet::getDeep($_settings, 'services', $_service))) {
                         throw new \RuntimeException('Service "' . $_service . '" is not properly configured.');
                     }
 
@@ -119,12 +118,12 @@ class MailTemplateService extends BaseService
     protected function _createMessage($template, &$data)
     {
         //	Pull out all the message data
-        $_to = array_get($data, 'to', null, true);
-        $_from = array_get($data, 'from', null, true);
-        $_replyTo = array_get($data, 'reply_to', null, true);
-        $_cc = array_get($data, 'cc', null, true);
-        $_bcc = array_get($data, 'bcc', null, true);
-        $_subject = array_get($data, 'subject', null, true);
+        $_to = array_get($data, 'to');
+        $_from = array_get($data, 'from');
+        $_replyTo = array_get($data, 'reply_to');
+        $_cc = array_get($data, 'cc');
+        $_bcc = array_get($data, 'bcc');
+        $_subject = array_get($data, 'subject');
 
         //	Get body template...
         if (false === ($_html = @file_get_contents($template))) {
@@ -160,10 +159,8 @@ class MailTemplateService extends BaseService
         }
 
         //	process generic macros.
-        $_message->setBody(
-            $this->replaceMacros($data, $_html),
-            'text/html'
-        );
+        $_message->setBody($this->replaceMacros($data, $_html),
+            'text/html');
 
         return $_message;
     }
@@ -213,11 +210,9 @@ class MailTemplateService extends BaseService
         }
 
         //	Do all replacements at once
-        $_result = str_ireplace(
-            array_keys($_data),
+        $_result = str_ireplace(array_keys($_data),
             array_values($_data),
-            $source
-        );
+            $source);
 
         //	Return re-worked source
         return $_result;

@@ -30,11 +30,9 @@ class ClusterManifestServiceProvider extends BaseServiceProvider
     public function register()
     {
         //  Register object into instance container
-        $this->singleton(
-            static::IOC_NAME,
+        $this->singleton(static::IOC_NAME,
             function (Application $app) {
                 return new ClusterManifestService($app);
-            }
-        );
+            });
     }
 }

@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Contracts;
+<?php namespace DreamFactory\Enterprise\Common\Contracts;
 
 use Symfony\Component\HttpFoundation\Request;
 

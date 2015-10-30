@@ -8,7 +8,7 @@ return [
     //* Global Options
     //******************************************************************************
     'display-name'      => 'DreamFactory Enterprise&trade;',
-    'display-version'   => 'v1.0.x-alpha',
+    'display-version'   => 'v1.0.0-beta',
     'display-copyright' => '© DreamFactory Software, Inc. 2012-' . date( 'Y' ) . '. All Rights Reserved.',
     /**
      * Theme selection -- a bootswatch theme name

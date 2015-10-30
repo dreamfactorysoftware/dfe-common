@@ -1,8 +1,8 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Services;
+<?php namespace DreamFactory\Enterprise\Common\Services;
 
 use DreamFactory\Enterprise\Common\Traits\Lumberjack;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Facades\Log;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 
@@ -47,7 +47,7 @@ class BaseService implements LoggerInterface, LoggerAwareInterface
     public function __construct($app = null)
     {
         $this->app = $app;
-        $this->initializeLumberjack(\Log::getMonolog());
+        $this->initializeLumberjack(Log::getMonolog());
 
         $this->boot();
     }

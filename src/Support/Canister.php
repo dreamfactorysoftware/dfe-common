@@ -70,12 +70,8 @@ class Canister implements Arrayable, Jsonable, \JsonSerializable
         empty($contents) && ($contents = $template ?: []);
 
         //  i like to move it move it
-        $this->contents = new Collection(
-            array_merge(
-                $this->removeDisallowedKeys($existing),
-                $this->removeDisallowedKeys($contents)
-            )
-        );
+        $this->contents = new Collection(array_merge($this->removeDisallowedKeys($existing),
+                $this->removeDisallowedKeys($contents)));
 
         return $this;
     }

@@ -2,7 +2,6 @@
 
 use DreamFactory\Enterprise\Common\Traits\EntityLookup;
 use DreamFactory\Enterprise\Common\Traits\HasCollectionResults;
-use DreamFactory\Enterprise\Common\Traits\StaticComponentLookup;
 use Illuminate\Support\Collection;
 
 /**

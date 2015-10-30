@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Packets;
+<?php namespace DreamFactory\Enterprise\Common\Packets;
 
 use DreamFactory\Library\Utility\Json;
 use Illuminate\Http\Response;
@@ -46,15 +45,13 @@ class BasePacket
      */
     protected static function makePacket($success, $contents = null, $httpCode = Response::HTTP_OK, $errorMessage = null)
     {
-        return static::signPacket(
-            [
-                'success'     => $success,
-                'status_code' => $httpCode,
-                'response'    => $contents,
-            ],
+        return static::signPacket([
+            'success'     => $success,
+            'status_code' => $httpCode,
+            'response'    => $contents,
+        ],
             $httpCode,
-            $errorMessage
-        );
+            $errorMessage);
     }
 
     /**

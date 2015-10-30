@@ -22,12 +22,10 @@ abstract class Manifest extends FileCanister
      */
     public function __construct($manifestType, $contents = [], $filename = null, Filesystem $filesystem = null, array $template = [])
     {
-        parent::__construct(
-            $contents,
+        parent::__construct($contents,
             static::buildManifestFilename($manifestType, $filename),
             $filesystem,
-            $template
-        );
+            $template);
     }
 
     /**

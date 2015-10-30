@@ -14,7 +14,7 @@ class DashboardAuthProvider extends ServiceProvider
     {
         /** @noinspection PhpUndefinedMethodInspection */
         $this->app['auth']->extend('dashboard',
-            function (){
+            function () {
                 /** @noinspection PhpUndefinedMethodInspection */
                 return new DashboardUserProvider($this->app['db']->connection(), $this->app['hash'], 'user_t');
             });

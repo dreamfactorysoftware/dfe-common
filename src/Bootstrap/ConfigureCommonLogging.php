@@ -42,9 +42,7 @@ class ConfigureEnterpriseLogging extends ConfigureLogging
             }
 
             $this->useCommonLogging =
-                (!empty($this->logPath) && !empty($this->logFileName))
-                    ? FileSystem::ensurePath($this->logPath)
-                    : false;
+                (!empty($this->logPath) && !empty($this->logFileName)) ? FileSystem::ensurePath($this->logPath) : false;
         } else {
             error_log('nope');
         }
