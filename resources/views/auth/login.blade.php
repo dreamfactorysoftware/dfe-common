@@ -40,7 +40,7 @@
 
                     <div class="form-group">
                         <div class="input-group">
-                            <span class="input-group-addon bg_lg"><i class="fa fa-user"></i></span>
+                            <span class="input-group-addon bg_lg"><i class="fa fa-user input-addon-icon-width"></i></span>
 
                             <input type="email"
                                 class="form-control email required"
@@ -53,7 +53,7 @@
 
                     <div class="form-group">
                         <div class="input-group">
-                            <span class="input-group-addon bg_ly"><i class="fa fa-lock"></i></span>
+                            <span class="input-group-addon bg_ly"><i class="fa fa-lock input-addon-icon-width"></i></span>
 
                             <input class="form-control password required" placeholder="password" name="password" type="password" />
                         </div>

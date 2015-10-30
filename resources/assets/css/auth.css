@@ -144,3 +144,7 @@ body {
 	margin-top:     0;
 	padding-bottom: 20px;
 }
+
+.input-addon-icon-width {
+    width: 15px;
+}
