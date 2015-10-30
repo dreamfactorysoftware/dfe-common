@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Enums;
+<?php namespace DreamFactory\Enterprise\Common\Enums;
 
 use DreamFactory\Library\Utility\Enums\FactoryEnum;
 
@@ -48,4 +47,8 @@ class AllocationFeatures extends FactoryEnum
      * @var int
      */
     const REGISTERED_USER_COUNT = 9;
+    /**
+     * @var int
+     */
+    const RUNNING_INSTANCES_PER_CLUSTER = 10;
 }

@@ -3,7 +3,9 @@
 use DreamFactory\Enterprise\Common\Contracts\ManagerContract;
 
 /**
- * A trait that adds object management to a class and implements the ObjectManagerContract
+ * A trait that adds object management to a class
+ *
+ * @implements \DreamFactory\Enterprise\Common\Contracts\ManagerContract;
  */
 trait ObjectManager
 {
@@ -31,11 +33,10 @@ trait ObjectManager
      *
      * @return ManagerContract
      */
-    public function manage( $tag, $thing, $overwrite = false )
+    public function manage($tag, $thing, $overwrite = false)
     {
-        if ( false === $overwrite && array_key_exists( $tag, $this->_things ) )
-        {
-            throw new \InvalidArgumentException( 'Item at "' . $tag . '" already exists. Overwrite not allowed.' );
+        if (false === $overwrite && array_key_exists($tag, $this->_things)) {
+            throw new \InvalidArgumentException('Item at "' . $tag . '" already exists. Overwrite not allowed.');
         }
 
         $this->_things[$tag] = $thing;
@@ -48,12 +49,11 @@ trait ObjectManager
      *
      * @return ManagerContract
      */
-    public function unmanage( $tag )
+    public function unmanage($tag)
     {
-        if ( array_key_exists( $tag, $this->_things ) )
-        {
+        if (array_key_exists($tag, $this->_things)) {
             $this->_things[$tag] = null;
-            unset( $this->_things[$tag] );
+            unset($this->_things[$tag]);
         }
 
         return $this;
@@ -67,14 +67,13 @@ trait ObjectManager
      * @return mixed
      * @throws \InvalidArgumentException when nothing is managed under $tag
      */
-    public function resolve( $tag )
+    public function resolve($tag)
     {
-        if ( isset( $this->_things[$tag] ) )
-        {
+        if (isset($this->_things[$tag])) {
             return $this->_things[$tag];
         }
 
-        throw new \InvalidArgumentException( 'There is nothing assigned to "' . $tag . '".' );
+        throw new \InvalidArgumentException('There is nothing assigned to "' . $tag . '".');
     }
 
     /**
@@ -85,7 +84,7 @@ trait ObjectManager
      *
      * @return $this
      */
-    public function extend( $tag, \Closure $callback )
+    public function extend($tag, \Closure $callback)
     {
         $this->_extensions[$tag] = $callback;
 
@@ -100,14 +99,13 @@ trait ObjectManager
      *
      * @return $this
      */
-    protected function _callExtension( $tag, array $config = [] )
+    protected function _callExtension($tag, array $config = [])
     {
-        if ( !isset( $this->_things[$tag] ) )
-        {
-            throw new \InvalidArgumentException( 'There is no extension defined for "' . $tag . '".' );
+        if (!isset($this->_things[$tag])) {
+            throw new \InvalidArgumentException('There is no extension defined for "' . $tag . '".');
         }
 
-        return $this->_extensions[$tag]( $config );
+        return $this->_extensions[$tag]($config);
     }
 
     /**
@@ -115,7 +113,7 @@ trait ObjectManager
      */
     public function getIterator()
     {
-        return new \IteratorIterator( new \ArrayObject( $this->_things ) );
+        return new \IteratorIterator(new \ArrayObject($this->_things));
     }
 
 }

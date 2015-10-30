@@ -1,5 +1,6 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Providers;
+<?php namespace DreamFactory\Enterprise\Common\Providers;
+
+use DreamFactory\Enterprise\Common\Services\SideloadService;
 
 /**
  * Register the sideload service into the $app ioc @ 'sideload'
@@ -12,8 +13,6 @@ class SideloadServiceProvider extends BaseServiceProvider
 
     /** @inheritdoc */
     const IOC_NAME = 'sideload';
-    /** @inheritdoc */
-    const ALIAS_NAME = false;
 
     //********************************************************************************
     //* Public Methods
@@ -25,7 +24,7 @@ class SideloadServiceProvider extends BaseServiceProvider
     public function boot()
     {
         //  Call my autoload method
-        app( static::IOC_NAME )->autoload();
+        app(static::IOC_NAME)->autoload();
     }
 
     /**
@@ -35,15 +34,10 @@ class SideloadServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
-        $this->_serviceClass = 'DreamFactory\\Enterprise\\Common\\Services\\SideloadService';
-
         //  Register object into instance container
-        $this->singleton(
-            static::IOC_NAME,
-            function ( $app )
-            {
-                return new $this->_serviceClass( $app );
-            }
-        );
+        $this->singleton(static::IOC_NAME,
+            function ($app) {
+                return new SideloadService($app);
+            });
     }
 }

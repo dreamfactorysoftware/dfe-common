@@ -1,28 +1,20 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Contracts;
+<?php namespace DreamFactory\Enterprise\Common\Contracts;
 
-use DreamFactory\Enterprise\Services\Provisioners\ProvisioningRequest;
+use DreamFactory\Enterprise\Common\Provisioners\BaseResponse;
 
 /**
  * Something that looks like it can provision resources
  */
-interface ResourceProvisioner
+interface ResourceProvisioner extends VirtualProvisioner
 {
     //*************************************************************************
     //* Methods
     //*************************************************************************
 
     /**
-     * @param ProvisioningRequest|mixed $request
+     * Returns the overall response to the request once handled
      *
-     * @return mixed
+     * @return BaseResponse
      */
-    public function provision( $request );
-
-    /**
-     * @param ProvisioningRequest|mixed $request
-     *
-     * @return mixed
-     */
-    public function deprovision( $request );
+    public function getResponse();
 }

@@ -1,14 +1,12 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Traits;
+<?php namespace DreamFactory\Enterprise\Common\Traits;
 
-use DreamFactory\Enterprise\Services\Enums\ServerTypes;
-use DreamFactory\Library\Fabric\Database\Models\Auth\User;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\Cluster;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\ClusterServer;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\Instance;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\InstanceServer;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\Server;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\UserRole;
+use DreamFactory\Enterprise\Database\Enums\OwnerTypes;
+use DreamFactory\Enterprise\Database\Models\Cluster;
+use DreamFactory\Enterprise\Database\Models\Instance;
+use DreamFactory\Enterprise\Database\Models\Mount;
+use DreamFactory\Enterprise\Database\Models\Server;
+use DreamFactory\Enterprise\Database\Models\Snapshot;
+use DreamFactory\Enterprise\Database\Models\User;
 use Illuminate\Support\Collection;
 
 /**
@@ -16,6 +14,12 @@ use Illuminate\Support\Collection;
  */
 trait EntityLookup
 {
+    //******************************************************************************
+    //* Traits
+    //******************************************************************************
+
+    use StaticEntityLookup;
+
     //*************************************************************************
     //* Methods
     //*************************************************************************
@@ -25,9 +29,14 @@ trait EntityLookup
      *
      * @return Cluster
      */
-    protected function _findCluster( $clusterId )
+    protected function _findCluster($clusterId)
     {
-        return Cluster::byNameOrId( $clusterId )->firstOrFail();
+        return static::findCluster($clusterId);
+    }
+
+    protected function _findAppKey($ownerId, $ownerType)
+    {
+        return static::findAppKey($ownerId, $ownerType);
     }
 
     /**
@@ -35,9 +44,9 @@ trait EntityLookup
      *
      * @return Server
      */
-    protected function _findServer( $serverId )
+    protected function _findServer($serverId)
     {
-        return Server::byNameOrId( $serverId )->firstOrFail();
+        return static::findServer($serverId);
     }
 
     /**
@@ -45,9 +54,31 @@ trait EntityLookup
      *
      * @return Instance
      */
-    protected function _findInstance( $instanceId )
+    protected function _findInstance($instanceId)
     {
-        return Instance::byNameOrId( $instanceId )->firstOrFail();
+        return static::findInstance($instanceId);
+    }
+
+    /**
+     * @param int|string $instanceId
+     *
+     * @return Instance
+     */
+    protected function _findArchivedInstance($instanceId)
+    {
+        return static::findArchivedInstance($instanceId);
+    }
+
+    /**
+     * Looks first in instance_t, then in instance_arch_t. If nothing found returns null.
+     *
+     * @param int|string $instanceId
+     *
+     * @return Instance|null
+     */
+    protected static function _locateInstance($instanceId)
+    {
+        return static::locateInstance($instanceId);
     }
 
     /**
@@ -55,9 +86,19 @@ trait EntityLookup
      *
      * @return User
      */
-    protected function _findUser( $userId )
+    protected function _findUser($userId)
     {
-        return User::where( 'id', '=', $userId )->findOrfail( $userId );
+        return static::findUser($userId);
+    }
+
+    /**
+     * @param string $snapshotId
+     *
+     * @return Snapshot
+     */
+    protected function _findSnapshot($snapshotId)
+    {
+        return static::findSnapshot($snapshotId);
     }
 
     /**
@@ -67,33 +108,21 @@ trait EntityLookup
      *
      * @return Collection
      */
-    protected function _clusterServers( $clusterId )
+    protected function _clusterServers($clusterId)
     {
-        $_rows = ClusterServer::join( 'server_t', 'id', '=', 'server_id' )
-            ->where( 'cluster_id', '=', $clusterId )
-            ->orderBy( 'server_t.server_type_id, server_t.server_id_text' )
-            ->get(
-                [
-                    'server_t.id',
-                    'server_t.server_id_text',
-                    'server_t.server_type_id',
-                    'cluster_server_asgn_t.cluster_id'
-                ]
-            );
+        return static::findClusterServers($clusterId);
+    }
 
-        //  Organize by type
-        $_servers = [
-            ServerTypes::APP => [],
-            ServerTypes::DB  => [],
-            ServerTypes::WEB => [],
-        ];
-
-        foreach ( $_rows as $_server )
-        {
-            $_servers[$_server->server_type_id][$_server->server_id_text] = $_server;
-        }
-
-        return $_servers;
+    /**
+     * Returns all clusters registered on $serverId
+     *
+     * @param int $serverId
+     *
+     * @return Collection
+     */
+    protected function _serverClusters($serverId)
+    {
+        return static::findServerClusters($serverId);
     }
 
     /**
@@ -103,12 +132,9 @@ trait EntityLookup
      *
      * @return Collection
      */
-    protected function _serverInstances( $serverId )
+    protected function _serverInstances($serverId)
     {
-        return InstanceServer::join( 'instance_t', 'id', '=', 'instance_id' )
-            ->where( 'server_id', '=', $serverId )
-            ->orderBy( 'instance_t.instance_id_text' )
-            ->get( ['instance_t.*'] );
+        return static::findServerInstances($serverId);
     }
 
     /**
@@ -118,11 +144,29 @@ trait EntityLookup
      *
      * @return Collection
      */
-    protected function _userRoles( $userId )
+    protected function _userRoles($userId)
     {
-        return UserRole::join( 'role_t', 'id', '=', 'role_id' )
-            ->where( 'user_id', '=', $userId )
-            ->orderBy( 'role_t.role_name_text' )
-            ->get( ['role_t.*'] );
+        return static::findUserRoles($userId);
+    }
+
+    /**
+     * @param int $id
+     * @param int $type
+     *
+     * @return \DreamFactory\Enterprise\Database\Models\Cluster|\DreamFactory\Enterprise\Database\Models\Instance|\DreamFactory\Enterprise\Database\Models\Server|\DreamFactory\Enterprise\Database\Models\User
+     */
+    protected function _locateOwner($id, $type = OwnerTypes::USER)
+    {
+        return static::findOwner($id, $type);
+    }
+
+    /**
+     * @param string|int $mountId
+     *
+     * @return Mount
+     */
+    protected function _findMount($mountId)
+    {
+        return static::findMount($mountId);
     }
 }

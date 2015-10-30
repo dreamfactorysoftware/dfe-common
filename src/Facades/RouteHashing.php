@@ -4,9 +4,9 @@ use DreamFactory\Enterprise\Common\Providers\RouteHashingServiceProvider;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static string create( string $pathToHash, int $keepDays = 30 )
- * @method static string resolve( string $hashToResolve )
- * @method static int expireFiles( $fsToCheck )
+ * @method static string create($pathToHash, $keepDays = 30)
+ * @method static string resolve($hashToResolve)
+ * @method static int expireFiles($fsToCheck)
  */
 class RouteHashing extends Facade
 {

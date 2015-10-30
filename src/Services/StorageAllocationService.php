@@ -1,8 +1,6 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Services;
+<?php namespace DreamFactory\Enterprise\Common\Services;
 
 use DreamFactory\Enterprise\Common\Utility\AllocationProfile;
-use Illuminate\Support\Facades\Config;
 use League\Flysystem\Filesystem;
 
 /**
@@ -23,7 +21,7 @@ class StorageAllocationService extends BaseService
      *
      * @return bool True if success
      */
-    public function allocate( AllocationProfile $profile, Filesystem $filesystem, $options = [] )
+    public function allocate(AllocationProfile $profile, Filesystem $filesystem, $options = [])
     {
         return true;
     }
@@ -36,7 +34,7 @@ class StorageAllocationService extends BaseService
      *
      * @return bool True if all went well
      */
-    public function deallocate( Filesystem $filesystem, $options = [] )
+    public function deallocate(Filesystem $filesystem, $options = [])
     {
         return true;
     }

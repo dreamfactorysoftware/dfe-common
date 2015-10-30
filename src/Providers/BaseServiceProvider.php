@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Providers;
+<?php namespace DreamFactory\Enterprise\Common\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -25,22 +24,17 @@ abstract class BaseServiceProvider extends ServiceProvider
      */
     const MANAGER_IOC_NAME = false;
 
-    //******************************************************************************
-    //* Members
-    //******************************************************************************
-
-    /**
-     * @type string The class of this provider's service
-     */
-    protected $_serviceClass = null;
-    /**
-     * @type bool No need to be eager unless wanted...
-     */
-    protected $defer = true;
-
     //********************************************************************************
     //* Public Methods
     //********************************************************************************
+
+    /**
+     * Called after construction
+     */
+    public function boot()
+    {
+        //  Does nothing but encourages calling the parent method
+    }
 
     /**
      * Register a shared binding in the container.
@@ -50,10 +44,10 @@ abstract class BaseServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function singleton( $abstract = null, $concrete )
+    public function singleton($abstract, $concrete)
     {
         //  Register object into instance container
-        $this->app->singleton( $abstract ?: static::IOC_NAME, $concrete );
+        $this->app->singleton($abstract ?: static::IOC_NAME, $concrete);
     }
 
     /**
@@ -65,10 +59,10 @@ abstract class BaseServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function bind( $abstract = null, $concrete, $shared = false )
+    public function bind($abstract, $concrete, $shared = false)
     {
         //  Register object into instance container
-        $this->app->bind( $abstract ?: static::IOC_NAME, $concrete, $shared );
+        $this->app->bind($abstract ?: static::IOC_NAME, $concrete, $shared);
     }
 
     /**
@@ -80,18 +74,22 @@ abstract class BaseServiceProvider extends ServiceProvider
     }
 
     /**
-     * @return string
+     * Returns the service configuration either based on class name or argument name. Override method to provide custom configurations
+     *
+     * @param string|null $name
+     * @param array       $default
+     *
+     * @return array
      */
-    protected function _getClass()
+    public static function getServiceConfig($name = null, $default = [])
     {
-        static $_class = null;
-
-        if ( !$_class )
-        {
-            $_class = get_class( $this ) ?: __CLASS__;
+        if (null === ($_name = $name)) {
+            $_mirror = new \ReflectionClass(get_called_class());
+            $_name = snake_case(str_ireplace('ServiceProvider', null, $_mirror->getShortName()));
+            unset($_mirror);
         }
 
-        return $_class;
+        return config($_name, $default);
     }
 
     /**
@@ -101,23 +99,4 @@ abstract class BaseServiceProvider extends ServiceProvider
     {
         return static::IOC_NAME ?: null;
     }
-
-    /**
-     * Redirect unknown methods to $app
-     *
-     * @param string $method
-     * @param array  $parameters
-     *
-     * @return mixed
-     */
-    public function __call( $method, $parameters )
-    {
-        if ( method_exists( $this->app, $method ) )
-        {
-            return call_user_func_array( [$this->app, $method], $parameters );
-        }
-
-        return parent::__call( $method, $parameters );
-    }
-
 }

@@ -1,7 +1,7 @@
 <?php namespace DreamFactory\Enterprise\Common\Auth;
 
-use DreamFactory\Library\Fabric\Database\Models\Auth\User;
-use DreamFactory\Library\Fabric\Database\Models\Deploy\ServiceUser;
+use DreamFactory\Enterprise\Database\Models\ServiceUser;
+use DreamFactory\Enterprise\Database\Models\User;
 use Illuminate\Auth\DatabaseUserProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
 
@@ -17,7 +17,7 @@ abstract class BaseUserProvider extends DatabaseUserProvider
     /**
      * @type string The model class for the user
      */
-    protected $_userClass = null;
+    protected $userClass = null;
 
     //******************************************************************************
     //* Methods
@@ -30,25 +30,30 @@ abstract class BaseUserProvider extends DatabaseUserProvider
      *
      * @return \Illuminate\Contracts\Auth\Authenticatable
      */
-    public function retrieveByCredentials( array $credentials )
+    public function retrieveByCredentials(array $credentials)
     {
         $_condition = [];
         $_data = [];
 
-        foreach ( $credentials as $_key => $_value )
-        {
-            if ( !str_contains( $_key, 'password' ) )
-            {
-                $_realKey = $this->_mapKey( $_key );
+        foreach ($credentials as $_key => $_value) {
+            if (!str_contains($_key, 'password')) {
+                $_realKey = $this->_mapKey($_key);
                 $_condition[] = $_realKey . ' = :' . $_realKey;
                 $_data[':' . $_realKey] = $_value;
             }
         }
 
-        /** @type ServiceUser|User $_model */
-        $_model = new $this->_userClass;
+        /**
+         * Only allow active users to login
+         *  0 = not active, 1 = active
+         */
+        $_condition[] = 'active_ind = :active_ind';
+        $_data[':active_ind'] = 1;
 
-        return $_model->whereRaw( explode( ' AND ', $_condition ), $_data )->first();
+        /** @type ServiceUser|User $_model */
+        $_model = new $this->userClass;
+
+        return $_model->whereRaw(implode(' AND ', $_condition), $_data)->first();
     }
 
     /**
@@ -58,12 +63,12 @@ abstract class BaseUserProvider extends DatabaseUserProvider
      *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
-    public function retrieveById( $identifier )
+    public function retrieveById($identifier)
     {
         /** @type ServiceUser|User $_model */
-        $_model = new $this->_userClass;
+        $_model = new $this->userClass;
 
-        return $_model->find( $identifier );
+        return $_model->find($identifier);
     }
 
     /**
@@ -74,12 +79,12 @@ abstract class BaseUserProvider extends DatabaseUserProvider
      *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
-    public function retrieveByToken( $identifier, $token )
+    public function retrieveByToken($identifier, $token)
     {
         /** @type ServiceUser|User $_model */
-        $_model = new $this->_userClass;
+        $_model = new $this->userClass;
 
-        return $_model->where( 'id', $identifier )->where( 'remember_token', $token )->first();
+        return $_model->where('id', $identifier)->where('remember_token', $token)->first();
     }
 
     /**
@@ -89,10 +94,9 @@ abstract class BaseUserProvider extends DatabaseUserProvider
      *
      * @return string
      */
-    protected function _mapKey( $key )
+    protected function _mapKey($key)
     {
-        switch ( $key )
-        {
+        switch ($key) {
             case 'password':
                 $key = 'password_text';
                 break;
@@ -117,9 +121,8 @@ abstract class BaseUserProvider extends DatabaseUserProvider
      *
      * @return bool
      */
-    public function validateCredentials( Authenticatable $user, array $credentials )
+    public function validateCredentials(Authenticatable $user, array $credentials)
     {
-        return $this->hasher->check( $credentials['password'], $user->getAuthPassword() );
+        return $this->hasher->check($credentials['password'], $user->getAuthPassword());
     }
-
 }

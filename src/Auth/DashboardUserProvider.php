@@ -1,5 +1,7 @@
 <?php namespace DreamFactory\Enterprise\Common\Auth;
 
+use DreamFactory\Enterprise\Database\Models\User;
+
 /**
  * Provides users for dashboard users
  */
@@ -12,5 +14,5 @@ class DashboardUserProvider extends BaseUserProvider
     /**
      * @type string Our user class
      */
-    protected $_userClass = 'DreamFactory\\Library\\Fabric\\Database\\Models\\Auth\\User';
+    protected $userClass = User::class;
 }

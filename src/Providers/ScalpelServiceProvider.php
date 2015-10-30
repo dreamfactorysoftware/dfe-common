@@ -1,5 +1,6 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Providers;
+<?php namespace DreamFactory\Enterprise\Common\Providers;
+
+use DreamFactory\Enterprise\Common\Services\ScalpelService;
 
 /**
  * Register the scalpel service into the $app ioc @ 'scalpel'
@@ -22,8 +23,6 @@ class ScalpelServiceProvider extends BaseServiceProvider
 
     /** @inheritdoc */
     const IOC_NAME = 'scalpel';
-    /** @inheritdoc */
-    const ALIAS_NAME = 'Scalpel';
 
     //********************************************************************************
     //* Public Methods
@@ -36,15 +35,10 @@ class ScalpelServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
-        $this->_serviceClass = 'DreamFactory\\Enterprise\\Common\\Services\\ScalpelService';
-
         //  Register object into instance container
-        $this->singleton(
-            static::IOC_NAME,
-            function ( $app )
-            {
-                return new $this->_serviceClass( $app );
-            }
-        );
+        $this->singleton(static::IOC_NAME,
+            function ($app) {
+                return new ScalpelService($app);
+            });
     }
 }

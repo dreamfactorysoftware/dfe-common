@@ -1,5 +1,7 @@
 <?php namespace DreamFactory\Enterprise\Common\Auth;
 
+use DreamFactory\Enterprise\Database\Models\ServiceUser;
+
 /**
  * Provides users for the console logins
  */
@@ -9,5 +11,5 @@ class ConsoleUserProvider extends BaseUserProvider
     //* Members
     //******************************************************************************
 
-    protected $_userClass = 'DreamFactory\\Library\\Fabric\\Database\\Models\\Deploy\\ServiceUser';
+    protected $userClass = ServiceUser::class;
 }

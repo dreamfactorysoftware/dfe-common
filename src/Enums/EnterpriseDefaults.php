@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Enums;
+<?php namespace DreamFactory\Enterprise\Common\Enums;
 
 use DreamFactory\Library\Utility\Enums\FactoryEnum;
 
@@ -13,61 +12,17 @@ class EnterpriseDefaults extends FactoryEnum
     //*************************************************************************
 
     /**
-     * @type string
+     * @var string
      */
-    const BOOTSTRAP_FILE = 'bootstrap.config.php';
+    const DFE_ENDPOINT = 'http://console.enterprise.dreamfactory.com/api/v1/ops';
     /**
      * @var string
      */
-    const DFE_ENDPOINT = 'http://cerberus.fabric.dreamfactory.com/api';
+    const DFE_AUTH_ENDPOINT = 'http://console.enterprise.dreamfactory.com/api/v1/ops/credentials';
     /**
      * @var string
      */
-    const DFE_AUTH_ENDPOINT = 'http://cerberus.fabric.dreamfactory.com/api/instance/credentials';
-    /**
-     * @var string
-     */
-    const OASYS_PROVIDER_ENDPOINT = 'http://oasys.cloud.dreamfactory.com/oauth/providerCredentials';
-    /**
-     * @var string
-     */
-    const INSTANCE_CONFIG_FILE_NAME_PATTERN = '/instance.json';
-    /**
-     * @var string
-     */
-    const DB_CONFIG_FILE_NAME_PATTERN = '/{instance_name}.database.config.php';
-    /**
-     * @var string
-     */
-    const PLATFORM_VIRTUAL_SUBDOMAIN = '.cloud.dreamfactory.com';
-    /**
-     * @type string
-     */
-    const INSTALL_ROOT_MARKER = '/.dreamfactory.php';
-    /**
-     * @type string
-     */
-    const COMPOSER_MARKER = '/vendor/autoload.php';
-    /**
-     * @var string
-     */
-    const FABRIC_MARKER = '/var/www/.fabric_hosted';
-    /**
-     * @var string
-     */
-    const ENTERPRISE_MARKER = '/var/www/.dfe_hosted';
-    /**
-     * @var string
-     */
-    const DEFAULT_DOC_ROOT = '/var/www/launchpad/web';
-    /**
-     * @var string
-     */
-    const DEFAULT_DEV_DOC_ROOT = '/opt/dreamfactory/dsp/dsp-core/web';
-    /**
-     * @var string
-     */
-    const MAINTENANCE_MARKER = '/var/www/.dfe_maintenance';
+    const MAINTENANCE_MARKER = '/var/www/.maintenance';
     /**
      * @var string
      */
@@ -83,19 +38,76 @@ class EnterpriseDefaults extends FactoryEnum
     /**
      * @var string Public storage cookie key
      */
-    const PUBLIC_STORAGE_COOKIE = 'dfe.storage_id';
+    const PUBLIC_STORAGE_COOKIE = 'dfe.public-id';
     /**
      * @var string Private storage cookie key
      */
-    const PRIVATE_STORAGE_COOKIE = 'dfe.private_storage_id';
+    const PRIVATE_STORAGE_COOKIE = 'dfe.private-id';
+    /** @type string The default hash algorithm to use for signing requests */
+    const DEFAULT_SIGNATURE_METHOD = 'sha256';
+    /**
+     * @type int The default number of days to keep a snapshots available
+     */
+    const SNAPSHOT_DAYS_TO_KEEP = 30;
+    /**
+     * @type bool If true, expired snapshots are moved to a "trash" area for removal via other means (or long-term
+     *       storage). Otherwise, expired snapshots are physically deleted. The latter being the default.
+     */
+    const SNAPSHOT_SOFT_DELETE = false;
+    /**
+     * @type string The manifest file name
+     */
+    const CLUSTER_MANIFEST_FILE_NAME = '.dfe.cluster.json';
+    /**
+     * @type string The default "trash" path for soft-deleted snapshots
+     */
+    const DEFAULT_TRASH_PATH = '/data/trash';
+    /** @type string The name of the private path */
+    const PRIVATE_PATH_NAME = '.private';
+    /** @type string The name of the snapshots path */
+    const SNAPSHOT_PATH_NAME = 'snapshots';
+    /** @type string The default prefix for outgoing email */
+    const EMAIL_SUBJECT_PREFIX = '[DFE]';
+    /** @type string The default hash algorithm used for signing requests */
+    const SIGNATURE_METHOD = 'sha256';
+    /** @type string The default export/mount point/directory where instance data lives */
+    const STORAGE_ROOT = '/data/storage';
+    /** @type string The value to put in the image name field for hosted instances */
+    const DFE_CLUSTER_BASE_IMAGE = 'dfe.standard';
     /**
      * @type string
      */
-    const DEFAULT_ENVIRONMENT_CLASS = '\\DreamFactory\\Library\\Utility\\Environment';
+    const DEFAULT_HANDLER_NAMESPACE = 'DreamFactory\\Enterprise\\Services\\Handlers\\Commands\\';
+    /** @type string The name of the cluster manifest file */
+    const CLUSTER_MANIFEST_FILE = '.dfe.cluster.json';
     /**
-     * @type string
+     * @type string The type of compression to use when making exports
      */
-    const DEFAULT_RESOLVER_CLASS = '\\DreamFactory\\Library\\Enterprise\\Storage\\Resolver';
-    /** @type string The default hash algorithm to use for creating structure */
-    const DEFAULT_DATA_STORAGE_HASH = 'sha256';
+    const DEFAULT_DATA_COMPRESSOR = 'zip';
+    /**
+     * @type string The default required storage paths
+     */
+    const DEFAULT_REQUIRED_STORAGE_PATHS = 'applications|.private';
+    /**
+     * @type string The default required private paths
+     */
+    const DEFAULT_REQUIRED_PRIVATE_PATHS = '.cache|config|scripts|scripts.user|logs';
+    /**
+     * @type string The default required private paths
+     */
+    const DEFAULT_REQUIRED_OWNER_PRIVATE_PATHS = 'snapshots';
+    /**
+     * @type int The default number of items to display on a listing of data
+     */
+    const DEFAULT_ITEMS_PER_PAGE = 25;
+    /**
+     * @type string The default protocol for building urls (http or https)
+     */
+    const DEFAULT_DOMAIN_PROTOCOL = 'http';
+    /** @type string X Header for the console to use to authenticate with a 2.0 instance */
+    const CONSOLE_X_HEADER = 'X-DreamFactory-Console-Key';
+    /**
+     * @type int The default number of days to keep system metrics
+     */
+    const DEFAULT_METRICS_DAYS_TO_KEEP = 365;
 }

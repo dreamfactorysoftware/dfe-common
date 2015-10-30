@@ -1,9 +1,12 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
+use Monolog\Logger;
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 
 /**
- * A trait that adds complete logging functionality
+ * A trait that adds complete logging functionality and fulfills the
+ * LoggerInterface and LoggerAwareInterface contracts
  */
 trait Lumberjack
 {
@@ -14,15 +17,50 @@ trait Lumberjack
     use LoggerAwareTrait;
 
     //******************************************************************************
-    //* Methods
+    //* Members
     //******************************************************************************
 
     /**
-     * @return \Psr\Log\LoggerInterface
+     * @type string The prefix for log entries, if any.
      */
+    protected $lumberjackPrefix;
+    /**
+     * @type int The current indent level
+     */
+    protected $indent = 0;
+    /**
+     * @type int The number of spaces per indent level
+     */
+    protected $indentSize = 4;
+    /**
+     * @type string The marker to increment the indent level
+     */
+    protected $indentStartMarker = '>>>';
+    /**
+     * @type string The marker to drop an indent level
+     */
+    protected $indentStopMarker = '<<<';
+
+    //******************************************************************************
+    //* Methods
+    //******************************************************************************
+
+    /** @inheritdoc */
     public function getLogger()
     {
-        return $this->logger;
+        return $this->logger = $this->logger ?: \Log::getMonolog();
+    }
+
+    /**
+     * @param int          $level
+     * @param string|array $message
+     * @param array        $context
+     *
+     * @return bool
+     */
+    public function log($level, $message, array $context = [])
+    {
+        return $this->getLogger()->log($level, $this->formatMessage($message), $context);
     }
 
     /**
@@ -31,11 +69,11 @@ trait Lumberjack
      * @param string $message
      * @param array  $context
      *
-     * @return null
+     * @return bool
      */
-    public function emergency( $message, array $context = array() )
+    public function emergency($message, array $context = [])
     {
-        $this->logger->emergency( $message, $context );
+        return $this->log(Logger::EMERGENCY, $message, $context);
     }
 
     /**
@@ -47,11 +85,11 @@ trait Lumberjack
      * @param string $message
      * @param array  $context
      *
-     * @return null
+     * @return bool
      */
-    public function alert( $message, array $context = array() )
+    public function alert($message, array $context = [])
     {
-        $this->logger->alert( $message, $context );
+        return $this->log(Logger::ALERT, $message, $context);
     }
 
     /**
@@ -62,11 +100,11 @@ trait Lumberjack
      * @param string $message
      * @param array  $context
      *
-     * @return null
+     * @return bool
      */
-    public function critical( $message, array $context = array() )
+    public function critical($message, array $context = [])
     {
-        $this->logger->critical( $message, $context );
+        return $this->log(Logger::CRITICAL, $message, $context);
     }
 
     /**
@@ -76,11 +114,11 @@ trait Lumberjack
      * @param string $message
      * @param array  $context
      *
-     * @return null
+     * @return bool
      */
-    public function error( $message, array $context = array() )
+    public function error($message, array $context = [])
     {
-        $this->logger->error( $message, $context );
+        return $this->log(Logger::ERROR, $message, $context);
     }
 
     /**
@@ -92,11 +130,11 @@ trait Lumberjack
      * @param string $message
      * @param array  $context
      *
-     * @return null
+     * @return bool
      */
-    public function warning( $message, array $context = array() )
+    public function warning($message, array $context = [])
     {
-        $this->logger->warning( $message, $context );
+        return $this->log(Logger::WARNING, $message, $context);
     }
 
     /**
@@ -105,11 +143,11 @@ trait Lumberjack
      * @param string $message
      * @param array  $context
      *
-     * @return null
+     * @return bool
      */
-    public function notice( $message, array $context = array() )
+    public function notice($message, array $context = [])
     {
-        $this->logger->notice( $message, $context );
+        return $this->log(Logger::NOTICE, $message, $context);
     }
 
     /**
@@ -120,11 +158,11 @@ trait Lumberjack
      * @param string $message
      * @param array  $context
      *
-     * @return null
+     * @return bool
      */
-    public function info( $message, array $context = array() )
+    public function info($message, array $context = [])
     {
-        $this->logger->info( $message, $context );
+        return $this->log(Logger::INFO, $message, $context);
     }
 
     /**
@@ -133,26 +171,95 @@ trait Lumberjack
      * @param string $message
      * @param array  $context
      *
-     * @return null
+     * @return bool
      */
-    public function debug( $message, array $context = array() )
+    public function debug($message, array $context = [])
     {
-        $this->logger->debug( $message, $context );
+        return $this->log(Logger::DEBUG, $message, $context);
     }
 
     /**
-     * Logs with an arbitrary level.
+     * Initializes the lumberjack logging faculties
      *
-     * @param mixed  $level
-     * @param string $message
-     * @param array  $context
+     * @param \Psr\Log\LoggerInterface $logger
+     * @param string|null              $prefix
      *
-     * @return null
+     * @return $this
      */
-    public function log( $level, $message, array $context = array() )
+    protected function initializeLumberjack(LoggerInterface $logger, $prefix = null)
     {
-        $this->logger->log( $level, $message, $context );
+        $logger && $this->setLogger($logger);
+        $prefix && $this->setLumberjackPrefix($prefix);
 
         return $this;
     }
+
+    /**
+     * @param string|array $message
+     * @param bool         $addPrefix If true, the message(s) will be prefixed
+     *
+     * @return array|false|string
+     */
+    protected function formatMessage($message, $addPrefix = true)
+    {
+        $_messages = [];
+        $_wasArray = true;
+
+        if (!is_array($message)) {
+            $message = [$message];
+            $_wasArray = false;
+        }
+
+        $_startLength = strlen($this->indentStartMarker);
+        $_stopLength = strlen($this->indentStopMarker);
+
+        //  Prepare the prefix for potential prepending!
+        $addPrefix = false;
+
+        $_prefix = (empty($this->lumberjackPrefix) || !$addPrefix) ? null : $this->lumberjackPrefix . ' ';
+
+        foreach ($message as $_message) {
+            $_indentAfter = false;
+
+            if ($this->indentStartMarker == substr($_message, 0, $_startLength)) {
+                $_indentAfter = true;
+            } elseif ($this->indentStopMarker == substr($_message, 0, $_stopLength)) {
+                $this->indent--;
+            }
+
+            $_messages[] =
+                $_prefix .
+                str_pad(' ', ($this->indent * $this->indentSize) - 1) .
+                trim(str_replace([$this->indentStartMarker, $this->indentStopMarker], null, $_message));
+
+            //  Indent after so the first line doesn't get indented
+            $_indentAfter && $this->indent++;
+        }
+
+        return $_wasArray ? $_messages : reset($_messages);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getLumberjackPrefix()
+    {
+        return $this->lumberjackPrefix;
+    }
+
+    /**
+     * @param string $lumberjackPrefix
+     * @param bool   $brackets If true, prefix is ensconced in lovely square brackets with a space on top.
+     *
+     * @return $this
+     */
+    protected function setLumberjackPrefix($lumberjackPrefix, $brackets = true)
+    {
+        $this->lumberjackPrefix = trim($lumberjackPrefix, '[]');
+        ($brackets && !empty($this->lumberjackPrefix)) &&
+        $this->lumberjackPrefix = '[' . $this->lumberjackPrefix . '] ';
+
+        return $this;
+    }
+
 }

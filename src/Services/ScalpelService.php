@@ -1,8 +1,6 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Services;
+<?php namespace DreamFactory\Enterprise\Common\Services;
 
-use DreamFactory\Library\Fabric\Common\Utility\Json;
-use DreamFactory\Library\Utility\IfSet;
+use DreamFactory\Library\Utility\JsonFile;
 use Illuminate\Support\Facades\Config;
 use Wpb\StringBladeCompiler\Facades\StringView;
 
@@ -22,11 +20,10 @@ class ScalpelService extends BaseService
      *
      * @return $this
      */
-    public function make( $templateKey, $data = [], $mergeData = [] )
+    public function make($templateKey, $data = [], $mergeData = [])
     {
         /** @noinspection PhpUndefinedMethodInspection */
-        return
-            $this->makeFromString( Config::get( $templateKey ), $data, $mergeData );
+        return $this->makeFromString(Config::get($templateKey), $data, $mergeData);
     }
 
     /**
@@ -36,31 +33,26 @@ class ScalpelService extends BaseService
      *
      * @return mixed|string
      */
-    public function makeFromString( $template, $data = [], $mergeData = [] )
+    public function makeFromString($template, $data = [], $mergeData = [])
     {
         $_json = false;
         $_workTemplate = $template;
 
-        !is_string( $_workTemplate ) && ( $_workTemplate = Json::encode( $_workTemplate ) ) && ( $_json = true );
+        !is_string($_workTemplate) && ($_workTemplate = JsonFile::encode($_workTemplate)) && ($_json = true);
 
         /** @type \Wpb\StringBladeCompiler\StringView $_view */
         /** @noinspection PhpUndefinedMethodInspection */
-        $_view = StringView::make(
-            [
-                'template'   => $_workTemplate,
-                'cache_key'  => md5( IfSet::get( $data, 'cache_key', microtime( true ) ) . sha1( $_workTemplate ) ),
-                'updated_at' => time(),
-            ],
+        $_view = StringView::make([
+            'template'   => $_workTemplate,
+            'cache_key'  => md5(array_get($data, 'cache_key', microtime(true)) . sha1($_workTemplate)),
+            'updated_at' => time(),
+        ],
             $data,
-            $mergeData
-        );
+            $mergeData);
 
         $_workTemplate = $_view->render();
 
-        return
-            $_json
-                ? Json::decode( $_workTemplate, true )
-                : $_workTemplate;
+        return $_json ? JsonFile::decode($_workTemplate, true) : $_workTemplate;
     }
 
 }

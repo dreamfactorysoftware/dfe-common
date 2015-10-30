@@ -14,10 +14,10 @@ interface Factory
      * Create a new thing
      *
      * @param string $abstract The abstract name of the thing to create
-     * @param array  $options  Array of options for creation
+     * @param array  $data     Any data needed to create the thing
      *
-     * @return array
+     * @return mixed
      */
-    public function make( $abstract, $options = [] );
+    public function make($abstract, $data = []);
 
 }

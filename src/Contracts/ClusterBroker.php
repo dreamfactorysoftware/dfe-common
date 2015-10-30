@@ -1,5 +1,4 @@
-<?php
-namespace DreamFactory\Enterprise\Common\Contracts;
+<?php namespace DreamFactory\Enterprise\Common\Contracts;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -35,5 +34,5 @@ interface ClusterBroker
      *
      * @return mixed
      */
-    public function consoleRequest( $verb = Request::METHOD_GET, $payload = [], $options = [] );
+    public function consoleRequest($verb = Request::METHOD_GET, $payload = [], $options = []);
 }
