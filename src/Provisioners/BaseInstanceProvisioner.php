@@ -3,8 +3,6 @@
 use DreamFactory\Enterprise\Common\Contracts\VirtualProvisioner;
 use DreamFactory\Enterprise\Common\Enums\EnterpriseDefaults;
 use DreamFactory\Enterprise\Common\Enums\EnterprisePaths;
-use DreamFactory\Enterprise\Common\Exceptions\NotImplementedException;
-use DreamFactory\Enterprise\Common\Services\BaseService;
 use DreamFactory\Enterprise\Common\Traits\HasTimer;
 use DreamFactory\Enterprise\Common\Traits\LockingService;
 use DreamFactory\Enterprise\Common\Traits\Notifier;
@@ -21,7 +19,7 @@ use DreamFactory\Enterprise\Database\Traits\InstanceValidation;
  *
  * @todo Move all english text to templates
  */
-abstract class BaseProvisioner extends BaseService implements VirtualProvisioner
+abstract class BaseInstanceProvisioner extends BaseProvisioningService implements VirtualProvisioner
 {
     //******************************************************************************
     //* Constants
@@ -31,10 +29,6 @@ abstract class BaseProvisioner extends BaseService implements VirtualProvisioner
      * @type string This is the "facility" passed along to the auditing system for reporting
      */
     const DEFAULT_FACILITY = 'dfe-provisioning';
-    /**
-     * @type string Your provisioner id
-     */
-    const PROVISIONER_ID = false;
     /**
      * @type string Our resource URI
      */
@@ -67,20 +61,6 @@ abstract class BaseProvisioner extends BaseService implements VirtualProvisioner
     //******************************************************************************
     //* Methods
     //******************************************************************************
-
-    /**
-     * @param BaseRequest|mixed $request
-     *
-     * @return BaseResponse
-     */
-    abstract protected function doProvision($request);
-
-    /**
-     * @param BaseRequest|mixed $request
-     *
-     * @return BaseResponse
-     */
-    abstract protected function doDeprovision($request);
 
     /** @inheritdoc */
     public function boot()
@@ -206,32 +186,4 @@ abstract class BaseProvisioner extends BaseService implements VirtualProvisioner
         return $_response;
     }
 
-    /**
-     * @param array $data
-     * @param int   $level
-     * @param bool  $deprovisioning
-     *
-     * @return bool
-     */
-    protected function audit($data = [], $level = 6 /* info */, $deprovisioning = false)
-    {
-        if (function_exists('audit')) {
-            //  Put instance ID into the correct place
-            isset($data['instance']) && $data['dfe'] = ['instance_id' => $data['instance']->instance_id_text];
-
-            return audit($data, $level, ($deprovisioning ? 'de' : null) . 'provision');
-        }
-
-        return false;
-    }
-
-    /** @inheritdoc */
-    public function getProvisionerId()
-    {
-        if (!static::PROVISIONER_ID) {
-            throw new NotImplementedException('No provisioner id has been set.');
-        }
-
-        return static::PROVISIONER_ID;
-    }
 }
