@@ -30,7 +30,7 @@ trait HasTimer
         $this->startTime = microtime(true);
         $this->elapsedTime = 0;
 
-        \Log::info('startTimer: start=' . $this->startTime);
+        //\Log::info('startTimer: start=' . $this->startTime);
 
         return $this;
     }
@@ -67,7 +67,7 @@ trait HasTimer
     {
         if (!empty($this->startTime)) {
             $this->elapsedTime = (microtime(true) - $this->startTime);
-            \Log::info('stopTimer: elapsed=' . $this->elapsedTime . ' start=' . $this->startTime);
+            //\Log::info('stopTimer: elapsed=' . $this->elapsedTime . ' start=' . $this->startTime);
         }
 
         $this->startTime = 0;
