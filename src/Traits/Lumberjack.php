@@ -1,12 +1,12 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
-use Monolog\Logger;
+use Illuminate\Support\Facades\Log;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 
 /**
- * A trait that adds complete logging functionality and fulfills the
- * LoggerInterface and LoggerAwareInterface contracts
+ * A trait that adds logging methods to a class that fulfill the LoggerInterface and LoggerAwareInterface contracts.
+ * Has indentation and prefix capabilities as well
  */
 trait Lumberjack
 {
@@ -45,35 +45,37 @@ trait Lumberjack
     //* Methods
     //******************************************************************************
 
-    /** @inheritdoc */
+    /**
+     * @return LoggerInterface
+     */
     public function getLogger()
     {
-        return $this->logger = $this->logger ?: \Log::getMonolog();
+        return $this->logger ?: $this->logger = Log::getMonolog();
     }
 
     /**
-     * @param int          $level
+     * @param int $level
      * @param string|array $message
-     * @param array        $context
+     * @param array $context
      *
      * @return bool
      */
     public function log($level, $message, array $context = [])
     {
-        return $this->getLogger()->log($level, $this->formatMessage($message), $context);
+        Log::log($level, $message, $context);
     }
 
     /**
      * System is unusable.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      *
      * @return bool
      */
     public function emergency($message, array $context = [])
     {
-        return $this->log(Logger::EMERGENCY, $message, $context);
+        return Log::emergency($message, $context);
     }
 
     /**
@@ -83,13 +85,13 @@ trait Lumberjack
      * trigger the SMS alerts and wake you up.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      *
      * @return bool
      */
     public function alert($message, array $context = [])
     {
-        return $this->log(Logger::ALERT, $message, $context);
+        return Log::alert($message, $context);
     }
 
     /**
@@ -98,13 +100,13 @@ trait Lumberjack
      * Example: Application component unavailable, unexpected exception.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      *
      * @return bool
      */
     public function critical($message, array $context = [])
     {
-        return $this->log(Logger::CRITICAL, $message, $context);
+        return Log::critical($message, $context);
     }
 
     /**
@@ -112,13 +114,13 @@ trait Lumberjack
      * be logged and monitored.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      *
      * @return bool
      */
     public function error($message, array $context = [])
     {
-        return $this->log(Logger::ERROR, $message, $context);
+        return Log::error($message, $context);
     }
 
     /**
@@ -128,26 +130,26 @@ trait Lumberjack
      * that are not necessarily wrong.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      *
      * @return bool
      */
     public function warning($message, array $context = [])
     {
-        return $this->log(Logger::WARNING, $message, $context);
+        return Log::warning($message, $context);
     }
 
     /**
      * Normal but significant events.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      *
      * @return bool
      */
     public function notice($message, array $context = [])
     {
-        return $this->log(Logger::NOTICE, $message, $context);
+        return Log::notice($message, $context);
     }
 
     /**
@@ -156,33 +158,33 @@ trait Lumberjack
      * Example: User logs in, SQL logs.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      *
      * @return bool
      */
     public function info($message, array $context = [])
     {
-        return $this->log(Logger::INFO, $message, $context);
+        return Log::info($message, $context);
     }
 
     /**
      * Detailed debug information.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      *
      * @return bool
      */
     public function debug($message, array $context = [])
     {
-        return $this->log(Logger::DEBUG, $message, $context);
+        return Log::debug($message, $context);
     }
 
     /**
      * Initializes the lumberjack logging faculties
      *
      * @param \Psr\Log\LoggerInterface $logger
-     * @param string|null              $prefix
+     * @param string|null $prefix
      *
      * @return $this
      */
@@ -196,7 +198,7 @@ trait Lumberjack
 
     /**
      * @param string|array $message
-     * @param bool         $addPrefix If true, the message(s) will be prefixed
+     * @param bool $addPrefix If true, the message(s) will be prefixed
      *
      * @return array|false|string
      */
@@ -249,7 +251,7 @@ trait Lumberjack
 
     /**
      * @param string $lumberjackPrefix
-     * @param bool   $brackets If true, prefix is ensconced in lovely square brackets with a space on top.
+     * @param bool $brackets If true, prefix is ensconced in lovely square brackets with a space on top.
      *
      * @return $this
      */
@@ -261,5 +263,4 @@ trait Lumberjack
 
         return $this;
     }
-
 }

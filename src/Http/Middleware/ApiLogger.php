@@ -24,15 +24,18 @@ class ApiLogger extends BaseMiddleware
      * Log all api requests
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \Closure                 $next
+     * @param  \Closure $next
      *
      * @return mixed
      */
     public function handle(Request $request, \Closure $next)
     {
-        $this->debug($request->getMethod() . ': ' . $request->getPathInfo());
+        try {
+            $this->debug($request->getMethod() . ' ' . $request->getPathInfo());
+        } catch (\Exception $_ex) {
+            //  Ignored.
+        }
 
         return parent::handle($request, $next);
     }
-
 }

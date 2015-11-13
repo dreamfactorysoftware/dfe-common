@@ -41,20 +41,19 @@ class BaseMiddleware implements LoggerAwareInterface, LoggerInterface
 
     /**
      * @param \Illuminate\Contracts\Foundation\Application $app
-     * @param \Psr\Log\LoggerInterface                     $logger
+     * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(Application $app, LoggerInterface $logger = null)
     {
         $this->app = $app;
-
-        $this->initializeLumberjack($logger, static::ALIAS);
+        $this->initializeLumberjack($logger, static::ALIAS ?: null);
     }
 
     /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \Closure                 $next
+     * @param  \Closure $next
      *
      * @return mixed
      */
@@ -62,5 +61,4 @@ class BaseMiddleware implements LoggerAwareInterface, LoggerInterface
     {
         return $next($request);
     }
-
 }
