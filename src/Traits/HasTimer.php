@@ -12,7 +12,7 @@ trait HasTimer
     /**
      * @type double
      */
-    protected $startTime = 0.0;
+    protected $startTime = 0;
     /**
      * @type double
      */
@@ -28,6 +28,9 @@ trait HasTimer
     public function startTimer()
     {
         $this->startTime = microtime(true);
+        $this->elapsedTime = 0;
+
+        \Log::info('startTimer: start=' . $this->startTime);
 
         return $this;
     }
@@ -62,7 +65,11 @@ trait HasTimer
      */
     public function stopTimer($returnElapsed = true)
     {
-        $this->elapsedTime = microtime(true) - $this->startTime;
+        if (!empty($this->startTime)) {
+            $this->elapsedTime = (microtime(true) - $this->startTime);
+            \Log::info('stopTimer: elapsed=' . $this->elapsedTime . ' start=' . $this->startTime);
+        }
+
         $this->startTime = 0;
 
         return $returnElapsed ? $this->elapsedTime : $this;
@@ -89,10 +96,12 @@ trait HasTimer
     }
 
     /**
+     * Returns the time elapsed in microseconds since the startTime, or the current $this->elapsedTime if set.
+     *
      * @return float
      */
     public function getElapsedTime()
     {
-        return $this->elapsedTime ?: $this->elapsedTime = microtime(true) - $this->startTime;
+        return 0 === $this->elapsedTime ? microtime(true) - $this->startTime : $this->elapsedTime;
     }
 }

@@ -3,6 +3,7 @@
 use DreamFactory\Enterprise\Common\Contracts\VirtualProvisioner;
 use DreamFactory\Enterprise\Common\Enums\EnterpriseDefaults;
 use DreamFactory\Enterprise\Common\Enums\EnterprisePaths;
+use DreamFactory\Enterprise\Common\Traits\EntityLookup;
 use DreamFactory\Enterprise\Common\Traits\HasTimer;
 use DreamFactory\Enterprise\Common\Traits\LockingService;
 use DreamFactory\Enterprise\Common\Traits\Notifier;
@@ -26,10 +27,6 @@ abstract class BaseInstanceProvisioner extends BaseProvisioningService implement
     //******************************************************************************
 
     /**
-     * @type string This is the "facility" passed along to the auditing system for reporting
-     */
-    const DEFAULT_FACILITY = 'dfe-provisioning';
-    /**
      * @type string Our resource URI
      */
     const RESOURCE_URI = false;
@@ -38,7 +35,7 @@ abstract class BaseInstanceProvisioner extends BaseProvisioningService implement
     //* Traits
     //******************************************************************************
 
-    use InstanceValidation, LockingService, Notifier, HasTimer;
+    use InstanceValidation, LockingService, Notifier, HasTimer, EntityLookup;
 
     //******************************************************************************
     //* Members
