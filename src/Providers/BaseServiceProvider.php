@@ -1,5 +1,6 @@
 <?php namespace DreamFactory\Enterprise\Common\Providers;
 
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -70,7 +71,7 @@ abstract class BaseServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [static::IOC_NAME];
+        return array_merge(parent::provides(), [static::IOC_NAME,]);
     }
 
     /**
@@ -98,5 +99,17 @@ abstract class BaseServiceProvider extends ServiceProvider
     public function __invoke()
     {
         return static::IOC_NAME ?: null;
+    }
+
+    /**
+     * @param Application|null $app
+     *
+     * @return static
+     */
+    public static function service(Application $app = null)
+    {
+        $app = $app ?: app();
+
+        return $app->make(static::IOC_NAME);
     }
 }

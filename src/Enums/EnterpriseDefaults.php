@@ -59,6 +59,10 @@ class EnterpriseDefaults extends FactoryEnum
      */
     const CLUSTER_MANIFEST_FILE_NAME = '.dfe.cluster.json';
     /**
+     * @type string The default path of the blueprint repository
+     */
+    const DEFAULT_BLUEPRINT_REPO_PATH = '/data/blueprints';
+    /**
      * @type string The default "trash" path for soft-deleted snapshots
      */
     const DEFAULT_TRASH_PATH = '/data/trash';
