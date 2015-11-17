@@ -52,7 +52,7 @@ trait Executioner
     public function exec($command, &$output = null, &$returnValue = null)
     {
         if ($this->pushCurrentPath()) {
-            $_result = exec($command, $_output, $_return);
+            $_result = exec($command, $output, $returnValue);
             $this->popCurrentPath();
 
             return $_result;

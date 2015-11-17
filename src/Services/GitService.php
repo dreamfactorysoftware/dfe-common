@@ -1,8 +1,8 @@
 <?php namespace DreamFactory\Enterprise\Common\Services;
 
-
 use DreamFactory\Enterprise\Common\Contracts\VersionController;
 use DreamFactory\Enterprise\Common\Traits\Executioner;
+use DreamFactory\Library\Utility\Disk;
 use Illuminate\Contracts\Foundation\Application;
 
 class GitService extends BaseService implements VersionController
@@ -20,58 +20,81 @@ class GitService extends BaseService implements VersionController
     /**
      * @type string The repository path
      */
-    protected $path;
+    protected $repositoryPath;
+    /**
+     * @type string The base repository path
+     */
+    protected $repositoryBasePath;
+    /**
+     * @type string The name of the ".git" path
+     */
+    protected $gitPath;
 
     //******************************************************************************
     //* Methods
     //******************************************************************************
 
     /**
-     * @param Application|null $app
-     * @param string|null      $path
+     * @param Application $app
+     * @param string      $repositoryBasePath
+     * @param string|null $repositoryPath The sub-directory for this instance
      */
-    public function __construct($app = null, $path = null)
+    public function __construct($app, $repositoryBasePath, $repositoryPath = null)
     {
         parent::__construct($app);
 
-        $this->setExecutionPath($path);
+        $this->gitPath = env('GIT_PATH', '.git');
+
+        $this
+            ->setRepositoryBasePath($repositoryBasePath)
+            ->setRepositoryPath($repositoryPath);
     }
 
-    /**
-     * @param string $revision
-     *
-     * @return null|string
-     */
-    public function checkout($revision)
+    /** @inheritdoc */
+    public function init(array $arguments = [], &$output = null, &$returnValue = null)
     {
-        return $this->exec('git checkout ' . $revision . ' 2>&1', $_output, $_return);
+        //  Save the current exec path
+        $_path = $this->executionPath;
+
+        //  Set it to our base...
+        $this->setExecutionPath($this->repositoryBasePath);
+
+        if ($this->pushCurrentPath()) {
+            $_result = $this->exec('git init ' . $this->makeArguments($arguments) . ' ./ 2>&1', $output, $returnValue);
+
+            $this->popCurrentPath();
+        }
+
+        //  Restore
+        $this->setExecutionPath($_path);
+
+        return 0 == $returnValue;
     }
 
-    /**
-     * @param string $message The commit message
-     *
-     * @return int
-     */
-    public function commitAllChanges($message)
+    /** @inheritdoc */
+    public function checkout($revision, array $arguments = [], &$output = null, &$returnValue = null)
+    {
+        return $this->exec('git checkout ' . $revision . ' ' . $this->makeArguments($arguments) . ' 2>&1',
+            $output,
+            $returnValue);
+    }
+
+    /** @inheritdoc */
+    public function commitAllChanges($message, &$output = null, &$returnValue = null)
     {
         $this->exec('git add --all 2>&1', $_output, $_return);
-        0 == $_return && $this->exec('git commit -a -m ' . escapeshellarg($message) . ' 2>&1', $_output, $_return);
+        0 == $_return && $this->exec('git commit -a -m ' . escapeshellarg($message) . ' 2>&1', $output, $returnValue);
 
         return $_return;
     }
 
-    /**
-     * @param string $file    The relative file to commit
-     * @param string $message The commit message
-     *
-     * @return int
-     */
-    public function commitChange($file, $message)
+    /** @inheritdoc */
+    public function commitChange($file, $message, &$output = null, &$returnValue = null)
     {
-        $this->exec('git add ' . escapeshellarg($file) . ' 2>&1', $_output, $_return);
-        0 == $_return && $this->exec('git commit -m ' . escapeshellarg($message) . ' 2>&1', $_output, $_return);
+        $this->exec('git add ' . escapeshellarg($file) . ' 2>&1', $output, $returnValue);
+        0 == $returnValue && $this->exec('git commit -m ' . escapeshellarg($message) . ' 2>&1', $output, $returnValue);
 
-        return $_return;
+        return $returnValue;
     }
 
     /**
@@ -79,19 +102,17 @@ class GitService extends BaseService implements VersionController
      */
     public function getCurrentBranch()
     {
-        $this->exec('git rev-parse --abbrev-ref HEAD', $_output, $_return);
+        $this->exec('git rev-parse --abbrev -ref HEAD 2>&1', $_output, $_return);
 
         return trim(explode(' ', $_output));
     }
 
-    /**
-     * @return array
-     */
-    public function getRevisions()
+    /** @inheritdoc */
+    public function getRevisions(&$output = null, &$returnValue = null)
     {
         $_revisions = [];
 
-        $this->exec('git log --pretty="%H %at %s" --no-merges', $_output, $_return);
+        $this->exec('git log --pretty="%H %at %s" --no-merges 2>&1', $_output, $_return);
 
         if (!empty($_output)) {
             foreach ($_output as $_entry) {
@@ -108,15 +129,44 @@ class GitService extends BaseService implements VersionController
         return $_revisions;
     }
 
-    /**
-     * @param string $path
-     *
-     * @return $this
-     */
-    public function setRepository($path)
+    /** @inheritdoc */
+    public function setRepositoryBasePath($repositoryBasePath)
     {
-        $path && $this->path = realpath($path);
+        $repositoryBasePath && $this->repositoryBasePath = $repositoryBasePath;
 
         return $this;
+    }
+
+    /** @inheritdoc */
+    public function setRepositoryPath($repositoryPath)
+    {
+        if (!empty($repositoryPath)) {
+            $this->setExecutionPath(realpath(Disk::path([
+                $this->repositoryBasePath,
+                $this->repositoryPath = $repositoryPath,
+            ],
+                true)));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Converts an array of key value pairs into command line arguments
+     *
+     * @param array $arguments
+     *
+     * @return null|string
+     */
+    protected function makeArguments(array $arguments = [])
+    {
+        $_args = null;
+
+        foreach ($arguments as $_key => $_value) {
+            $_key = ('--' != substr($_key, 0, 2)) ? '-' . $_key . ' ' : $_key . '=';
+            $_args = $_key . escapeshellarg($_value);
+        }
+
+        return $_args;
     }
 }
