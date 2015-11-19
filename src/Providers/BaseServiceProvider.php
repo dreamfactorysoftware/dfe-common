@@ -104,7 +104,7 @@ abstract class BaseServiceProvider extends ServiceProvider
     /**
      * @param Application|null $app
      *
-     * @return static
+     * @return mixed
      */
     public static function service(Application $app = null)
     {
