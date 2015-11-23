@@ -3,6 +3,7 @@
 use DreamFactory\Enterprise\Common\Traits\HasResults;
 use DreamFactory\Enterprise\Common\Traits\InteractsWithConsole;
 use DreamFactory\Enterprise\Common\Traits\PublishesResults;
+use DreamFactory\Enterprise\Console\Enums\ConsoleDefaults;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -74,15 +75,16 @@ abstract class BaseJob implements ShouldQueue, InputAwareInterface
      */
     private function createJobId($jobId = null)
     {
-        return implode('.',
-            [
-                '[' . microtime(true) . ']',
-                config('dfe.cluster-id'),
-                config('dfe.security.console-api-client-id'),
-                $jobId
-                    ?: str_slug(trim(str_replace(['\\', 'DreamFactory', 'Enterprise',],
-                    [' ', null, null,],
-                    get_class($this)))),
-            ]);
+        return hash(ConsoleDefaults::SIGNATURE_METHOD,
+            implode('.',
+                [
+                    '[' . microtime(true) . ']',
+                    config('dfe.cluster-id'),
+                    config('dfe.security.console-api-client-id'),
+                    $jobId
+                        ?: str_slug(trim(str_replace(['\\', 'DreamFactory', 'Enterprise',],
+                        [' ', null, null,],
+                        get_class($this)))),
+                ]) . microtime(true));
     }
 }
