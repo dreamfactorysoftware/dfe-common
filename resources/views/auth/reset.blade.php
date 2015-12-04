@@ -25,7 +25,7 @@
 						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
-						<h4>Rut-roh...</h4>
+						<h4>Error</h4>
 
 						<ul style="list-style: none">
 							@foreach ($errors->all() as $error)
