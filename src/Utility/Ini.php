@@ -27,24 +27,13 @@ class Ini extends Collection
      *
      * @return static
      */
-    public static function make($file)
+    public static function makeFromFile($file)
     {
-        $_ini = new static($file, true);
+        $_ini = new static();
+        $_ini->setFile($file);
         $_ini->load();
 
         return $_ini;
-    }
-
-    /**
-     * @param string|null $file     The ini file target
-     * @param bool        $autoload If true (the default), if $file is not null it will be loaded
-     */
-    public function __construct($file = null, $autoload = true)
-    {
-        parent::__construct();
-
-        $file && $this->file = $file;
-        $autoload && $file && $this->load();
     }
 
     /**
@@ -65,7 +54,7 @@ class Ini extends Collection
         $_lines = file($this->file, FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES);
 
         foreach ($_lines as $_line) {
-            $_parts = explode('=', $_line, 1);
+            $_parts = explode('=', $_line);
             if (2 == count($_parts)) {
                 $_key = trim($_parts[0]);
                 $_fc = $_key[0];
