@@ -1,7 +1,10 @@
 <?php namespace DreamFactory\Enterprise\Common\Http\Controllers\Auth;
 
 use DreamFactory\Enterprise\Common\Http\Controllers\BaseController;
+use DreamFactory\Enterprise\Database\Models\ServiceUser;
+use DreamFactory\Enterprise\Database\Models\User;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CommonPasswordController extends BaseController
@@ -38,5 +41,20 @@ class CommonPasswordController extends BaseController
         }
 
         return view('dfe-common::auth.reset')->with('token', $token);
+    }
+
+    /**
+     * Reset the given user's password.
+     *
+     * @param  \Illuminate\Contracts\Auth\CanResetPassword|User|ServiceUser $user
+     * @param  string                                                       $password
+     */
+    protected function resetPassword($user, $password)
+    {
+        $user->password_text = bcrypt($password);
+        $user->save();
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        Auth::login($user);
     }
 }
