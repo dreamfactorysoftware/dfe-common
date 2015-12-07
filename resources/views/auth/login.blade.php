@@ -25,7 +25,7 @@
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        <h4>Rut-roh...</h4>
+                        <h4>Error</h4>
 
                         <ul style="list-style: none">
                             @foreach ($errors->all() as $error)
@@ -43,11 +43,11 @@
                             <span class="input-group-addon bg_lg"><i class="fa fa-user input-addon-icon-width"></i></span>
 
                             <input type="email"
-                                class="form-control email required"
-                                autofocus
-                                name="email"
-                                placeholder="email address"
-                                value="{{ old('email') }}">
+                                   class="form-control email required"
+                                   autofocus
+                                   name="email"
+                                   placeholder="email address"
+                                   value="{{ old('email') }}">
                         </div>
                     </div>
 
@@ -55,7 +55,10 @@
                         <div class="input-group">
                             <span class="input-group-addon bg_ly"><i class="fa fa-lock input-addon-icon-width"></i></span>
 
-                            <input class="form-control password required" placeholder="password" name="password" type="password" />
+                            <input class="form-control password required"
+                                   placeholder="password"
+                                   name="password"
+                                   type="password" />
                         </div>
                     </div>
 
@@ -74,16 +77,20 @@
                     <div class="form-actions">
                         <div class="row">
                             <div class="col-sm-4">
-								<span class="pull-left" style="margin-right: 10px;"><a href="/auth/register" class="btn btn-info">
+								<span class="pull-left" style="margin-right: 10px;"><a href="/auth/register"
+                                                                                       class="btn btn-info">
                                         <i class="fa fa-fw fa-user"></i>Sign Up</a></span>
                             </div>
 
                             <div class="col-sm-4 pull-center">
-                                <span><a href="/password/email" class="btn btn-warning"><i class="fa fa-fw fa-life-ring"></i>Lost password?</a></span>
+                                <span><a href="/password/email"
+                                         class="btn btn-warning"><i class="fa fa-fw fa-life-ring"></i>Lost password?</a></span>
                             </div>
 
                             <div class="col-sm-4">
-                                <span class="pull-right"><button type="submit" class="btn btn-success"><i class="fa fa-fw fa-sign-in"></i>Login</button></span>
+                                <span class="pull-right"><button type="submit" class="btn btn-success">
+                                        <i class="fa fa-fw fa-sign-in"></i>Login
+                                    </button></span>
                             </div>
                         </div>
                     </div>

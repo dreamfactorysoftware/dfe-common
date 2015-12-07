@@ -138,6 +138,19 @@ trait EntityLookup
     }
 
     /**
+     * Returns all instances managed by $clusterId
+     *
+     * @param \DreamFactory\Enterprise\Database\Models\Cluster|int $clusterId
+     * @param array|null                                           $columns
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    protected function _clusterInstances($clusterId, $columns = null)
+    {
+        return static::findClusterInstances($clusterId, $columns);
+    }
+
+    /**
      * Returns all assigned roles for a user
      *
      * @param int $userId

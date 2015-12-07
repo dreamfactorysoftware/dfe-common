@@ -107,6 +107,7 @@ trait StaticComponentLookup
     {
         $_cluster = ($clusterId instanceof Cluster) ? $clusterId : static::_lookupCluster($clusterId);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $_rows = DB::select(<<<MYSQL
 SELECT
     s.id,
@@ -216,15 +217,25 @@ MYSQL
     {
         if ($entity instanceof User) {
             return OwnerTypes::USER;
-        } elseif ($entity instanceof ServiceUser) {
+        }
+
+        if ($entity instanceof ServiceUser) {
             return OwnerTypes::SERVICE_USER;
-        } elseif ($entity instanceof Instance) {
+        }
+
+        if ($entity instanceof Instance) {
             return OwnerTypes::INSTANCE;
-        } else if ($entity instanceof Server) {
+        }
+
+        if ($entity instanceof Server) {
             return OwnerTypes::SERVER;
-        } else if ($entity instanceof Cluster) {
+        }
+
+        if ($entity instanceof Cluster) {
             return OwnerTypes::CLUSTER;
-        } else if ($entity instanceof Mount) {
+        }
+
+        if ($entity instanceof Mount) {
             return OwnerTypes::MOUNT;
         }
 
