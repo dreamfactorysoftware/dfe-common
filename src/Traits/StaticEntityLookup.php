@@ -183,6 +183,19 @@ trait StaticEntityLookup
     }
 
     /**
+     * Returns all instances managed by $clusterId
+     *
+     * @param \DreamFactory\Enterprise\Database\Models\Cluster|int $clusterId
+     * @param array                                                $columns The columns to retrieve
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    protected static function findClusterInstances($clusterId, $columns = ['*'])
+    {
+        return Instance::where('cluster_id', static::findCluster($clusterId)->id)->orderBy('instance_id_text')->get($columns);
+    }
+
+    /**
      * Returns all assigned roles for a user
      *
      * @param int $userId
@@ -191,10 +204,7 @@ trait StaticEntityLookup
      */
     protected static function findUserRoles($userId)
     {
-        return UserRole::join('role_t', 'id', '=', 'role_id')
-            ->where('user_id', '=', $userId)
-            ->orderBy('role_t.role_name_text')
-            ->get(['role_t.*']);
+        return UserRole::join('role_t', 'id', '=', 'role_id')->where('user_id', '=', $userId)->orderBy('role_t.role_name_text')->get(['role_t.*']);
     }
 
     /**
