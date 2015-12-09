@@ -141,11 +141,11 @@ trait EntityLookup
      * Returns all instances managed by $clusterId
      *
      * @param \DreamFactory\Enterprise\Database\Models\Cluster|int $clusterId
-     * @param array|null                                           $columns
+     * @param array                                                $columns
      *
      * @return \Illuminate\Support\Collection
      */
-    protected function _clusterInstances($clusterId, $columns = null)
+    protected function _clusterInstances($clusterId, $columns = ['*'])
     {
         return static::findClusterInstances($clusterId, $columns);
     }
