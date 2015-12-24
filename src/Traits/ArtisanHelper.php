@@ -1,11 +1,12 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\OutputStyle;
 
 /**
  * A trait that adds shortcuts for artisan commands
  *
- * @property OutputInterface $output
+ * @property OutputInterface|OutputStyle $output
  */
 trait ArtisanHelper
 {
@@ -14,13 +15,13 @@ trait ArtisanHelper
     //******************************************************************************
 
     /**
-     * @type string An optional prefix, such as the command name, which will be prepended to output
-     */
-    private $outputPrefix;
-    /**
      * @type string The currently buffered output
      */
     private $lineBuffer;
+    /**
+     * @type string An optional prefix, such as the command name, which will be prepended to output
+     */
+    private $outputPrefix;
 
     //******************************************************************************
     //* Methods
@@ -40,7 +41,7 @@ trait ArtisanHelper
             /** @noinspection PhpUndefinedFieldInspection */
             $this->output->writeln($this->context(config('commands.display-name'), 'info') .
                 ' (' .
-                $this->context(config('commands.display-version', 'Alpha'), 'comment') .
+                $this->context($this->name . '-' . config('commands.display-version', 'develop'), 'comment') .
                 ')');
 
             if (null !== ($_copyright = config('commands.display-copyright'))) {
