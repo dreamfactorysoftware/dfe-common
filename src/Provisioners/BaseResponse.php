@@ -46,9 +46,8 @@ class BaseResponse extends Response
      */
     public static function make($success, $request, $result = null, $content = [], $output = null, $httpCode = Response::HTTP_OK, $headers = [])
     {
+        /** @type BaseResponse $_response */
         $_response = new static($content, $httpCode, $headers);
-
-        /** @noinspection PhpUndefinedMethodInspection */
 
         return $_response->setRequest($request)->setResult($result)->setOutput($output)->setSuccess($success);
     }
@@ -104,7 +103,7 @@ class BaseResponse extends Response
     }
 
     /**
-     * @return BaseRequest|ProvisionServiceRequest|PortableServiceRequest
+     * @return BaseRequest|\DreamFactory\Enterprise\Services\Provisioners\ProvisionServiceRequest|PortableServiceRequest
      */
     public function getRequest()
     {
@@ -153,5 +152,13 @@ class BaseResponse extends Response
         $this->request = $request;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSuccess()
+    {
+        return $this->success;
     }
 }

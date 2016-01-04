@@ -1,5 +1,7 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
+use DreamFactory\Enterprise\Common\Provisioners\BaseResponse;
+
 /**
  * A trait for things that need a timer
  */
@@ -27,10 +29,8 @@ trait HasTimer
      */
     public function startTimer()
     {
-        $this->startTime = microtime(true);
         $this->elapsedTime = 0;
-
-        //\Log::info('startTimer: start=' . $this->startTime);
+        $this->startTime = microtime(true);
 
         return $this;
     }
@@ -39,21 +39,29 @@ trait HasTimer
      * Times a closure. Any arguments passed after the closure become arguments to the closure.
      * Elapsed time stored in $this->elapsedTime.
      *
-     * @param \Closure $closure The closure to profile
-     * @param [mixed]  $option1 Optional closure parameter
-     * @param [mixed]  $option2 Optional closure parameter
+     * @param \Closure $closure   The closure to profile
+     * @param array    $arguments Optional arguments for closure
      *
-     * @return mixed the return value of the closure
+     * @return array [0=elapsed time, 1=response]
      */
-    public function profile(\Closure $closure)
+    public function profile(\Closure $closure, array $arguments = [])
     {
-        array_shift($_arguments = func_get_args());
+        $this->elapsedTime = 0;
+        $this->startTime = microtime(true);
 
-        $this->startTimer();
-        $_result = call_user_func_array($closure, empty($_arguments) ? [] : $_arguments);
-        $this->stopTimer();
+        try {
+            $_response = call_user_func_array($closure, $arguments);
+        } catch (\Exception $_ex) {
+            \Log::error($_ex->getMessage());
+            $_response = null;
+        }
+        finally {
+            $_elapsed = $this->stopTimer();
+        }
 
-        return $_result;
+        $_response && ($_response instanceof BaseResponse) && $_response->setElapsedTime($_elapsed);
+
+        return [$_elapsed, $_response];
     }
 
     /**
