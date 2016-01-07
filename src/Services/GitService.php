@@ -91,8 +91,13 @@ class GitService extends BaseService implements VersionController
     /** @inheritdoc */
     public function commitChange($file, $message, &$output = null, &$returnValue = null)
     {
-        $this->exec('git add ' . escapeshellarg($file) . ' 2>&1', $output, $returnValue);
-        0 == $returnValue && $this->exec('git commit -m ' . escapeshellarg($message) . ' 2>&1', $output, $returnValue);
+        if (0 == $this->exec('git add ' . escapeshellarg(basename($file)) . ' 2>&1', $output, $returnValue)) {
+            if (0 != $this->exec('git commit -m ' . escapeshellarg($message) . ' 2>&1', $output, $returnValue)) {
+                \Log::error('Error committing "' . $file . '".');
+            }
+        } else {
+            \Log::error('Error adding "' . $file . '" to change list.');
+        }
 
         return $returnValue;
     }

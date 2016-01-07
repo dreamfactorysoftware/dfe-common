@@ -21,5 +21,4 @@ class DataShaper extends Facade
     {
         return DataShaperServiceProvider::IOC_NAME;
     }
-
 }
