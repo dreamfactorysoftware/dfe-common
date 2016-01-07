@@ -1,2 +1,2 @@
-## DreamFactory Enterprise(tm) Common Components v1.0.8
+## DreamFactory Enterprise(tm) Common Components v1.0.9
 See the [DreamFactory](https://www.dreamfactory.com/) site for more information
