@@ -121,17 +121,18 @@ abstract class ConsoleCommand extends Command
      * @param array       $array
      * @param bool        $pretty
      * @param string|null $rootNode Enclose transformed data inside a $rootNode
+     * @param string      $type     Inner node name prefix. Defaults to 'item'. Used only for XML
      *
      * @return string
      */
-    protected function formatArray(array $array, $pretty = true, $rootNode = 'root')
+    protected function formatArray(array $array, $pretty = true, $rootNode = 'root', $type = 'item')
     {
         switch ($this->format) {
             case 'json':
                 return Json::encode($array, ($pretty ? JSON_PRETTY_PRINT : 0) | JSON_UNESCAPED_SLASHES);
 
             case 'xml':
-                return XmlShape::transform($array, ['root' => $rootNode]);
+                return XmlShape::transform($array, ['root' => $rootNode, 'item-type' => $type, 'ugly' => !$pretty]);
         }
 
         //  Default is to use print_r format
