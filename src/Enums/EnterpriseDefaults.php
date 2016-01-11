@@ -110,6 +110,8 @@ class EnterpriseDefaults extends FactoryEnum
     const DEFAULT_DOMAIN_PROTOCOL = 'http';
     /** @type string X Header for the console to use to authenticate with a 2.0 instance */
     const CONSOLE_X_HEADER = 'X-DreamFactory-Console-Key';
+    /** @type string X Header for an app to talk with a 2.0 instance */
+    const INSTANCE_API_HEADER = 'X-DreamFactory-API-Key';
     /**
      * @type int The default number of days to keep system metrics
      */
