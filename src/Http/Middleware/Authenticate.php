@@ -45,10 +45,7 @@ class Authenticate
     public function handle($request, Closure $next)
     {
         if ($this->auth->guest()) {
-            return $request->ajax()
-                ? response()->json('Unauthorized.', 401)
-                : \Redirect::guest('auth/login')
-                    ->withErrors(['Session Expired' => \Lang::get('session-expired')]);
+            return $request->ajax() ? response()->json('Unauthorized.', 401) : \Redirect::guest('auth/login');
         }
 
         return $next($request);
