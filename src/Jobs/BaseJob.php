@@ -1,9 +1,9 @@
 <?php namespace DreamFactory\Enterprise\Common\Jobs;
 
+use DreamFactory\Enterprise\Common\Enums\EnterpriseDefaults;
 use DreamFactory\Enterprise\Common\Traits\HasResults;
 use DreamFactory\Enterprise\Common\Traits\InteractsWithConsole;
 use DreamFactory\Enterprise\Common\Traits\PublishesResults;
-use DreamFactory\Enterprise\Console\Enums\ConsoleDefaults;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -75,7 +75,7 @@ abstract class BaseJob implements ShouldQueue, InputAwareInterface
      */
     private function createJobId($jobId = null)
     {
-        return hash(ConsoleDefaults::SIGNATURE_METHOD,
+        return hash(EnterpriseDefaults::SIGNATURE_METHOD,
             implode('.',
                 [
                     '[' . microtime(true) . ']',
