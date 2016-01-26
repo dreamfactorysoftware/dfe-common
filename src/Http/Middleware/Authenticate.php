@@ -2,6 +2,7 @@
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Support\Facades\Redirect;
 
 /**
  * Generic/standard authentication middleware
@@ -45,7 +46,7 @@ class Authenticate
     public function handle($request, Closure $next)
     {
         if ($this->auth->guest()) {
-            return $request->ajax() ? response()->json('Unauthorized.', 401) : \Redirect::guest('auth/login');
+            return $request->ajax() ? response()->json('Unauthorized.', 401) : Redirect::guest('auth/login');
         }
 
         return $next($request);
