@@ -32,22 +32,19 @@ trait Notifier
     protected function notifyInstanceOwner($instance, $subject, array $data)
     {
         try {
-            if (!empty($this->subjectPrefix)) {
-                $subject = $this->subjectPrefix . ' ' . trim(str_replace($this->subjectPrefix, null, $subject));
-            }
-
+            empty($this->subjectPrefix) && $this->subjectPrefix = config('provisioning.email-subject-prefix');
+            $subject = $this->subjectPrefix . ' ' . trim(str_replace($this->subjectPrefix, null, $subject));
             $data['dashboard_url'] = config('dfe.dashboard-url');
             $data['support_email_address'] = config('dfe.support-email-address');
 
             $_result = \Mail::send('emails.generic',
                 $data,
-                function ($message/** @var Message $message */) use ($instance, $subject){
+                function ($message/** @var Message $message */) use ($instance, $subject) {
                     $message->to($instance->user->email_addr_text,
                         $instance->user->first_name_text . ' ' . $instance->user->last_name_text)->subject($subject);
                 });
 
-            ($this instanceof Lumberjack) &&
-            $this->debug('notification sent to "' . $instance->user->email_addr_text . '"');
+            \Log::debug('notification sent to "' . $instance->user->email_addr_text . '"');
 
             return $_result;
         } catch (\Exception $_ex) {
@@ -66,5 +63,4 @@ trait Notifier
             return false;
         }
     }
-
 }
