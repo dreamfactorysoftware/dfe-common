@@ -30,8 +30,7 @@ class VerifyCsrfToken extends BaseVerifier
         } catch (TokenMismatchException $_ex) {
             //  Catch expired sessions
             return Redirect::guest('auth/login')->withErrors([
-                'Session Expired' => Lang::get('dashboard.session-expired',
-                    'Your session has expired or is otherwise not valid.'),
+                'Session Expired' => Lang::get('common.session-expired') ?: 'Your session has expired or is otherwise not valid.',
             ]);
         }
     }
