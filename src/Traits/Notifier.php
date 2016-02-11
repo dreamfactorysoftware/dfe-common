@@ -1,6 +1,7 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
 use DreamFactory\Enterprise\Database\Models\Instance;
+use DreamFactory\Enterprise\Database\Models\ServiceUser;
 use DreamFactory\Library\Utility\Json;
 use Illuminate\Mail\Message;
 
@@ -31,6 +32,21 @@ trait Notifier
      */
     protected function notifyInstanceOwner($instance, $subject, array $data)
     {
+        $_name = trim($instance->user->first_name_text . ' ' . $instance->user->last_name_text) ?: $instance->user->email_addr_text;
+
+        return $this->notify($instance->user->email_addr_text, $_name, $subject, $data);
+    }
+
+    /**
+     * @param string $email
+     * @param string $name
+     * @param string $subject
+     * @param array  $data
+     *
+     * @return int The number of recipients mailed
+     */
+    protected function notify($email, $name, $subject, array $data)
+    {
         try {
             empty($this->subjectPrefix) && $this->subjectPrefix = config('provisioning.email-subject-prefix');
             $subject = $this->subjectPrefix . ' ' . trim(str_replace($this->subjectPrefix, null, $subject));
@@ -39,12 +55,14 @@ trait Notifier
 
             $_result = \Mail::send('emails.generic',
                 $data,
-                function ($message/** @var Message $message */) use ($instance, $subject) {
-                    $message->to($instance->user->email_addr_text,
-                        $instance->user->first_name_text . ' ' . $instance->user->last_name_text)->subject($subject);
+                function($message/** @var Message $message */) use ($email, $name, $subject) {
+                    $message->from(config('mail.from.address'), config('mail.from.name'));
+                    $message->subject($subject);
+                    $message->to($email, $name);
+                    $message->bcc(config('license.notification-address'), 'DreamFactory Operations');
                 });
 
-            \Log::debug('notification sent to "' . $instance->user->email_addr_text . '"');
+            \Log::debug('notification sent to "' . $email . '"');
 
             return $_result;
         } catch (\Exception $_ex) {
@@ -56,9 +74,9 @@ trait Notifier
                 mkdir($_mailPath, 0777, true);
             }
 
-            @file_put_contents(date('YmdHis') . '-' . $instance->user->email_addr_text . '.json',
+            @file_put_contents(date('YmdHis') . '-' . $email . '.json',
                 Json::encode(array_merge($data,
-                    ['subject' => $subject, 'template' => 'emails.generic', 'instance' => $instance->toArray()])));
+                    ['subject' => $subject, 'template' => 'emails.generic', 'email' => $email, 'name' => $name,])));
 
             return false;
         }
