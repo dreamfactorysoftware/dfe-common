@@ -56,6 +56,8 @@ trait Notifier
             $_result = \Mail::send('emails.generic',
                 $data,
                 function($message/** @var Message $message */) use ($email, $name, $subject) {
+                    $message->from(config('mail.from.address'), config('mail.from.name'));
+                    $message->subject($subject);
                     $message->to($email, $name);
                     $message->bcc(config('license.notification-address'), 'DreamFactory Operations');
                 });
