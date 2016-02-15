@@ -58,7 +58,7 @@ class BasePacket
      * Generates a signature for a packet request response
      *
      * @param array                  $packet
-     * @param int|null               $code
+     * @param int|\Exception|null    $code
      * @param string|\Exception|null $message
      *
      * @return array
@@ -76,12 +76,12 @@ class BasePacket
             $message = null;
         }
 
-        !$code && $code = Response::HTTP_OK;
-        $code = $code ?: ($_ex ? $_ex->getCode() : Response::HTTP_OK);
-        $message = $message ?: ($_ex ? $_ex->getMessage() : null);
+        if (false !== $_ex) {
+            (null === $code) && $code = $_ex->getCode();
+            (null === $message) && $message = $_ex->getMessage();
+        }
 
-        $_startTime =
-            \Request::server('REQUEST_TIME_FLOAT', \Request::server('REQUEST_TIME', $_timestamp = microtime(true)));
+        $_startTime = \Request::server('REQUEST_TIME_FLOAT', \Request::server('REQUEST_TIME', $_timestamp = microtime(true)));
 
         $_elapsed = $_timestamp - $_startTime;
         $_id = sha1($_startTime . \Request::server('HTTP_HOST') . \Request::server('REMOTE_ADDR'));

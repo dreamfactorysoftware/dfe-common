@@ -99,8 +99,13 @@ trait Notifier
     {
         /** @type Instance $_instance */
         if (null !== ($_instance = array_get($data, 'instance'))) {
-            $data['instanceUrl'] = $_instance->getProvisionedEndpoint();
-            $data['instanceName'] = $_instance->instance_name_text;
+            if (false === $_instance) {
+                $data['instanceUrl'] = false;
+                $data['instanceName'] = array_get($data, 'instanceName');
+            } else {
+                $data['instanceUrl'] = $_instance->getProvisionedEndpoint();
+                $data['instanceName'] = $_instance->instance_name_text;
+            }
         }
 
         if ($_instance && null === ($_firstName = array_get($data, 'firstName'))) {
@@ -108,37 +113,38 @@ trait Notifier
             $data['firstName'] = $_firstName;
         }
 
-        $_headTitle = $_contentHeader = null;
+        $_headTitle = array_get($data, 'headTitle');
+        $_contentHeader = array_get($data, 'contentHeader');
 
         switch (trim(strtolower($operation))) {
             case ConsoleOperations::METRICS:
-                $_headTitle = 'Metrics Complete';
-                $_contentHeader = 'Metrics have been generated successfully';
+                !$_headTitle && $_headTitle = 'Metrics Complete';
+                !$_contentHeader && $_contentHeader = 'Metrics have been generated successfully';
                 $view = $view ?: 'emails.generic';
                 break;
 
             case ConsoleOperations::PROVISION:
-                $_headTitle = 'Provisioning Complete';
-                $_contentHeader = 'Your new instance is ready';
+                !$_headTitle && $_headTitle = 'Provisioning Complete';
+                !$_contentHeader && $_contentHeader = 'Your new instance is ready';
                 $view = $view ?: 'emails.provision';
                 break;
 
             case ConsoleOperations::DEPROVISION:
-                $_headTitle = 'Deprovisioning Complete';
-                $_contentHeader = 'Your instance has been retired';
+                !$_headTitle && $_headTitle = 'Deprovisioning Complete';
+                !$_contentHeader && $_contentHeader = 'Your instance has been retired';
                 $view = $view ?: 'emails.deprovision';
                 break;
 
             case ConsoleOperations::IMPORT:
-                $_headTitle = 'Import Complete';
-                $_contentHeader = 'Your imported instance is ready';
-                $view = $view ?: 'emails.generic';
+                !$_headTitle && $_headTitle = 'Import Complete';
+                !$_contentHeader && $_contentHeader = 'Your imported instance is ready';
+                $view = $view ?: 'emails.import';
                 break;
 
             case ConsoleOperations::EXPORT:
-                $_headTitle = 'Export Complete';
-                $_contentHeader = 'Your export is complete';
-                $view = $view ?: 'emails.generic';
+                !$_headTitle && $_headTitle = 'Export Complete';
+                !$_contentHeader && $_contentHeader = 'Your export is complete';
+                $view = $view ?: 'emails.export';
                 break;
 
             default:
