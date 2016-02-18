@@ -62,7 +62,7 @@ trait Notifier
                     $message->from(config('mail.from.address'), config('mail.from.name'));
                     $message->subject($subject);
                     $message->to($email, $name);
-                    $message->bcc(config('license.notification-address'), 'DreamFactory Operations');
+                    config('license.bcc-notifications', false) && $message->bcc(config('license.notification-address'), 'DreamFactory Operations');
                 });
 
             \Log::debug('notification sent to "' . $email . '"');
@@ -98,19 +98,17 @@ trait Notifier
     protected function notifyJobOwner($operation, $email, $name, array $data = [], $view = null)
     {
         /** @type Instance $_instance */
-        if (null !== ($_instance = array_get($data, 'instance'))) {
-            if (false === $_instance) {
-                $data['instanceUrl'] = false;
-                $data['instanceName'] = array_get($data, 'instanceName');
-            } else {
-                $data['instanceUrl'] = $_instance->getProvisionedEndpoint();
-                $data['instanceName'] = $_instance->instance_name_text;
-            }
+        if (empty($_instance = array_get($data, 'instance'))) {
+            $data['instance'] = $_instance = false;
+            $data['instanceUrl'] = false;
+            $data['instanceName'] = array_get($data, 'instanceName');
+        } else {
+            $data['instanceUrl'] = $_instance->getProvisionedEndpoint();
+            $data['instanceName'] = $_instance->instance_id_text;
         }
 
-        if ($_instance && null === ($_firstName = array_get($data, 'firstName'))) {
-            $_firstName = $_instance->user->first_name_text;
-            $data['firstName'] = $_firstName;
+        if ($_instance && $_instance->user && null === ($_firstName = array_get($data, 'firstName'))) {
+            $data['firstName'] = $_firstName = $_instance->user->first_name_text;
         }
 
         $_headTitle = array_get($data, 'headTitle');
@@ -154,6 +152,7 @@ trait Notifier
         ($_headTitle && !isset($data['headTitle'])) && $data['headTitle'] = $_headTitle;
         ($_contentHeader && !isset($data['contentHeader'])) && $data['contentHeader'] = $_contentHeader;
         $data['email-view'] = $view;
+        $data['emailBody'] = array_get($data, 'emailBody');
 
         return $this->notify($email, $name, $_headTitle, $data);
     }
