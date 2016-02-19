@@ -207,9 +207,7 @@ class FileCanister extends Canister implements Custodial
         }
 
         if (!$overwrite && $this->filesystem->has($this->filename)) {
-            throw new FileException('The file "' .
-                $this->filename .
-                '" already exists, and $overwrite is set to "FALSE".');
+            throw new FileException('The file "' . $this->filename . '" already exists, and $overwrite is set to "FALSE".');
         }
 
         $this->addActivity('write')->addCustodyLogs(static::CUSTODY_LOG_KEY, true);
@@ -254,11 +252,7 @@ class FileCanister extends Canister implements Custodial
                 if ($this->filesystem->put($this->filename, Json::encode($_contents, $options, $depth))) {
                     break;
                 }
-                throw new FileException('Unable to write data to file "' .
-                    $this->filename .
-                    '" after ' .
-                    $retries .
-                    ' attempt(s).');
+                throw new FileException('Unable to write data to file "' . $this->filename . '" after ' . $retries . ' attempt(s).');
             } catch (FileException $_ex) {
                 if ($_attempts) {
                     usleep($retryDelay);
