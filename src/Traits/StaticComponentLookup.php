@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * A trait for looking up various enterprise components statically
+ *
+ * @deprecated in 1.0.14 to be removed in 1.1.0.
+ * @see        \DreamFactory\Enterprise\Common\Traits\StaticEntityLookup
  */
 trait StaticComponentLookup
 {
@@ -200,45 +203,6 @@ MYSQL
      */
     protected static function _lookupUserRoles($userId)
     {
-        return UserRole::join('role_t', 'id', '=', 'role_id')
-            ->where('user_id', '=', $userId)
-            ->orderBy('role_t.role_name_text')
-            ->get(['role_t.*']);
-    }
-
-    /**
-     * Given an enterprise model, return the OwnerType associated with the entity
-     *
-     * @param \DreamFactory\Enterprise\Database\Models\EnterpriseModel $entity
-     *
-     * @return int|null The OwnerTypes constant value or null if not found
-     */
-    protected static function _getOwnerTypeFromEntity(EnterpriseModel $entity)
-    {
-        if ($entity instanceof User) {
-            return OwnerTypes::USER;
-        }
-
-        if ($entity instanceof ServiceUser) {
-            return OwnerTypes::SERVICE_USER;
-        }
-
-        if ($entity instanceof Instance) {
-            return OwnerTypes::INSTANCE;
-        }
-
-        if ($entity instanceof Server) {
-            return OwnerTypes::SERVER;
-        }
-
-        if ($entity instanceof Cluster) {
-            return OwnerTypes::CLUSTER;
-        }
-
-        if ($entity instanceof Mount) {
-            return OwnerTypes::MOUNT;
-        }
-
-        return null;
+        return UserRole::join('role_t', 'id', '=', 'role_id')->where('user_id', '=', $userId)->orderBy('role_t.role_name_text')->get(['role_t.*']);
     }
 }

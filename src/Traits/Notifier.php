@@ -149,8 +149,10 @@ trait Notifier
                 throw new \InvalidArgumentException('The operation "' . $operation . '" is invalid.');
         }
 
+        ($view == 'email.export' && !isset($data['daysToKeep'])) && $data['daysToKeep'] = config('snapshot.days-to-keep');
         ($_headTitle && !isset($data['headTitle'])) && $data['headTitle'] = $_headTitle;
         ($_contentHeader && !isset($data['contentHeader'])) && $data['contentHeader'] = $_contentHeader;
+
         $data['email-view'] = $view;
         $data['emailBody'] = array_get($data, 'emailBody');
 
