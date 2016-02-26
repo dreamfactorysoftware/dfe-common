@@ -2,6 +2,7 @@
 
 use DreamFactory\Library\Utility\Json;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class BasePacket
 {
@@ -105,10 +106,11 @@ class BasePacket
         //  Update the error entry if there was an error
         if (!array_get($packet, 'success', false) && !array_get($packet, 'error', false)) {
             $_packet['error'] = [
-                'code'      => $code,
-                'message'   => $message,
-                'exception' => $_ex ? Json::encode($_ex) : false,
+                'code'    => $code,
+                'message' => $message,
             ];
+
+            $_ex && $_packet['error']['exception'] = Json::encode($_ex);
         } else {
             array_forget($_packet, 'error');
         }
