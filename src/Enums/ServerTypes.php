@@ -17,6 +17,18 @@ class ServerTypes extends FactoryEnum
     //******************************************************************************
 
     /**
+     * @type int Application server
+     */
+    const APPS = 3;
+    /**
+     * @type int Web server
+     */
+    const WEB_APPS = 2;
+    /**
+     * @type int Database server (purty vershun)
+     */
+    const DATABASE = 1;
+    /**
      * @type int Database server
      */
     const DB = 1;

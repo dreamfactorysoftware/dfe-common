@@ -45,7 +45,7 @@ trait StaticEntityLookup
      */
     protected static function findUser($userId)
     {
-        return User::findOrFail($userId);
+        return ($userId instanceof User) ? $userId : User::findOrFail($userId);
     }
 
     /**
@@ -55,7 +55,7 @@ trait StaticEntityLookup
      */
     protected static function findServiceUser($serviceUserId)
     {
-        return ServiceUser::findOrFail($serviceUserId);
+        return ($serviceUserId instanceof ServiceUser) ? $serviceUserId : ServiceUser::findOrFail($serviceUserId);
     }
 
     /**
@@ -65,7 +65,7 @@ trait StaticEntityLookup
      */
     protected static function findCluster($clusterId)
     {
-        return Cluster::byNameOrId($clusterId)->firstOrFail();
+        return ($clusterId instanceof Cluster) ? $clusterId : Cluster::byNameOrId($clusterId)->firstOrFail();
     }
 
     /**
@@ -75,7 +75,7 @@ trait StaticEntityLookup
      */
     protected static function findServer($serverId)
     {
-        return Server::byNameOrId($serverId)->firstOrFail();
+        return ($serverId instanceof Server) ? $serverId : Server::byNameOrId($serverId)->firstOrFail();
     }
 
     /**
@@ -85,7 +85,7 @@ trait StaticEntityLookup
      */
     protected static function findInstance($instanceId)
     {
-        return Instance::with(['user', 'guest'])->byNameOrId($instanceId)->firstOrFail();
+        return ($instanceId instanceof Instance) ? $instanceId : Instance::with(['user', 'guest'])->byNameOrId($instanceId)->firstOrFail();
     }
 
     /**
@@ -95,7 +95,7 @@ trait StaticEntityLookup
      */
     protected static function findArchivedInstance($instanceId)
     {
-        return InstanceArchive::with(['user', 'guest'])->byNameOrId($instanceId)->firstOrFail();
+        return ($instanceId instanceof InstanceArchive) ? $instanceId : InstanceArchive::with(['user', 'guest'])->byNameOrId($instanceId)->firstOrFail();
     }
 
     /**
@@ -125,7 +125,7 @@ trait StaticEntityLookup
      */
     protected static function findSnapshot($snapshotId)
     {
-        return Snapshot::bySnapshotId($snapshotId)->with(['user', 'routeHash'])->firstOrFail();
+        return ($snapshotId instanceof Snapshot) ? $snapshotId : Snapshot::bySnapshotId($snapshotId)->with(['user', 'routeHash'])->firstOrFail();
     }
 
     /**
@@ -135,7 +135,7 @@ trait StaticEntityLookup
      */
     protected static function findMount($mountId)
     {
-        return Mount::byNameOrId($mountId)->firstOrFail();
+        return ($mountId instanceof Mount) ? $mountId : Mount::byNameOrId($mountId)->firstOrFail();
     }
 
     /**
@@ -147,9 +147,6 @@ trait StaticEntityLookup
      */
     protected static function findClusterServers($clusterId)
     {
-        $_cluster = ($clusterId instanceof Cluster) ? $clusterId : static::findCluster($clusterId);
-        $_rows = $_cluster->assignedServers();
-
         //  Organize by type
         $_response = [
             ServerTypes::APP => [],
@@ -158,7 +155,7 @@ trait StaticEntityLookup
         ];
 
         /** @type Server $_server */
-        foreach ($_rows as $_assignment) {
+        foreach (static::findCluster($clusterId)->assignedServers() as $_assignment) {
             if (null !== ($_server = $_assignment->server)) {
                 $_response[$_server->server_type_id][$_server->server_id_text] = $_server;
             }
@@ -230,7 +227,7 @@ trait StaticEntityLookup
         try {
             $_owner = OwnerTypes::getOwner($id, $type);
         } catch (\Exception $_ex) {
-            is_string($id) && $_owner = User::byEmail($id)->first();
+            is_string($id) && $_owner = User::byEmail($id)->first() && $type = OwnerTypes::USER;
         }
         finally {
             if (empty($_owner)) {

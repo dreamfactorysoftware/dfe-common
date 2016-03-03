@@ -2,6 +2,7 @@
 
 use DreamFactory\Library\Utility\Json;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class BasePacket
 {
@@ -58,7 +59,7 @@ class BasePacket
      * Generates a signature for a packet request response
      *
      * @param array                  $packet
-     * @param int|null               $code
+     * @param int|\Exception|null    $code
      * @param string|\Exception|null $message
      *
      * @return array
@@ -76,12 +77,12 @@ class BasePacket
             $message = null;
         }
 
-        !$code && $code = Response::HTTP_OK;
-        $code = $code ?: ($_ex ? $_ex->getCode() : Response::HTTP_OK);
-        $message = $message ?: ($_ex ? $_ex->getMessage() : null);
+        if (false !== $_ex) {
+            (null === $code) && $code = $_ex->getCode();
+            (null === $message) && $message = $_ex->getMessage();
+        }
 
-        $_startTime =
-            \Request::server('REQUEST_TIME_FLOAT', \Request::server('REQUEST_TIME', $_timestamp = microtime(true)));
+        $_startTime = \Request::server('REQUEST_TIME_FLOAT', \Request::server('REQUEST_TIME', $_timestamp = microtime(true)));
 
         $_elapsed = $_timestamp - $_startTime;
         $_id = sha1($_startTime . \Request::server('HTTP_HOST') . \Request::server('REMOTE_ADDR'));
@@ -105,10 +106,11 @@ class BasePacket
         //  Update the error entry if there was an error
         if (!array_get($packet, 'success', false) && !array_get($packet, 'error', false)) {
             $_packet['error'] = [
-                'code'      => $code,
-                'message'   => $message,
-                'exception' => $_ex ? Json::encode($_ex) : false,
+                'code'    => $code,
+                'message' => $message,
             ];
+
+            $_ex && $_packet['error']['exception'] = Json::encode($_ex);
         } else {
             array_forget($_packet, 'error');
         }
