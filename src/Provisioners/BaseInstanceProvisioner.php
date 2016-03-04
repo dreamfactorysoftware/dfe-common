@@ -8,6 +8,7 @@ use DreamFactory\Enterprise\Common\Traits\LockingService;
 use DreamFactory\Enterprise\Database\Enums\ProvisionStates;
 use DreamFactory\Enterprise\Database\Models\Instance;
 use DreamFactory\Enterprise\Database\Traits\InstanceValidation;
+use DreamFactory\Library\Utility\Laravel;
 
 /**
  * A base class for all provisioners
@@ -51,6 +52,7 @@ abstract class BaseInstanceProvisioner extends BaseProvisioningService implement
         'api-key'          => null,
         'client-id'        => null,
         'client-secret'    => null,
+        'app-key'          => null,
     ];
 
     //******************************************************************************
@@ -88,5 +90,11 @@ abstract class BaseInstanceProvisioner extends BaseProvisioningService implement
             'status'      => $_instance->state_nbr,
             'status_text' => ProvisionStates::prettyNameOf($_instance->state_nbr),
         ];
+    }
+
+    /** @inheritdoc */
+    public function makeAppKey()
+    {
+        return Laravel::makeAppKey();
     }
 }

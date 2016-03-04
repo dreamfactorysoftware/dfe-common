@@ -72,8 +72,10 @@ class EnterpriseDefaults extends FactoryEnum
     const SNAPSHOT_PATH_NAME = 'snapshots';
     /** @type string The default prefix for outgoing email */
     const EMAIL_SUBJECT_PREFIX = '[DFE]';
-    /** @type string The default hash algorithm used for signing requests */
-    const SIGNATURE_METHOD = 'sha256';
+    /** @type string The default hash algorithm for hashing */
+    const DEFAULT_HASH_ALGORITHM = 'sha256';
+    /** @type string The hash algorithm to use for signing requests */
+    const SIGNATURE_METHOD = self::DEFAULT_HASH_ALGORITHM;
     /** @type string The default export/mount point/directory where instance data lives */
     const STORAGE_ROOT = '/data/storage';
     /** @type string The value to put in the image name field for hosted instances */

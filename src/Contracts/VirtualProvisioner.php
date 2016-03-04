@@ -13,6 +13,13 @@ interface VirtualProvisioner
     //*************************************************************************
 
     /**
+     * Generates an APP_KEY suitable for use with Laravel deployments
+     *
+     * @return string The key
+     */
+    public function makeAppKey();
+
+    /**
      * Returns the id, config key, or short name, of this provisioner.
      *
      * @return string The id of this provisioner
