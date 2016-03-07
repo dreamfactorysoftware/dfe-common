@@ -32,7 +32,6 @@
     "prefer-stable":     false,
     "minimum-stability": "dev",
     "require":           {
-        "dreamfactory/dfe-database":   "dev-feature/l52-upgrade as master",
         "dreamfactory/php-utils":      "1.1.*",
         "wpb/string-blade-compiler":   "2.*@dev",
         "ruflin/elastica":             "*",
