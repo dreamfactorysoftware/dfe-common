@@ -29,8 +29,8 @@
             "url":  "https://github.com/dreamfactorysoftware/dfe-storage.git"
         }
     ],
+    "prefer-stable":     false,
     "minimum-stability": "dev",
-    "prefer-stable":     true,
     "require":           {
         "dreamfactory/php-utils":      "1.1.*",
         "dreamfactory/dfe-storage":    "dev-feature/l52-upgrade as master",
