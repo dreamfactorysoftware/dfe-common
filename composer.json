@@ -33,13 +33,13 @@
     "minimum-stability": "dev",
     "require":           {
         "dreamfactory/php-utils":      "1.1.*",
-        "dreamfactory/dfe-storage":    "dev-feature/l52-upgrade as master",
-        "dreamfactory/dfe-database":   "dev-feature/l52-upgrade as master",
         "wpb/string-blade-compiler":   "2.*@dev",
         "ruflin/elastica":             "*",
         "league/flysystem-ziparchive": "*"
     },
     "require-dev":       {
+        "dreamfactory/dfe-storage":    "dev-feature/l52-upgrade as master",
+        "dreamfactory/dfe-database":   "dev-feature/l52-upgrade as master",
         "laravel/framework":    "5.2.*",
         "symfony/dom-crawler":  "~3.0",
         "symfony/css-selector": "~3.0",
