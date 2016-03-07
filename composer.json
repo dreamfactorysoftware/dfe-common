@@ -35,7 +35,6 @@
         "dreamfactory/php-utils":      "1.1.*",
         "dreamfactory/dfe-storage":    "dev-feature/l52-upgrade as master",
         "dreamfactory/dfe-database":   "dev-feature/l52-upgrade as master",
-        "barryvdh/laravel-ide-helper": "~2.1",
         "wpb/string-blade-compiler":   "2.*@dev",
         "ruflin/elastica":             "*",
         "league/flysystem-ziparchive": "*"
@@ -45,7 +44,6 @@
         "symfony/dom-crawler":  "~3.0",
         "symfony/css-selector": "~3.0",
         "phpunit/phpunit":      "~4.0",
-        "doctrine/dbal":        "~2.3",
         "way/generators":       "~3.0",
         "phpspec/phpspec":      "~2.1"
     },
