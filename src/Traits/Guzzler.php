@@ -1,5 +1,6 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
+use DreamFactory\Library\Utility\Json;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -166,10 +167,11 @@ trait Guzzler
 
             logger('guzzler ' . $method . ' ' . $url, is_array($payload) ? $payload : ['payload' => $payload]);
 
-            /** @type \Response $_response */
+            /** @type \GuzzleHttp\Message\ResponseInterface $_response */
             $this->lastResponse = $_response = $this->getGuzzleClient()->{$method}($url, $options);
 
-            return $_response->json(['object' => $object]);
+            return Json::decode($_response->getBody(), !$object);
+            //getBody json(['object' => $object]);
         } catch (\Exception $_ex) {
             if (is_object($_response) && method_exists($_response, 'getBody')) {
                 return trim((string)$_response->getBody());

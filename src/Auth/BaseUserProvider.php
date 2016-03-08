@@ -1,7 +1,5 @@
 <?php namespace DreamFactory\Enterprise\Common\Auth;
 
-use DreamFactory\Enterprise\Database\Models\ServiceUser;
-use DreamFactory\Enterprise\Database\Models\User;
 use Illuminate\Auth\DatabaseUserProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
 
@@ -17,7 +15,7 @@ abstract class BaseUserProvider extends DatabaseUserProvider
     /**
      * @type string The model class for the user
      */
-    protected $userClass = null;
+    protected $userClass;
 
     //******************************************************************************
     //* Methods
@@ -37,7 +35,7 @@ abstract class BaseUserProvider extends DatabaseUserProvider
 
         foreach ($credentials as $_key => $_value) {
             if (!str_contains($_key, 'password')) {
-                $_realKey = $this->_mapKey($_key);
+                $_realKey = $this->mapKey($_key);
                 $_condition[] = $_realKey . ' = :' . $_realKey;
                 $_data[':' . $_realKey] = $_value;
             }
@@ -50,10 +48,8 @@ abstract class BaseUserProvider extends DatabaseUserProvider
         $_condition[] = 'active_ind = :active_ind';
         $_data[':active_ind'] = 1;
 
-        /** @type ServiceUser|User $_model */
-        $_model = new $this->userClass;
-
-        return $_model->whereRaw(implode(' AND ', $_condition), $_data)->first();
+        /** @noinspection PhpUndefinedMethodInspection */
+        return $this->getProviderModel()->whereRaw(implode(' AND ', $_condition), $_data)->first();
     }
 
     /**
@@ -65,10 +61,7 @@ abstract class BaseUserProvider extends DatabaseUserProvider
      */
     public function retrieveById($identifier)
     {
-        /** @type ServiceUser|User $_model */
-        $_model = new $this->userClass;
-
-        return $_model->find($identifier);
+        return $this->getProviderModel()->find($identifier);
     }
 
     /**
@@ -81,10 +74,7 @@ abstract class BaseUserProvider extends DatabaseUserProvider
      */
     public function retrieveByToken($identifier, $token)
     {
-        /** @type ServiceUser|User $_model */
-        $_model = new $this->userClass;
-
-        return $_model->where('id', $identifier)->where('remember_token', $token)->first();
+        return $this->getProviderModel()->where('id', $identifier)->where('remember_token', $token)->first();
     }
 
     /**
@@ -94,7 +84,7 @@ abstract class BaseUserProvider extends DatabaseUserProvider
      *
      * @return string
      */
-    protected function _mapKey($key)
+    protected function mapKey($key)
     {
         switch ($key) {
             case 'password':
@@ -124,5 +114,15 @@ abstract class BaseUserProvider extends DatabaseUserProvider
     public function validateCredentials(Authenticatable $user, array $credentials)
     {
         return $this->hasher->check($credentials['password'], $user->getAuthPassword());
+    }
+
+    /**
+     * Returns a new instance of the user class
+     *
+     * @return mixed
+     */
+    protected function getProviderModel()
+    {
+        return new $this->userClass;
     }
 }

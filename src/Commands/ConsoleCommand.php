@@ -7,7 +7,7 @@ use DreamFactory\Library\Utility\Shapers\XmlShape;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Composer;
+use Illuminate\Support\Composer;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -27,7 +27,7 @@ abstract class ConsoleCommand extends Command
     //******************************************************************************
 
     /**
-     * @type \Illuminate\Foundation\Composer The Composer class instance.
+     * @type Composer The Composer class instance.
      */
     protected $composer;
     /**

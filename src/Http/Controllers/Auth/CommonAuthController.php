@@ -13,6 +13,19 @@ abstract class CommonAuthController extends BaseController
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
     //******************************************************************************
+    //* Members
+    //******************************************************************************
+
+    /**
+     * @type string The login view
+     */
+    protected $loginView = 'dfe-common::auth.login';
+    /**
+     * @type string The register view
+     */
+    protected $registerView = 'dfe-common::auth.register';
+
+    //******************************************************************************
     //* Methods
     //******************************************************************************
 
@@ -33,8 +46,7 @@ abstract class CommonAuthController extends BaseController
     /** @inheritdoc */
     public function getRegister()
     {
-        return view(config('auth.open-registration', false) ? 'dfe-common::auth.register'
-            : 'dfe-common::auth.no-register');
+        return view(config('auth.open-registration', false) ? $this->showRegistrationForm() : 'dfe-common::auth.no-register');
     }
 
     /** @inheritdoc */

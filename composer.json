@@ -1,6 +1,6 @@
 {
     "name":              "dreamfactory/dfe-common",
-    "description":       "DreamFactory Enterprise(tm) Common Components",
+    "description":       "DreamFactory(tm) Enterprise Common Component Package",
     "homepage":          "https://www.dreamfactory.com/",
     "keywords":          [
         "dreamfactory",
@@ -29,23 +29,19 @@
             "url":  "https://github.com/dreamfactorysoftware/dfe-storage.git"
         }
     ],
+    "prefer-stable":     false,
     "minimum-stability": "dev",
-    "prefer-stable":     true,
     "require":           {
         "dreamfactory/php-utils":      "1.1.*",
-        "dreamfactory/dfe-database":   "1.0.*",
         "wpb/string-blade-compiler":   "2.*@dev",
         "ruflin/elastica":             "*",
-        "league/flysystem-sftp":       "*",
-        "league/flysystem-ziparchive": "*"
+        "league/flysystem-ziparchive": "~1.0"
     },
     "require-dev":       {
-        "phpunit/phpunit":             "~4.0",
-        "barryvdh/laravel-ide-helper": "~2.0",
-        "doctrine/dbal":               "~2.3",
-        "way/generators":              "~3.0",
-        "laravel/framework":           "5.1.*",
-        "phpspec/phpspec":             "~2.1"
+        "laravel/framework": "5.2.*",
+        "phpunit/phpunit":   "~4.0",
+        "way/generators":    "~3.0",
+        "phpspec/phpspec":   "~2.1"
     },
     "autoload":          {
         "psr-4": {

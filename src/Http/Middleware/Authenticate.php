@@ -46,6 +46,7 @@ class Authenticate
     public function handle($request, Closure $next)
     {
         if ($this->auth->guest()) {
+            /** @noinspection PhpUndefinedMethodInspection */
             return $request->ajax() ? response()->json('Unauthorized.', 401) : Redirect::guest('auth/login');
         }
 

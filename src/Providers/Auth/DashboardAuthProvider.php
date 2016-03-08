@@ -1,6 +1,7 @@
 <?php namespace DreamFactory\Enterprise\Common\Providers\Auth;
 
 use DreamFactory\Enterprise\Common\Auth\DashboardUserProvider;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class DashboardAuthProvider extends ServiceProvider
@@ -13,8 +14,8 @@ class DashboardAuthProvider extends ServiceProvider
     public function boot()
     {
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->app['auth']->extend('dashboard',
-            function () {
+        Auth::provider('dashboard',
+            function() {
                 /** @noinspection PhpUndefinedMethodInspection */
                 return new DashboardUserProvider($this->app['db']->connection(), $this->app['hash'], 'user_t');
             });
