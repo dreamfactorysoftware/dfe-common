@@ -4,6 +4,7 @@ use DreamFactory\Enterprise\Common\Enums\EnterpriseDefaults;
 use DreamFactory\Enterprise\Common\Traits\HasResults;
 use DreamFactory\Enterprise\Common\Traits\InteractsWithConsole;
 use DreamFactory\Enterprise\Common\Traits\PublishesResults;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -36,7 +37,7 @@ abstract class BaseJob implements ShouldQueue, InputAwareInterface
     //* Traits
     //******************************************************************************
 
-    use InteractsWithConsole, InteractsWithQueue, SerializesModels, HasResults, PublishesResults;
+    use Queueable, InteractsWithQueue, SerializesModels, HasResults, InteractsWithConsole, PublishesResults;
 
     //******************************************************************************
     //* Methods

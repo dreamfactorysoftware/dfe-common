@@ -14,8 +14,8 @@ use DreamFactory\Enterprise\Database\Models\ServiceUser;
 use DreamFactory\Enterprise\Database\Models\Snapshot;
 use DreamFactory\Enterprise\Database\Models\User;
 use DreamFactory\Enterprise\Database\Models\UserRole;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Collection;
 
 /**
  * A trait for looking up various enterprise components statically
@@ -31,7 +31,7 @@ trait StaticEntityLookup
      * @param int $ownerId
      * @param int $ownerType
      *
-     * @return AppKey
+     * @return \DreamFactory\Enterprise\Database\Models\AppKey
      */
     protected static function findAppKey($ownerId, $ownerType)
     {
@@ -39,9 +39,9 @@ trait StaticEntityLookup
     }
 
     /**
-     * @param int $userId
+     * @param int|string|\DreamFactory\Enterprise\Database\Models\User $userId
      *
-     * @return User
+     * @return \DreamFactory\Enterprise\Database\Models\User
      */
     protected static function findUser($userId)
     {
@@ -49,9 +49,9 @@ trait StaticEntityLookup
     }
 
     /**
-     * @param int $serviceUserId
+     * @param int|string|\DreamFactory\Enterprise\Database\Models\ServiceUser $serviceUserId
      *
-     * @return User
+     * @return \DreamFactory\Enterprise\Database\Models\User
      */
     protected static function findServiceUser($serviceUserId)
     {
@@ -59,9 +59,9 @@ trait StaticEntityLookup
     }
 
     /**
-     * @param string|int $clusterId
+     * @param string|int|\DreamFactory\Enterprise\Database\Models\Cluster $clusterId
      *
-     * @return Cluster
+     * @return \DreamFactory\Enterprise\Database\Models\Cluster
      */
     protected static function findCluster($clusterId)
     {
@@ -69,9 +69,9 @@ trait StaticEntityLookup
     }
 
     /**
-     * @param int|string $serverId
+     * @param int|string|\DreamFactory\Enterprise\Database\Models\Server $serverId
      *
-     * @return Server
+     * @return \DreamFactory\Enterprise\Database\Models\Server
      */
     protected static function findServer($serverId)
     {
@@ -79,9 +79,9 @@ trait StaticEntityLookup
     }
 
     /**
-     * @param int|string $instanceId
+     * @param int|string|\DreamFactory\Enterprise\Database\Models\Instance $instanceId
      *
-     * @return Instance
+     * @return \DreamFactory\Enterprise\Database\Models\Instance
      */
     protected static function findInstance($instanceId)
     {
@@ -89,9 +89,9 @@ trait StaticEntityLookup
     }
 
     /**
-     * @param int|string $instanceId
+     * @param int|string|\DreamFactory\Enterprise\Database\Models\InstanceArchive $instanceId
      *
-     * @return Instance
+     * @return \DreamFactory\Enterprise\Database\Models\InstanceArchive
      */
     protected static function findArchivedInstance($instanceId)
     {
@@ -101,9 +101,9 @@ trait StaticEntityLookup
     /**
      * Looks first in instance_t, then in instance_arch_t. If nothing found returns null.
      *
-     * @param int|string $instanceId
+     * @param int|string|\DreamFactory\Enterprise\Database\Models\Instance $instanceId
      *
-     * @return Instance|null
+     * @return \DreamFactory\Enterprise\Database\Models\Instance|null
      */
     protected static function locateInstance($instanceId)
     {
@@ -119,9 +119,9 @@ trait StaticEntityLookup
     }
 
     /**
-     * @param string|int $snapshotId
+     * @param string|int|\DreamFactory\Enterprise\Database\Models\Snapshot $snapshotId
      *
-     * @return Snapshot|\Illuminate\Database\Eloquent\Model
+     * @return \DreamFactory\Enterprise\Database\Models\Snapshot
      */
     protected static function findSnapshot($snapshotId)
     {
@@ -129,9 +129,9 @@ trait StaticEntityLookup
     }
 
     /**
-     * @param int|string $mountId
+     * @param int|string|\DreamFactory\Enterprise\Database\Models\Mount $mountId
      *
-     * @return Instance
+     * @return \DreamFactory\Enterprise\Database\Models\Mount
      */
     protected static function findMount($mountId)
     {
@@ -141,7 +141,7 @@ trait StaticEntityLookup
     /**
      * Returns all servers registered on $clusterId
      *
-     * @param int $clusterId
+     * @param int|string|\DreamFactory\Enterprise\Database\Models\Cluster $clusterId
      *
      * @return array
      */
@@ -169,7 +169,7 @@ trait StaticEntityLookup
      *
      * @param int $serverId
      *
-     * @return Collection
+     * @return array|\Illuminate\Database\Eloquent\Collection|static[]
      */
     protected static function findServerInstances($serverId)
     {
@@ -185,7 +185,7 @@ trait StaticEntityLookup
      * @param \DreamFactory\Enterprise\Database\Models\Cluster|int $clusterId
      * @param array                                                $columns The columns to retrieve
      *
-     * @return \Illuminate\Support\Collection
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     protected static function findClusterInstances($clusterId, $columns = ['*'])
     {
@@ -197,7 +197,7 @@ trait StaticEntityLookup
      *
      * @param int $userId
      *
-     * @return Collection
+     * @return array|\Illuminate\Database\Eloquent\Collection|static[]
      */
     protected static function findUserRoles($userId)
     {
@@ -220,13 +220,13 @@ trait StaticEntityLookup
      * @param int $id
      * @param int $type
      *
-     * @return \DreamFactory\Enterprise\Database\Models\Cluster|\DreamFactory\Enterprise\Database\Models\Instance|\DreamFactory\Enterprise\Database\Models\Server|\DreamFactory\Enterprise\Database\Models\User
+     * @return \DreamFactory\Enterprise\Database\Contracts\OwnedEntity
      */
     protected static function findOwner($id, $type = OwnerTypes::USER)
     {
         try {
             $_owner = OwnerTypes::getOwner($id, $type);
-        } catch (\Exception $_ex) {
+        } catch (Exception $_ex) {
             is_string($id) && $_owner = User::byEmail($id)->first() && $type = OwnerTypes::USER;
         }
         finally {

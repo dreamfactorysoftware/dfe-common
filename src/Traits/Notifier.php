@@ -1,10 +1,13 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
-use DreamFactory\Enterprise\Console\Enums\ConsoleOperations;
+use DreamFactory\Enterprise\Common\Enums\EnterpriseDefaults;
 use DreamFactory\Enterprise\Database\Models\Instance;
-use DreamFactory\Enterprise\Database\Models\ServiceUser;
 use DreamFactory\Library\Utility\Json;
+use Exception;
 use Illuminate\Mail\Message;
+use InvalidArgumentException;
+use Log;
+use Mail;
 
 /**
  * A trait that aids with notifying
@@ -52,24 +55,34 @@ trait Notifier
 
         try {
             $this->subjectPrefix = $this->subjectPrefix ?: config('provisioning.email-subject-prefix');
-            $subject = $this->subjectPrefix . ' ' . trim(str_replace($this->subjectPrefix, null, $subject));
+            $subject = trim(str_replace($this->subjectPrefix, null, $subject));
+            $_bccSubject = $this->subjectPrefix . ' ' . trim(str_replace($this->subjectPrefix, null, $subject));
 
             $data = array_merge($this->getNotificationDefaultData(), $data);
 
-            $_result = \Mail::send($_view,
+            Mail::send($_view,
                 $data,
                 function($message/** @var Message $message */) use ($email, $name, $subject) {
                     $message->from(config('mail.from.address'), config('mail.from.name'));
                     $message->subject($subject);
                     $message->to($email, $name);
-                    config('license.bcc-notifications', false) && $message->bcc(config('license.notification-address'), 'DreamFactory Operations');
                 });
 
-            \Log::debug('notification sent to "' . $email . '"');
+            if (config('license.bcc-notifications', false)) {
+                Mail::send($_view,
+                    $data,
+                    function($message/** @var Message $message */) use ($email, $name, $_bccSubject) {
+                        $message->from(config('mail.from.address'), config('mail.from.name'));
+                        $message->subject($_bccSubject);
+                        $message->to(config('license.notification-address'), 'DreamFactory');
+                    });
+            }
 
-            return $_result;
-        } catch (\Exception $_ex) {
-            \Log::error('Error sending notification: ' . $_ex->getMessage());
+            logger('notification sent to "' . $email . '"');
+
+            return true;
+        } catch (Exception $_ex) {
+            Log::error('Error sending notification: ' . $_ex->getMessage());
 
             $_mailPath = storage_path('logs/unsent-mail');
 
@@ -97,6 +110,11 @@ trait Notifier
      */
     protected function notifyJobOwner($operation, $email, $name, array $data = [], $view = null)
     {
+        //  Bogus operation?
+        if (empty($_config = config('notifications.templates.' . trim(strtolower($operation))))) {
+            throw new InvalidArgumentException('The operation "' . $operation . '" is invalid.');
+        }
+
         /** @type Instance $_instance */
         if (empty($_instance = array_get($data, 'instance'))) {
             $data['instance'] = $_instance = false;
@@ -111,52 +129,13 @@ trait Notifier
             $data['firstName'] = $_firstName = $_instance->user->first_name_text;
         }
 
-        $_headTitle = array_get($data, 'headTitle');
-        $_contentHeader = array_get($data, 'contentHeader');
-
-        switch (trim(strtolower($operation))) {
-            case ConsoleOperations::METRICS:
-                !$_headTitle && $_headTitle = 'Metrics Complete';
-                !$_contentHeader && $_contentHeader = 'Metrics have been generated successfully';
-                $view = $view ?: 'emails.generic';
-                break;
-
-            case ConsoleOperations::PROVISION:
-                !$_headTitle && $_headTitle = 'Provisioning Complete';
-                !$_contentHeader && $_contentHeader = 'Your new instance is ready';
-                $view = $view ?: 'emails.provision';
-                break;
-
-            case ConsoleOperations::DEPROVISION:
-                !$_headTitle && $_headTitle = 'Deprovisioning Complete';
-                !$_contentHeader && $_contentHeader = 'Your instance has been retired';
-                $view = $view ?: 'emails.deprovision';
-                break;
-
-            case ConsoleOperations::IMPORT:
-                !$_headTitle && $_headTitle = 'Import Complete';
-                !$_contentHeader && $_contentHeader = 'Your imported instance is ready';
-                $view = $view ?: 'emails.import';
-                break;
-
-            case ConsoleOperations::EXPORT:
-                !$_headTitle && $_headTitle = 'Export Complete';
-                !$_contentHeader && $_contentHeader = 'Your export is complete';
-                $view = $view ?: 'emails.export';
-                break;
-
-            default:
-                throw new \InvalidArgumentException('The operation "' . $operation . '" is invalid.');
-        }
-
-        ($view == 'email.export' && !isset($data['daysToKeep'])) && $data['daysToKeep'] = config('snapshot.days-to-keep');
-        ($_headTitle && !isset($data['headTitle'])) && $data['headTitle'] = $_headTitle;
-        ($_contentHeader && !isset($data['contentHeader'])) && $data['contentHeader'] = $_contentHeader;
-
-        $data['email-view'] = $view;
+        $data['headTitle'] = array_get($data, 'headTitle', array_get($_config, 'subject', 'System Notification'));
+        $data['contentHeader'] = array_get($data, 'contentHeader', array_get($_config, 'title', 'System Notification'));
+        $data['email-view'] = $view ?: array_get($_config, 'view', 'emails.generic');
         $data['emailBody'] = array_get($data, 'emailBody');
+        $data['daysToKeep'] = array_get($data, 'daysToKeep', config('snapshot.days-to-keep', EnterpriseDefaults::SNAPSHOT_DAYS_TO_KEEP));
 
-        return $this->notify($email, $name, $_headTitle, $data);
+        return $this->notify($email, $name, $data['headTitle'], $data);
     }
 
     /**

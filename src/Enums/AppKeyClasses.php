@@ -5,6 +5,8 @@ use DreamFactory\Library\Utility\Enums\FactoryEnum;
 
 /**
  * The classes of app keys
+ *
+ * @deprecated This class has been moved to the dfe-database package. Please adjust your code
  */
 class AppKeyClasses extends FactoryEnum
 {

@@ -1,6 +1,7 @@
 <?php namespace DreamFactory\Enterprise\Common\Http\Controllers;
 
 use DreamFactory\Enterprise\Common\Traits\Lumberjack;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller;
@@ -14,5 +15,5 @@ abstract class BaseController extends Controller
     //* Traits
     //******************************************************************************
 
-    use DispatchesJobs, ValidatesRequests, Lumberjack;
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests, Lumberjack;
 }

@@ -8,6 +8,7 @@ use DreamFactory\Enterprise\Common\Traits\LockingService;
 use DreamFactory\Enterprise\Database\Enums\ProvisionStates;
 use DreamFactory\Enterprise\Database\Models\Instance;
 use DreamFactory\Enterprise\Database\Traits\InstanceValidation;
+use DreamFactory\Library\Utility\Laravel;
 
 /**
  * A base class for all provisioners
@@ -18,7 +19,7 @@ use DreamFactory\Enterprise\Database\Traits\InstanceValidation;
  *
  * @todo Move all english text to templates
  */
-abstract class BaseInstanceProvisioner extends BaseProvisioningService implements VirtualProvisioner
+abstract class BaseInstanceProvisioner extends BaseProvisioningService
 {
     //******************************************************************************
     //* Traits
@@ -51,6 +52,7 @@ abstract class BaseInstanceProvisioner extends BaseProvisioningService implement
         'api-key'          => null,
         'client-id'        => null,
         'client-secret'    => null,
+        'app-key'          => null,
     ];
 
     //******************************************************************************
