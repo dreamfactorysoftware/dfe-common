@@ -19,7 +19,7 @@ use DreamFactory\Library\Utility\Laravel;
  *
  * @todo Move all english text to templates
  */
-abstract class BaseInstanceProvisioner extends BaseProvisioningService implements VirtualProvisioner
+abstract class BaseInstanceProvisioner extends BaseProvisioningService
 {
     //******************************************************************************
     //* Traits
@@ -90,11 +90,5 @@ abstract class BaseInstanceProvisioner extends BaseProvisioningService implement
             'status'      => $_instance->state_nbr,
             'status_text' => ProvisionStates::prettyNameOf($_instance->state_nbr),
         ];
-    }
-
-    /** @inheritdoc */
-    public function makeAppKey()
-    {
-        return Laravel::makeAppKey();
     }
 }
