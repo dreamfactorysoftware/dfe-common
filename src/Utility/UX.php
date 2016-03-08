@@ -20,7 +20,11 @@ class UX
      */
     public static function makeInstanceToolbarButton($id, $text, array $options = [])
     {
+        $_action = trim(strtolower(str_replace(['_', ' '], '-', $text)), ' -');
+
         $_template = [
+            'id'         => 'instance-' . $_action . '-' . $id,
+            'text'       => trim($text),
             'type'       => 'button',
             'size'       => 'btn-xs',
             'context'    => 'btn-info',
@@ -28,7 +32,7 @@ class UX
             'hint'       => null,
             'icon-class' => 'instance-toolbar-button',
             'data'       => [],
-            'action'     => $_action = trim(strtolower(str_replace(['_', ' '], '-', $text)), ' -'),
+            'action'     => $_action,
         ];
 
         $_data = array_merge($_template, $options);
@@ -37,16 +41,13 @@ class UX
         $_data['icon'] = '<i class="fa fa-fw ' . $_icon . ' ' . array_get($_data, 'icon-class', $_template['icon-class']) . '"></i>';
         !empty($_hint = array_get($_data, 'hint')) && $_data['hint'] = trim($text . ' instance');
 
-        return array_merge($_template,
+        $_data['data'] = array_merge($_data['data'],
             [
-                'id'   => 'instance-' . $_action . '-' . $id,
-                'text' => $text,
-                'data' => [
-                    'instance-id'     => $id,
-                    'instance-action' => $_action,
-                ],
-            ],
-            $_data);
+                'instance-id'     => $id,
+                'instance-action' => $_action,
+            ]);
+
+        return array_merge($_template, $_data);
     }
 
     /**
