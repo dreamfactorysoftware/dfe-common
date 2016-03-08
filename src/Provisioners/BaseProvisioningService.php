@@ -3,6 +3,7 @@
 use DreamFactory\Enterprise\Common\Contracts\VirtualProvisioner;
 use DreamFactory\Enterprise\Common\Exceptions\NotImplementedException;
 use DreamFactory\Enterprise\Common\Services\BaseService;
+use DreamFactory\Library\Utility\Laravel;
 
 abstract class BaseProvisioningService extends BaseService implements VirtualProvisioner
 {
@@ -74,4 +75,9 @@ abstract class BaseProvisioningService extends BaseService implements VirtualPro
         return static::PROVISIONER_ID;
     }
 
+    /** @inheritdoc */
+    public function makeAppKey()
+    {
+        return Laravel::makeAppKey();
+    }
 }
