@@ -1,13 +1,13 @@
 <?php namespace DreamFactory\Enterprise\Common\Traits;
 
 use DreamFactory\Enterprise\Common\Enums\EnterpriseDefaults;
-use DreamFactory\Enterprise\Console\Enums\ConsoleDefaults;
-use DreamFactory\Enterprise\Console\Enums\ConsoleOperations;
 use DreamFactory\Enterprise\Database\Models\Instance;
-use DreamFactory\Enterprise\Database\Models\ServiceUser;
-use DreamFactory\Enterprise\Services\Facades\Snapshot;
 use DreamFactory\Library\Utility\Json;
+use Exception;
 use Illuminate\Mail\Message;
+use InvalidArgumentException;
+use Log;
+use Mail;
 
 /**
  * A trait that aids with notifying
@@ -55,24 +55,34 @@ trait Notifier
 
         try {
             $this->subjectPrefix = $this->subjectPrefix ?: config('provisioning.email-subject-prefix');
-            $subject = $this->subjectPrefix . ' ' . trim(str_replace($this->subjectPrefix, null, $subject));
+            $subject = trim(str_replace($this->subjectPrefix, null, $subject));
+            $_bccSubject = $this->subjectPrefix . ' ' . trim(str_replace($this->subjectPrefix, null, $subject));
 
             $data = array_merge($this->getNotificationDefaultData(), $data);
 
-            $_result = \Mail::send($_view,
+            Mail::send($_view,
                 $data,
                 function($message/** @var Message $message */) use ($email, $name, $subject) {
                     $message->from(config('mail.from.address'), config('mail.from.name'));
                     $message->subject($subject);
                     $message->to($email, $name);
-                    config('license.bcc-notifications', false) && $message->bcc(config('license.notification-address'), 'DreamFactory Operations');
                 });
 
-            \Log::debug('notification sent to "' . $email . '"');
+            if (config('license.bcc-notifications', false)) {
+                Mail::send($_view,
+                    $data,
+                    function($message/** @var Message $message */) use ($email, $name, $_bccSubject) {
+                        $message->from(config('mail.from.address'), config('mail.from.name'));
+                        $message->subject($_bccSubject);
+                        $message->to(config('license.notification-address'), 'DreamFactory');
+                    });
+            }
 
-            return $_result;
-        } catch (\Exception $_ex) {
-            \Log::error('Error sending notification: ' . $_ex->getMessage());
+            logger('notification sent to "' . $email . '"');
+
+            return true;
+        } catch (Exception $_ex) {
+            Log::error('Error sending notification: ' . $_ex->getMessage());
 
             $_mailPath = storage_path('logs/unsent-mail');
 
@@ -102,7 +112,7 @@ trait Notifier
     {
         //  Bogus operation?
         if (empty($_config = config('notifications.templates.' . trim(strtolower($operation))))) {
-            throw new \InvalidArgumentException('The operation "' . $operation . '" is invalid.');
+            throw new InvalidArgumentException('The operation "' . $operation . '" is invalid.');
         }
 
         /** @type Instance $_instance */
