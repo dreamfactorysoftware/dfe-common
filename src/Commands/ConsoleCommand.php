@@ -66,7 +66,7 @@ abstract class ConsoleCommand extends Command
      */
     public function fire()
     {
-        return $this->handle();
+        $this->handle();
     }
 
     /**
