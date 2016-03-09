@@ -7,6 +7,7 @@ use Symfony\Component\Console\Style\OutputStyle;
  * A trait that adds shortcuts for artisan commands
  *
  * @property OutputInterface|OutputStyle $output
+ * @property string                      $name
  */
 trait ArtisanHelper
 {
@@ -36,16 +37,13 @@ trait ArtisanHelper
      */
     protected function writeHeader($newline = true)
     {
-        /** @noinspection PhpUndefinedFieldInspection */
         if ($this->output) {
-            /** @noinspection PhpUndefinedFieldInspection */
-            $this->output->writeln($this->context(config('commands.display-name'), 'info') .
+            $this->output->writeln($this->context(config('dfe.common.display-name'), 'info') .
                 ' (' .
-                $this->context($this->name . '-' . config('commands.display-version', 'develop'), 'comment') .
+                $this->context($this->name . '-' . config('dfe.common.display-version', 'develop'), 'comment') .
                 ')');
 
-            if (null !== ($_copyright = config('commands.display-copyright'))) {
-                /** @noinspection PhpUndefinedFieldInspection */
+            if (null !== ($_copyright = config('dfe.common.display-copyright'))) {
                 $this->output->writeln($this->context($_copyright, 'info') . ($newline ? PHP_EOL : null));
             }
         }
