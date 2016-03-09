@@ -59,10 +59,10 @@ class UX
     public static function makeInstanceToolbarButtons($id, $startStop = false)
     {
         $_buttons = [
-            'launch'    => static::makeInstanceToolbarButton($id, 'Launch', ['context' => 'btn-success', 'icon' => 'fa-play']),
-            'delete'    => static::makeInstanceToolbarButton($id, 'Delete', ['context' => 'btn-danger', 'icon' => 'fa-times']),
-            'export'    => static::makeInstanceToolbarButton($id, 'Export', ['context' => 'btn-info', 'icon' => 'fa-cloud-download']),
-            'blueprint' => static::makeInstanceToolbarButton($id, 'Blueprint', ['context' => 'btn-info', 'icon' => 'fa-file-code-o']),
+            'launch' => static::makeInstanceToolbarButton($id, 'Launch', ['context' => 'btn-success', 'icon' => 'fa-play']),
+            'delete' => static::makeInstanceToolbarButton($id, 'Delete', ['context' => 'btn-danger', 'icon' => 'fa-times']),
+            'export' => static::makeInstanceToolbarButton($id, 'Export', ['context' => 'btn-info', 'icon' => 'fa-cloud-download']),
+            //'blueprint' => static::makeInstanceToolbarButton($id, 'Blueprint', ['context' => 'btn-info', 'icon' => 'fa-file-code-o']),
         ];
 
         if ($startStop) {
