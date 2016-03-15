@@ -34,19 +34,10 @@ abstract class CommonAuthController extends BaseController
      */
     public function __construct()
     {
+        //  Show the "closed" screen if registration is disabled
+        !config('auth.open-registration', false) && $this->registerView = 'dfe-common::auth.no-register';
+
         $this->middleware('guest', ['except' => 'getLogout']);
-    }
-
-    /** @inheritdoc */
-    public function getLogin()
-    {
-        return view('dfe-common::auth.login');
-    }
-
-    /** @inheritdoc */
-    public function getRegister()
-    {
-        return view(config('auth.open-registration', false) ? $this->showRegistrationForm() : 'dfe-common::auth.no-register');
     }
 
     /** @inheritdoc */
