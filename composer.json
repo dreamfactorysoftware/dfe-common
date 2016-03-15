@@ -29,7 +29,6 @@
             "url":  "https://github.com/dreamfactorysoftware/dfe-storage.git"
         }
     ],
-    "prefer-stable":     true,
     "minimum-stability": "dev",
     "require":           {
         "dreamfactory/php-utils":      "1.1.*",
