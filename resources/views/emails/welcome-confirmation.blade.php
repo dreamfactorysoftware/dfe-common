@@ -1,6 +1,8 @@
-@extends('dfe-common::emails.responsive')
-@section('headTitle')DreamFactory Enterprise&trade; : Welcome@stop
-@section('contentHeader')Welcome to DreamFactory Enterprise&trade;!@stop
+<?php
+!isset($headTitle) && $headTitle = 'Welcome';
+!isset($contentHeader) && $contentHeader = 'Welcome';
+?>
+@extends('dfe-common::layouts.responsive')
 {{--
 
  This blade is for generating passwor reset emails.
@@ -22,41 +24,21 @@
 --}}
 @section('contentBody')
     <div>
+        <p>Your account on the DFE Console has been successfully created.</p>
+
+        <p>In order to complete the registration process, please click the link below confirming your registered email address.</p>
+
         <p>
-            {{ $firstName }},
+            <a href="{{ $confirmationUrl }}"
+               title="Click to confirm your email address">{{ $confirmationUrl }}</a>
         </p>
 
-        <div>
-            <p>Your account on the DFE Admin Console has been successfully created.</p>
-
-            <p>In order to complete the registration process, please click the link below confirming your registered email address.</p>
-
-            <p>
-                <a href="{{ $confirmationUrl }}"
-                   title="Click to confirm your email address">{{ $confirmationUrl }}</a>
-            </p>
-
-            <p>
-                If you've got any questions, feel free to drop us a line at <a href="mailto:{{ $supportEmail }}">{{ $supportEmail }}</a>
-            </p>
-
-            <p>
-                Have a great day!<br /> The Dream Team
-            </p>
-        </div>
-
-        @if(isset($emailBody))
-            <div>{!! $emailBody !!}</div>
-        @endif
-
-        <div>
-            <p>Go to your DreamFactory&trade; Dashboard at <a href="{{ $dashboard_url }}" target="_blank">{{ $dashboard_url }}</a> to create a new instance, or
-                manage your other instances.</p>
-        </div>
+        <p>
+            If you've got any questions, feel free to drop us a line at <a href="mailto:{{ $supportEmail }}">{{ $supportEmail }}</a>
+        </p>
 
         <p>
-            Thanks!
-            <cite>-- Team DreamFactory</cite>
+            Have a great day!<br /> The Dream Team
         </p>
     </div>
 @stop

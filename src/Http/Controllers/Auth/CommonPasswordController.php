@@ -5,7 +5,6 @@ use DreamFactory\Enterprise\Database\Models\ServiceUser;
 use DreamFactory\Enterprise\Database\Models\User;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CommonPasswordController extends BaseController
 {
@@ -14,6 +13,23 @@ class CommonPasswordController extends BaseController
     //******************************************************************************
 
     use ResetsPasswords;
+
+    //******************************************************************************
+    //* Members
+    //******************************************************************************
+
+    /**
+     * @type string The password reset link request view
+     */
+    protected $linkRequestView = 'dfe-common::auth.password';
+    /**
+     * @type string The password reset view
+     */
+    protected $resetView = 'dfe-common::auth.reset';
+    /**
+     * @type string Where to go after a reset
+     */
+    protected $redirectPath = '/auth/login';
 
     //******************************************************************************
     //* Methods
@@ -25,22 +41,6 @@ class CommonPasswordController extends BaseController
     public function __construct()
     {
         $this->middleware('guest');
-    }
-
-    /** @inheritdoc */
-    public function getEmail()
-    {
-        return view('dfe-common::auth.password');
-    }
-
-    /** @inheritdoc */
-    public function getReset($token = null)
-    {
-        if (is_null($token)) {
-            throw new NotFoundHttpException;
-        }
-
-        return view('dfe-common::auth.reset')->with('token', $token);
     }
 
     /**
@@ -55,6 +55,6 @@ class CommonPasswordController extends BaseController
         $user->save();
 
         /** @noinspection PhpUndefinedMethodInspection */
-        Auth::login($user);
+        Auth::guard($this->getGuard())->login($user);
     }
 }
