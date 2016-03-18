@@ -115,6 +115,8 @@ trait Notifier
             throw new InvalidArgumentException('The operation "' . $operation . '" is invalid.');
         }
 
+        $data = array_merge($this->getNotificationDefaultData(), $data);
+
         /** @type Instance $_instance */
         if (empty($_instance = array_get($data, 'instance'))) {
             $data['instance'] = $_instance = false;
