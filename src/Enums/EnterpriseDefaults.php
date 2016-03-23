@@ -126,4 +126,8 @@ class EnterpriseDefaults extends FactoryEnum
      * @type int The default number of days to keep system metrics
      */
     const DEFAULT_METRICS_DETAIL_DAYS_TO_KEEP = 7;
+    /**
+     * @type int The default number of days an instance may remain non-active
+     */
+    const DEFAULT_ACTIVATE_DAYS_BY = 7;
 }
