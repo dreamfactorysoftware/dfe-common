@@ -130,4 +130,8 @@ class EnterpriseDefaults extends FactoryEnum
      * @type int The default number of days an instance may remain non-active
      */
     const DEFAULT_ACTIVATE_DAYS_BY = 7;
+    /**
+     * @type int The allowed number of activation extensions
+     */
+    const DEFAULT_ACTIVATE_ALLOWED_EXTENDS = 7;
 }
