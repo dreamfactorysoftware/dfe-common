@@ -115,7 +115,23 @@ class EnterpriseDefaults extends FactoryEnum
     /** @type string X Header for an app to talk with a 2.0 instance */
     const INSTANCE_API_HEADER = 'X-DreamFactory-API-Key';
     /**
+     * @type int The default number of days to keep password resets
+     */
+    const DEFAULT_RESETS_DAYS_TO_KEEP = 1;
+    /**
      * @type int The default number of days to keep system metrics
      */
-    const DEFAULT_METRICS_DAYS_TO_KEEP = 365;
+    const DEFAULT_METRICS_DAYS_TO_KEEP = 180;
+    /**
+     * @type int The default number of days to keep system metrics
+     */
+    const DEFAULT_METRICS_DETAIL_DAYS_TO_KEEP = 7;
+    /**
+     * @type int The default number of days an instance may remain non-active
+     */
+    const DEFAULT_ACTIVATE_DAYS_BY = 7;
+    /**
+     * @type int The allowed number of activation extensions
+     */
+    const DEFAULT_ACTIVATE_ALLOWED_EXTENDS = 7;
 }
