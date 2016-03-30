@@ -30,8 +30,10 @@ class ApiLogger extends BaseMiddleware
      */
     public function handle(Request $request, \Closure $next)
     {
+
         try {
-            $this->debug($request->getMethod() . ' ' . $request->getPathInfo(), $request->input());
+            $this->debug($request->getMethod() . ' ' . $request->getPathInfo(),
+                array_except($request->input(), ['access-token', 'client-secret', 'password', 'password_text', 'pass']));
         } catch (\Exception $_ex) {
             //  Ignored.
         }
