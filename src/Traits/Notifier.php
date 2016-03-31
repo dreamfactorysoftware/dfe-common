@@ -54,11 +54,12 @@ trait Notifier
         $_view = array_get($data, 'email-view', 'emails.generic');
 
         try {
+            $data = array_merge($this->getNotificationDefaultData(), $data);
             $this->subjectPrefix = $this->subjectPrefix ?: config('provisioning.email-subject-prefix');
             $subject = trim(str_replace($this->subjectPrefix, null, $subject));
             $_bccSubject = $this->subjectPrefix . ' ' . trim(str_replace($this->subjectPrefix, null, $subject));
 
-            $data = array_merge($this->getNotificationDefaultData(), $data);
+            //logger('[dfe.notifier.notify] mail to ' . $email, $data);
 
             Mail::send($_view,
                 $data,
@@ -114,8 +115,6 @@ trait Notifier
         if (empty($_config = config('notifications.templates.' . trim(strtolower($operation))))) {
             throw new InvalidArgumentException('The operation "' . $operation . '" is invalid.');
         }
-
-        $data = array_merge($this->getNotificationDefaultData(), $data);
 
         /** @type Instance $_instance */
         if (empty($_instance = array_get($data, 'instance'))) {

@@ -44,7 +44,7 @@ trait VerifiesSignatures
         $_key = AppKey::byClientId($clientId)->first();
 
         if (empty($_key) || $clientSecret != $_key->client_secret) {
-            throw new \InvalidArgumentException('Invalid credentials.');
+            throw new \InvalidArgumentException('Invalid $clientId: ' . $clientId);
         }
 
         //  Looks good

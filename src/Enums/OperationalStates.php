@@ -39,4 +39,8 @@ class OperationalStates extends FactoryEnum
      * @var int
      */
     const TOS_VIOLATION = 4;
+    /**
+     * @var int
+     */
+    const DEACTIVATED = 5;
 }
