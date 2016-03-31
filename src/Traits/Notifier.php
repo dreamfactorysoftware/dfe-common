@@ -136,7 +136,6 @@ trait Notifier
         $data['email-view'] = $view ?: array_get($_config, 'view', 'emails.generic');
         $data['emailBody'] = array_get($data, 'emailBody');
         $data['daysToKeep'] = array_get($data, 'daysToKeep', config('snapshot.days-to-keep', EnterpriseDefaults::SNAPSHOT_DAYS_TO_KEEP));
-        $data['dashboard_url'] = config('dfe.dashboard-url');
 
         return $this->notify($email, $name, $data['headTitle'], $data);
     }
