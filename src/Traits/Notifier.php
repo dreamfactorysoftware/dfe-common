@@ -51,16 +51,19 @@ trait Notifier
      */
     protected function notify($email, $name, $subject, array $data)
     {
+        $_view = array_get($data, 'email-view', 'emails.generic');
         $data = array_merge($this->getNotificationDefaultData(), $data);
 
-        $_view = array_get($data, 'email-view', 'emails.generic');
+        if (empty(array_get($data, 'dashboard_url'))) {
+            $data['dashboard_url'] = config('dfe.dashboard-url');
+        }
 
         try {
             $this->subjectPrefix = $this->subjectPrefix ?: config('provisioning.email-subject-prefix');
             $subject = trim(str_replace($this->subjectPrefix, null, $subject));
             $_bccSubject = $this->subjectPrefix . ' ' . trim(str_replace($this->subjectPrefix, null, $subject));
 
-            $data = array_merge($this->getNotificationDefaultData(), $data);
+            logger('[dfe.notifier.notify] mail to ' . $email, $data);
 
             Mail::send($_view,
                 $data,
