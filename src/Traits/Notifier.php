@@ -51,6 +51,8 @@ trait Notifier
      */
     protected function notify($email, $name, $subject, array $data)
     {
+        $data = array_merge($this->getNotificationDefaultData(), $data);
+
         $_view = array_get($data, 'email-view', 'emails.generic');
 
         try {
@@ -115,8 +117,6 @@ trait Notifier
             throw new InvalidArgumentException('The operation "' . $operation . '" is invalid.');
         }
 
-        $data = array_merge($this->getNotificationDefaultData(), $data);
-
         /** @type Instance $_instance */
         if (empty($_instance = array_get($data, 'instance'))) {
             $data['instance'] = $_instance = false;
@@ -136,6 +136,7 @@ trait Notifier
         $data['email-view'] = $view ?: array_get($_config, 'view', 'emails.generic');
         $data['emailBody'] = array_get($data, 'emailBody');
         $data['daysToKeep'] = array_get($data, 'daysToKeep', config('snapshot.days-to-keep', EnterpriseDefaults::SNAPSHOT_DAYS_TO_KEEP));
+        $data['dashboard_url'] = config('dfe.dashboard-url');
 
         return $this->notify($email, $name, $data['headTitle'], $data);
     }
