@@ -23,4 +23,12 @@ interface PrivatePathAware
      * @return string
      */
     public function getOwnerPrivatePath($append = null);
+
+    /**
+     * @param string $append
+     *
+     * @return string
+     */
+    public function getPackagePath($append = null);
+
 }
