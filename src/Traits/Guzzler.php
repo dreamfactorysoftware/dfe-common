@@ -165,8 +165,6 @@ trait Guzzler
                 $options = array_merge($options, is_scalar($payload) ? ['body' => $payload,] : ['json' => $payload]);
             }
 
-            logger('guzzler ' . $method . ' ' . $url, is_array($payload) ? $payload : ['payload' => $payload]);
-
             /** @type \GuzzleHttp\Message\ResponseInterface $_response */
             $this->lastResponse = $_response = $this->getGuzzleClient()->{$method}($url, $options);
 

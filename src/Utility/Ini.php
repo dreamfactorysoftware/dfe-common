@@ -117,5 +117,31 @@ class Ini extends Collection
 
         return $this;
     }
+
+    /**
+     * @param string $string    The string to parse
+     * @param string $delimiter The delimiter used. Defaults to "|" (pipe)
+     *
+     * @return array
+     */
+    public static function parseDelimitedString($string, $delimiter = '|')
+    {
+        if (empty($string)) {
+            return [];
+        }
+
+        //  Ignore arrays...
+        if (is_array($string)) {
+            return $string;
+        }
+
+        //  No delimiter? Convert to array
+        if (false === strpos($string, $delimiter)) {
+            return empty($string) ? [] : [$string];
+        }
+
+        //  Parse the string
+        return explode($delimiter, $string);
+    }
 }
 
