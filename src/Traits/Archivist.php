@@ -2,6 +2,7 @@
 
 use DreamFactory\Library\Utility\Disk;
 use League\Flysystem\Adapter\Local;
+use League\Flysystem\FileNotFoundException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\ZipArchive\ZipArchiveAdapter;
 
@@ -72,15 +73,17 @@ trait Archivist
 
         //  Create our zip container
         $_archive = new Filesystem(new ZipArchiveAdapter($archiveFile));
-
+        $_pathPrefix = $source->getAdapter()->getPathPrefix();
         try {
             foreach ($source->listContents('', true) as $_file) {
+
                 if ('dir' == $_file['type']) {
                     $_archive->createDir($_file['path']);
                 } elseif ('link' == $_file['type']) {
                     $_archive->put($_file['path'], $_file['target']);
                 } elseif ('file' == $_file['type']) {
-                    file_exists($_file['path']) && static::writeStream($_archive, $_file['path'], $_file['path']);
+                    $source->assertPresent($_file['path']);
+                    static::writeStream($_archive, $_pathPrefix . $_file['path'], $_file['path']);
                 }
             }
         } catch (\Exception $_ex) {
