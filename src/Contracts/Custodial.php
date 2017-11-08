@@ -26,7 +26,7 @@ interface Custodial
      *
      * @return Custodial
      */
-    public function addActivity($activity, array $extras = null);
+    public function addActivity($activity);
 
     /**
      * Get the logged activity
